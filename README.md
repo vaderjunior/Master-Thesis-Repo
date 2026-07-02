@@ -1,26 +1,32 @@
-# TUDaGPT (HAWKI) API
+# Hate Speech Classifier — Prototype
 
-LLM backend for the classifier. Runs on TU Darmstadt infrastructure.
+Adaptable multi-label hate speech classifier using an LLM + RAG (Master's thesis, TU Darmstadt / PEASEC).
 
-## Base URL
+## Setup
 
-```
-https://tudagpt.hrz.tu-darmstadt.de
-```
+```bash
+python -m venv .venv
+.venv\Scripts\Activate.ps1
 
-Endpoints:
-- `POST /api/ai-req` — model completion
-- `GET /api/user` — verify token
-
-## Auth
-
-Bearer token (Laravel Sanctum). Create it in the TUDaGPT web profile under "API Tokens" (shown once). Store in `.env`, never commit.
-
-```
-Authorization: Bearer <TOKEN>
+pip install -r requirements.txt
 ```
 
-## Models
+`.env` file (not committed):
+```
+TUDAGPT_TOKEN=<your token>
+TUDAGPT_URL=https://tudagpt.hrz.tu-darmstadt.de/api/ai-req
+```
+
+## LLM backend: TUDaGPT (HAWKI)
+
+### Endpoints
+- `POST /api/ai-req`
+- `GET /api/user`
+
+### Auth
+Bearer token, from `.env`.
+
+### Models
 
 | Tier | Slug |
 |------|------|
@@ -30,9 +36,9 @@ Authorization: Bearer <TOKEN>
 
 Get exact slugs from the web chat: F12 → Network → send a message → open the `streamAI` request → `model` field in the payload.
 
-## Request format
+### Request format
 
-Note the non-standard `payload` wrapper and nested `content.text`:
+Non-standard `payload` wrapper, nested `content.text`. Keep the payload minimal — only `model`, `temperature`, `messages`. Extra fields (`stream`, `tools`) copied from the web app have caused server-side errors.
 
 ```json
 {
@@ -47,36 +53,20 @@ Note the non-standard `payload` wrapper and nested `content.text`:
 }
 ```
 
-`temperature` is supported (confirmed: produces run-to-run variation).
-
-## Response format
+### Response format
 
 ```json
 { "success": true, "content": { "text": "<output>" } }
 ```
 
-Read the output from `response["content"]["text"]`.
+Read output from `response["content"]["text"]`.
 
-## Sample call (curl)
-
-```bash
-curl -X POST https://tudagpt.hrz.tu-darmstadt.de/api/ai-req \
-  -H "Authorization: Bearer $HAWKI_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"payload":{"model":"mistral-large-3-675b-instruct-2512","temperature":1.0,"messages":[{"role":"user","content":{"text":"Give me a random word."}}]}}'
-```
-
-## Errors
+### Errors
 
 | Code | Meaning |
 |------|---------|
 | 401 | bad/missing token |
 | 403 | external API disabled or no permission |
-| 422 | validation error (returns field detail) |
-| 500 | server error (retry with backoff) |
+| 422 | validation error |
+| 500 | server error — retry with backoff |
 
-## Notes
-
-- All requests are usage-tracked and may be rate-limited.
-- Self-consistency multiplies calls per input — factor into quota.
-- HTTPS only.
