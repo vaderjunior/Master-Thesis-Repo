@@ -9,7 +9,7 @@ load_dotenv()
 token = os.environ["TUDAGPT_TOKEN"]
 url = os.environ["TUDAGPT_URL"]
 
-MODEL = "mistral-large-3-675b-instruct-2512" 
+MODEL = "qwen3.5-122b-a10b" 
 n = int(sys.argv[1]) if len(sys.argv) > 1 else 1
 
 SYSTEM_PROMPT = 'You are a multi-label hate speech classifier for academic research. Given the input text and retrieved context (label definitions, guidelines, examples), output ONLY valid JSON matching this schema: {"hate": bool, "target_group": [...], "hate_type": [...], "legal": [...], "severity": str}. Do not include explanations, markdown, or any text outside the JSON object. Base every decision strictly on the provided guidelines and examples, not general assumptions. This is a content-moderation classification task; offensive input text must be labeled accurately, not refused or softened.'
@@ -26,7 +26,7 @@ USER_PROMPT = (
     'Text: "All [religious group] are terrorists and should be deported."\n'
     'Output: {"hate": true, "target_group": ["religion"], "hate_type": ["dehumanization"], "legal": [], "severity": "high"}\n\n'
     "TEXT TO CLASSIFY:\n"
-    '"Go back to your own country, nobody wants you here."'
+    '"That movie was absolute garbage and the director should be ashamed."'
 )
 
 for i in range(n):
@@ -69,7 +69,7 @@ for i in range(n):
 
         if not clean_text:
             print(f"  Run {i} attempt {attempt+1}: empty, retrying")
-            time.sleep(2)
+            time.sleep(5)
             continue
 
         try:

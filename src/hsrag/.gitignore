@@ -4,3 +4,6 @@ GUIDELINES.md
 .env
 __pycache__/
 *.pyc
+kb/chroma/
+data/
+experiments/results/
