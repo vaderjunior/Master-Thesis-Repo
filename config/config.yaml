@@ -1,0 +1,20 @@
+api:
+    base_url_env: TUDAGPT_URL      # we read the actual URL from .env
+    token_env: TUDAGPT_TOKEN       # we read the actual token from .env
+    model_strong: mistral-large-3-675b-instruct-2512
+    model_medium: qwen3.5-122b-a10b         # confirm via Network tab (step 1.5)
+    model_fast: FILL_IN             # confirm via Network tab (step 1.5)
+    temperature: 1.0
+    max_retries: 2
+    timeout_seconds: 30
+
+paths:
+  data_raw: data/raw
+  data_processed: data/processed
+  kb_records: kb/records.jsonl
+  results: experiments/results
+
+retrieval:
+  #for Phase 4 — placeholders for now
+  strategy: dense
+  k: 5
