@@ -1,6 +1,9 @@
 .env
 GUIDELINES.md
 log.md
+DATASET_log.md
+FOR_MARKUS.md
+personal_log.md
 .venv/
 .env
 __pycache__/
@@ -9,3 +12,4 @@ kb/chroma/
 data/
 experiments/results/
 scratch/
+

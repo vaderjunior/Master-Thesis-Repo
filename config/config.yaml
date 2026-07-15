@@ -1,12 +1,21 @@
 api:
     base_url_env: TUDAGPT_URL      # we read the actual URL from .env
     token_env: TUDAGPT_TOKEN       # we read the actual token from .env
-    model_strong: mistral-large-3-675b-instruct-2512
-    model_medium: qwen3.5-122b-a10b         # confirm via Network tab (step 1.5)
-    model_fast: FILL_IN             # confirm via Network tab (step 1.5)
+    models_strong:
+      - mistral-large-3-675b-instruct-2512
+      - qwen3.5-397b-a17b
+      - deepseek-r1-distill-llama-70b
+    models_medium:
+      - qwen3.5-122b-a10b
+      - openai-gpt-oss-120b
+      - glm-4.7
+    models_fast:
+      - meta-llama-3.3-70b-instruct    # verify
+      - gemma-3-27b-instruct          # verify
+      - qwen-3.5-27b                  # verify
     temperature: 1.0
     max_retries: 2
-    timeout_seconds: 30
+    timeout_seconds: 40
 
 paths:
   data_raw: data/raw
