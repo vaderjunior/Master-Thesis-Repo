@@ -3,7 +3,7 @@ from collections import Counter
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--dataset", required=True,
-                    choices=["hatexplain", "mhs", "implicit_hate", "gahd"])
+                    choices=["hatexplain", "mhs", "implicit_hate", "gahd", "detox"],)
 args = parser.parse_args()
 
 if args.dataset == "hatexplain":
@@ -15,6 +15,9 @@ elif args.dataset == "mhs":
 elif args.dataset == "implicit_hate":
     from src.hsrag.data.implicit_hate import load_implicit_hate
     records, stats = load_implicit_hate()
+elif args.dataset == "detox":
+    from src.hsrag.data.detox import load_detox
+    records, stats = load_detox()
 elif args.dataset == "gahd":
     from src.hsrag.data.gahd import load_gahd
     records, stats = load_gahd()
