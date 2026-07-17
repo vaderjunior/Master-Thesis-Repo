@@ -1,0 +1,81 @@
+# Hand-authored annotation guidelines for the hard cases.
+# These encode POLICY - see FOR_MARKUS.md #10. Revising = edit + re-ingest KB.
+version: 1
+guidelines:
+  - id: quoted-slurs
+    dimension: hate
+    text: >
+      Quoting or reporting a slur - in news, testimony, counter-speech, or
+      condemnation - is not itself hate speech. The test is whether the
+      author endorses the attack, not whether a slur appears in the text.
+
+  - id: reclaimed-slurs
+    dimension: hate
+    text: >
+      A slur used by a member of the targeted group about their own group
+      (reclaimed or in-group use) is generally not hate speech. Context and
+      speaker matter more than the presence of the word.
+
+  - id: counter-speech
+    dimension: hate
+    text: >
+      Counter-speech that names or describes hate in order to oppose,
+      challenge, or condemn it is not hate speech, even when it repeats the
+      hateful content it argues against.
+
+  - id: irony-and-jokes
+    dimension: hate
+    text: >
+      Sarcasm, irony, or jokes that demean a protected group ARE hate speech.
+      Humorous framing does not neutralise an attack on a group based on a
+      protected characteristic.
+
+  - id: religion-ideas-vs-believers
+    dimension: hate
+    text: >
+      Criticism of a religion's ideas, doctrines, or practices is not hate
+      speech. Attacks on, or dehumanisation of, its believers as people
+      because of their faith IS hate speech. The target - ideas vs people -
+      is the distinction.
+
+  - id: profanity-without-target
+    dimension: hate
+    text: >
+      Profanity, insults, or aggression without a protected-characteristic
+      target is not hate speech. "You idiot" or generic rudeness is offensive
+      but not hate unless it attacks a protected group.
+
+  - id: group-vs-individual
+    dimension: hate
+    text: >
+      An attack on an individual for personal reasons is not hate speech.
+      It becomes hate speech when the person is attacked as a representative
+      of a protected group, or the attack generalises to the whole group.
+
+  - id: implicit-and-coded
+    dimension: hate
+    text: >
+      Hate speech need not contain slurs. Coded language, dog whistles,
+      stereotypes stated as fact, and implied dehumanisation can be hate
+      speech even when no explicit slur appears.
+
+  - id: threats-and-incitement
+    dimension: hate
+    text: >
+      Calls for violence, exclusion, deportation, or harm against a protected
+      group, and statements that such harm is deserved or desirable, are hate
+      speech of the most severe kind.
+
+  - id: majority-and-powerful-groups
+    dimension: hate
+    text: >
+      Hate speech can target majority or powerful groups, not only
+      minorities. The test is an attack based on a protected characteristic,
+      regardless of the group's social status.
+
+  - id: negation-and-support
+    dimension: hate
+    text: >
+      Statements that explicitly reject or negate hate ("I don't think women
+      are inferior") are not hate speech. Attend to negation - surface
+      keywords alone can flip the meaning.

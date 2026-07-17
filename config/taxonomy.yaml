@@ -53,25 +53,25 @@ dimensions:
       threatening: {definition: "Threatens or intimidates the group or its members."}
       grievance: {definition: "Frames the in-group as victims of the targeted group (e.g. white grievance)."}
 
-severity:
-  type: ordinal
-  labels:
-    low:
-      definition: >
-        Hateful, but comparatively mild in intensity: insults, slurs, or
-        derogatory remarks that demean a protected group without extreme
-        hostility.
-    medium:
-      definition: >
-        Strongly hostile: heavy or repeated slurs and clearly degrading
-        language directed at a protected group.
-    high:
-      definition: >
-        Extremely hostile: the most intense hate, including incitement,
-        threats, or calls for violence, as well as the most severe
-        degradation.
-  note: >
-    Severity reflects annotator-PERCEIVED INTENSITY, operationalised as
-    terciles of the Measuring Hate Speech aggregate score within the
-    hateful mass. It is not a harm-type taxonomy. Cut-points in
-    data/mappings/mhs_thresholds.md. See FOR_MARKUS.md #8.
+  severity:
+    type: ordinal
+    labels:
+      low:
+        definition: >
+          Hateful, but comparatively mild in intensity: insults, slurs, or
+          derogatory remarks that demean a protected group without extreme
+          hostility.
+      medium:
+        definition: >
+          Strongly hostile: heavy or repeated slurs and clearly degrading
+          language directed at a protected group.
+      high:
+        definition: >
+          Extremely hostile: the most intense hate, including incitement,
+          threats, or calls for violence, as well as the most severe
+          degradation.
+    note: >
+      Severity reflects annotator-PERCEIVED INTENSITY, operationalised as
+      terciles of the Measuring Hate Speech aggregate score within the
+      hateful mass. It is not a harm-type taxonomy. Cut-points in
+      data/mappings/mhs_thresholds.md. See FOR_MARKUS.md #8.
