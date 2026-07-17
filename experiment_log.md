@@ -59,3 +59,39 @@ transfer, concepts do).
 **PoC**, not formal eval — one illustrative triple, not a systematic
 cross-lingual retrieval benchmark.
 
+## 2026-07-16 — First KB retrieval, naive dense (Phase 3.5)
+
+**Setup:** BGE-M3 dense retrieval, top-5, over the full 311-record KB (defs +
+guidelines + examples mixed). 6 hand-written probes. No filtering, no hybrid
+— deliberately naive baseline.
+
+**What worked:**
+- Misogyny probe -> gender-labelled examples (top hit gender+disability).
+- Religion probe -> muslim/islam examples, one tagged religion.
+- German probe "Ausländer raus..." -> sensible ENGLISH hateful examples
+  (deport/"not wanted here"), zero shared words. Cross-lingual transfer
+  confirmed in the live KB, not just the toy demo.
+- Neutral probe -> highest distances (0.42+ vs 0.25-0.30 for real hate); the
+  distance gap itself is signal.
+
+**Key finding (SQ1 motivation):** examples dominate; definitions and
+guidelines almost never surface. Only 1 definition appeared across all 6
+probes (and on the neutral probe); ZERO guidelines appeared. Cause: examples
+are raw text, lexically close to raw-text queries; defs/guidelines are
+abstract descriptive language, far in embedding space. Naive dense retrieval
+over a mixed KB buries the abstract knowledge.
+
+**Two informative misses:**
+- "you're such an idiot, get lost" (offensive, NOT hate) -> retrieved hateful
+  examples ("Dumb bitch is dumb"), not the profanity-without-target guideline.
+  The over-sensitivity failure mode, live.
+- "he called me the n-word and I was shocked" (victim recounting, NOT hate)
+  -> retrieved unrelated sexual/violent examples; the quoted-slurs guideline
+  that exactly covers this case NEVER surfaced.
+
+**Implication:** motivates Phase 4 directly — per-kind metadata-filtered
+retrieval (surface definitions/guidelines separately from examples), hybrid
+BM25 (would catch literal "quoted"/"slur"), and per-kind retrieval budgets.
+Naive dense-over-mixed-KB is insufficient on its own.
+
+**PoC / eyeball**, not a metric.
