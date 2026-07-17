@@ -23,6 +23,12 @@ paths:
   kb_records: kb/records.jsonl
   results: experiments/results
 
+kb:
+  records_path: kb/records.jsonl
+  chroma_path: kb/chroma
+  embedding_model: BAAI/bge-m3
+  examples_per_label: 10
+
 retrieval:
   #for Phase 4 — placeholders for now
   strategy: dense

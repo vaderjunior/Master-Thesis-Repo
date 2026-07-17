@@ -35,3 +35,27 @@ taxonomy.yaml was indented at the top level, outside `dimensions:`, so both
 the KB generator and check_taxonomy silently skipped it. Re-indented under
 dimensions. Now 18 definitions (gate 1 + target 7 + type 7 + severity 3),
 check_taxonomy sees 4 dimensions. Classic YAML indentation trap.
+
+## 2026-07-16 — BGE-M3 cross-lingual sanity (Phase 3.3)
+
+**Setup:** Loaded BAAI/bge-m3 (first run: ~2.3 GB download). Encoded an EN
+misogyny sentence, its German translation (zero shared words), and an
+unrelated EN sentence. Normalised embeddings, cosine similarity. Running on
+CPU (iGPU active to save power; dedicated GPU available on restart for
+heavier re-ingest work later).
+
+**Results (cosine):**
+- EN-misogyny <-> DE-misogyny : 0.887   (HIGH)
+- EN-misogyny <-> EN-hiking   : 0.383   (LOW)
+- DE-misogyny <-> EN-hiking   : 0.350   (LOW)
+
+**Interpretation:** the cross-lingual misogyny pair scores far above either
+unrelated pair despite no lexical overlap. Confirms the shared multilingual
+embedding space works — a German query can retrieve an English concept. This
+is the empirical basis for the design decision: definitions and guidelines
+authored once in English, examples kept per-language (slurs/slang don't
+transfer, concepts do).
+
+**PoC**, not formal eval — one illustrative triple, not a systematic
+cross-lingual retrieval benchmark.
+
