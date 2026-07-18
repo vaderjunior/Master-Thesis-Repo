@@ -18,7 +18,7 @@ import pytest
 import yaml
 from sentence_transformers import SentenceTransformer
 
-from src.hsrag.kb import load_collection
+from src.hsrag.kb import load_collection, unsentinel
 
 config = yaml.safe_load(Path("config/config.yaml").read_text(encoding="utf-8"))
 kb_cfg = config["kb"]
@@ -29,16 +29,9 @@ col = load_collection(Path(kb_cfg["chroma_path"]), kb_cfg["embedding_model"])
 
 
 def _parse_target_groups(meta: dict) -> list[str]:
-    """target_groups comes back from Chroma as a JSON string (or the
-    '__none__' sentinel). Return a plain list for easy checking."""
-    raw = meta.get("target_groups", "__none__")
-    if raw == "__none__" or not isinstance(raw, str):
-        return []
-    try:
-        val = json.loads(raw)
-        return val if isinstance(val, list) else []
-    except json.JSONDecodeError:
-        return []
+    """Use the canonical unsentinel; return [] if absent for easy checking."""
+    val = unsentinel(meta.get("target_groups", "__none__"))
+    return val if isinstance(val, list) else []
 
 
 def _query(text: str, k: int = 3):

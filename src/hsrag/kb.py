@@ -36,6 +36,29 @@ LIST_META_KEYS = ("target_groups", "hate_types")
 def _kb_hash(records_path: Path) -> str:
     return hashlib.sha256(records_path.read_bytes()).hexdigest()[:16]
 
+def unsentinel(value):
+    """Reverse the Chroma metadata encoding.
+
+    CONTRACT: every reader of KB metadata goes through this. Chroma can't
+    store None or lists, so build() writes "__none__" for None, "" for null
+    dimension/label, and JSON strings for lists. If a Hit.meta ever shows
+    "__none__" or a raw JSON string, some code path bypassed this function.
+
+    The None / [] / ["race"] three-way distinction from Phase 2 depends on it.
+    """
+    if value == "__none__" or value == "":
+        return None
+    if isinstance(value, str) and value.startswith("["):
+        try:
+            return json.loads(value)
+        except json.JSONDecodeError:
+            return value
+    return value
+
+
+def unsentinel_meta(meta: dict) -> dict:
+    """Apply unsentinel to every value in a Chroma metadata dict."""
+    return {k: unsentinel(v) for k, v in meta.items()}
 
 def _flatten_meta(record: dict) -> dict:
     """Turn a KB record into Chroma-safe scalar metadata.

@@ -94,7 +94,7 @@ out = FIG_DIR / "mhs_score_hist.png"
 plt.savefig(out, dpi=150)
 print(f"\nSaved {out}")
 
-# --- eyeball the bands: does the data match your taxonomy definitions? ---
+# --- bands---
 print("\n--- 5 samples per severity band ---")
 print("(check these against your taxonomy.yaml definitions:")
 print(" low=insult, medium=dehumanisation, high=incitement/threat)")

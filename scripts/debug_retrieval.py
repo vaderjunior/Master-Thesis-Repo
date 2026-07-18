@@ -1,68 +1,79 @@
 """
-Debug retrieval: embed hand-written probes, show the top-k KB hits.
-Phase 4 will make this a proper CLI; for now it's for eyeballing sanity.
+Retrieval microscope. Shows the three buckets for a query.
+
+    python -m scripts.debug_retrieval "some text" --lang en
+    python -m scripts.debug_retrieval          # runs the 6 standard probes
 """
 
-import json
+import argparse
 from pathlib import Path
 
 import yaml
-from sentence_transformers import SentenceTransformer
 
-from src.hsrag.kb import load_collection
+from src.hsrag.retrieve import Retriever
 
 config = yaml.safe_load(Path("config/config.yaml").read_text(encoding="utf-8"))
 kb_cfg = config["kb"]
+ret_cfg = config["retrieval"]
 
-model = SentenceTransformer(kb_cfg["embedding_model"])
-col = load_collection(Path(kb_cfg["chroma_path"]), kb_cfg["embedding_model"])
+parser = argparse.ArgumentParser()
+parser.add_argument("text", nargs="?", default=None)
+parser.add_argument("--lang", default="en", choices=["en", "de"])
+parser.add_argument("--strategy", default=None,
+                    choices=["dense", "bm25", "hybrid"],
+                    help="override config strategy")
+args = parser.parse_args()
+
+if args.strategy:
+    ret_cfg = {**ret_cfg, "strategy": args.strategy}
+
+if args.strategy:
+    ret_cfg = {**ret_cfg, "strategy": args.strategy}
+
+retriever = Retriever(
+    chroma_path=Path(kb_cfg["chroma_path"]),
+    records_path=Path(kb_cfg["records_path"]),
+    model_name=kb_cfg["embedding_model"],
+    cfg=ret_cfg,
+)
 
 
-def unsentinel(v):
-    """Reverse the KB metadata encoding for display."""
-    if v == "__none__" or v == "":
-        return None
-    if isinstance(v, str) and v.startswith("["):
-        try:
-            return json.loads(v)
-        except json.JSONDecodeError:
-            return v
-    return v
+def show(text: str, lang: str):
+    result = retriever.retrieve(text, lang=lang)
+    print(f"\n{'='*72}\nQUERY ({lang}): {text}\n{'='*72}")
 
-
-def retrieve(query: str, k: int = 5):
-    q = model.encode([query], normalize_embeddings=True)
-    hits = col.query(query_embeddings=q.tolist(), n_results=k)
-
-    print(f"\n{'='*70}\nQUERY: {query}\n{'='*70}")
-    for i in range(len(hits["ids"][0])):
-        meta = hits["metadatas"][0][i]
-        dist = hits["distances"][0][i]
-        doc = hits["documents"][0][i]
-
-        kind = meta["kind"]
-        label = unsentinel(meta.get("label"))
-        lang = meta["lang"]
-
-        # for examples, show the gold labels; for defs/guides, the dim/label
-        if kind == "example":
-            tag = f"gate={unsentinel(meta.get('gate'))} " \
-                  f"tg={unsentinel(meta.get('target_groups'))}"
-        else:
-            tag = f"{meta.get('dimension','')}/{label}"
-
-        print(f"\n  [{i+1}] {kind:10} ({lang}) dist={dist:.3f}  {tag}")
-        print(f"      {doc[:90]}")
+    for bucket_name, hits in [
+        ("DEFINITIONS", result.definitions),
+        ("GUIDELINES", result.guidelines),
+        ("EXAMPLES", result.examples),
+    ]:
+        print(f"\n  --- {bucket_name} ({len(hits)}) ---")
+        for i, h in enumerate(hits, 1):
+            if h.kind == "example":
+                tag = (f"gate={h.meta.get('gate')} "
+                       f"tg={h.meta.get('target_groups')}")
+                if h.meta.get("illustrative_only"):
+                    tag += f" [LEGAL §{h.meta.get('stgb')}]"
+            else:
+                tag = f"{h.meta.get('dimension') or ''}/{h.meta.get('label') or ''}"
+            print(f"  [{i}] {h.score:.3f} ({h.via}) {h.id}")
+            if h.meta.get("_ranks"):
+                print(f"      ranks: {h.meta['_ranks']}")
+            print(f"      {tag}")
+            print(f"      {h.text[:88]}")
 
 
 PROBES = [
-    "women are too stupid to vote",                    # misogyny
-    "muslims are terrorists and should be banned",      # religious hate
-    "Ausländer raus, wir wollen euch hier nicht",       # German (foreigners out)
-    "you're such an idiot, get lost",                   # offensive, not hate
-    "he called me the n-word and I was shocked",        # quoted slur, not hate
-    "the weather is lovely for a walk today",           # neutral
+    ("women are too stupid to vote", "en"),
+    ("muslims are terrorists and should be banned", "en"),
+    ("Ausländer raus, wir wollen euch hier nicht", "de"),
+    ("you're such an idiot, get lost", "en"),
+    ("he called me the n-word and I was shocked", "en"),
+    ("the weather is lovely for a walk today", "en"),
 ]
 
-for probe in PROBES:
-    retrieve(probe)
+if args.text:
+    show(args.text, args.lang)
+else:
+    for probe, lang in PROBES:
+        show(probe, lang)

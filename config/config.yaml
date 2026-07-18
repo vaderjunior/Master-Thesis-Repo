@@ -30,6 +30,11 @@ kb:
   examples_per_label: 10
 
 retrieval:
-  #for Phase 4 — placeholders for now
-  strategy: dense
-  k: 5
+  strategy: hybrid           # dense | bm25 | hybrid  
+  k_definitions: 2
+  k_guidelines: 2
+  k_examples: 5
+  use_mmr: false            # 4.5
+  mmr_lambda: 0.7
+  use_reranker: false       # stub, Phase 8 Stage C
+  rrf_k: 60                 # 4.4
