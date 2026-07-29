@@ -50,6 +50,7 @@ python -m scripts.build_kb                              # records.jsonl -> Chrom
 python -m scripts.debug_retrieval                       # all 6 standard probes
 python -m scripts.debug_retrieval --strategy bm25       # dense | bm25 | hybrid
 python -m scripts.debug_retrieval "some text" --lang de # single query
+python -m scripts.check_mmr [--probe "text" --lang en]   # MMR redundancy check
 ```
 
 ## Tests

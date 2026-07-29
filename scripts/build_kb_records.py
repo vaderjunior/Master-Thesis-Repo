@@ -1,4 +1,5 @@
 """
+build_kb_rcords.py
 Generate kb/records.jsonl from three sources:
   1. definitions - auto-generated from taxonomy.yaml
   2. guidelines  - from guidelines.yaml (hand-authored policy)
@@ -226,16 +227,29 @@ def gen_examples() -> list[dict]:
 
     return records
 
-
-def gen_legal_illustrations() -> list[dict]:
+def gen_legal_illustrations(existing: list[dict]) -> list[dict]:
     """DeTox train comments flagged with an StGB paragraph -> illustrative
     examples. illustrative_only=True, paragraph in meta.stgb. These ground
-    the legal motivation without being a scored dimension (Option 2)."""
+    the legal motivation without being a scored dimension (Option 2).
+
+    DEDUP (added Phase 4.5): a flagged comment may ALREADY be in the KB as a
+    balanced example, under a different id (ex-detox-<x> vs
+    ex-detox-legal-<x>). That produced byte-identical duplicate records, and
+    retrieval returned the same German comment in two of five example slots.
+    When a flagged comment is already present, merge meta.stgb onto the
+    existing record and emit nothing new: the scarce legal annotation is
+    kept, the duplicate is not. The surviving record stays
+    illustrative_only=False - it is a genuine scored example that happens to
+    carry a paragraph flag.
+    """
     path = PROCESSED / "de_train.parquet"
     df = pd.read_parquet(path)
     df = df[df["source"] == "detox"]
 
+    by_id = {r["id"]: r for r in existing}
+
     records = []
+    merged = 0
     for row in df.itertuples(index=False):
         raw = json.loads(row.raw)
         paragraphs = raw.get("legal_paragraphs", {})
@@ -243,6 +257,14 @@ def gen_legal_illustrations() -> list[dict]:
         flagged = [p.replace("p_", "") for p, v in paragraphs.items() if v > 0.5]
         if not flagged:
             continue
+        stgb = ",".join(flagged)
+
+        base_id = f"ex-{row.id}"
+        if base_id in by_id:
+            by_id[base_id]["meta"]["stgb"] = stgb
+            merged += 1
+            continue
+
         records.append({
             "id": f"ex-detox-legal-{row.id.split('-', 1)[1]}",
             "kind": "example",
@@ -253,13 +275,16 @@ def gen_legal_illustrations() -> list[dict]:
             "source": "detox-train-legal",
             "meta": {
                 "gate": bool(row.gate),
-                "target_groups": clean(row.target_groups),   # was passed raw
+                "target_groups": clean(row.target_groups),
                 "hate_types": None,
                 "severity": None,
                 "illustrative_only": True,
-                "stgb": ",".join(flagged),
+                "stgb": stgb,
             },
         })
+
+    print(f"\n  legal: {len(records)} standalone illustrations, "
+          f"{merged} merged into existing balanced examples")
     return records
 
 
@@ -269,8 +294,11 @@ def main():
     all_records = []
     all_records += gen_definitions()
     all_records += gen_guidelines()
-    all_records += gen_examples()
-    all_records += gen_legal_illustrations()
+    # legal generator needs the balanced examples so it can merge rather than
+    # duplicate a comment that is already in the KB under a different id
+    examples = gen_examples()
+    all_records += examples
+    all_records += gen_legal_illustrations(examples)
 
     with open(OUT, "w", encoding="utf-8") as f:
         for r in all_records:

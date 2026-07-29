@@ -19,6 +19,15 @@ class ModelUnavailable(Exception):
     """The requested model is offline or not enabled on this instance.
     Permanent for that model — retrying won't help, but another model might."""
 
+class BadRequest(Exception):
+    """The server refused this specific request body (4xx that is not 429).
+
+    Deliberately NOT a RequestException, so tenacity does not retry it: the
+    same body will be refused identically every time, and retrying five times
+    with exponential backoff wastes ~30 s per occurrence. Carries the response
+    body, because a 422 on specific inputs may be a content filter, and that
+    would be systematic missing data rather than a transient error.
+    """
 
 class TUDaGPTClient:
     def __init__(
@@ -68,7 +77,13 @@ class TUDaGPTClient:
                 msg = response.text[:200]
             raise ModelUnavailable(msg)
 
-        response.raise_for_status()  # 429/500 raise -> triggers a retry
+        # 429 is genuine rate limiting and SHOULD be retried; other 4xx are
+        # about this request and will not fix themselves.
+        if 400 <= response.status_code < 500 and response.status_code != 429:
+            raise BadRequest(
+                f"{response.status_code}: {response.text[:300]}")
+
+        response.raise_for_status()  # 429/5xx raise -> triggers a retry
         return response.json()
 
     def _log_call(
@@ -110,7 +125,8 @@ class TUDaGPTClient:
                 data = self._post(body)
                 latency = time.time() - start
 
-            except (ModelUnavailable, requests.exceptions.RequestException) as e:
+            except (ModelUnavailable, BadRequest,
+                    requests.exceptions.RequestException) as e:
                 errors.append(f"{model}: {type(e).__name__}: {e}")
 
                 if not self.allow_fallback:
@@ -143,10 +159,20 @@ class MockClient:
         self.model = model
         self.active_model = model
         self.temperature = temperature
-        self.broken = broken  # if True, returns malformed JSON to test repair
+        # broken=True fails the FIRST call only, then succeeds. A permanently
+        # broken mock can only prove the repair loop gives up; it can never
+        # prove the loop recovers, which is the behaviour under test.
+        self.broken = broken
+        self._calls = 0
+
+    def reset(self) -> None:
+        """Re-arm the broken-first-call behaviour between test cases."""
+        self._calls = 0
 
     def complete(self, messages: list[dict]) -> str:
-        if self.broken:
+        self._calls += 1
+
+        if self.broken and self._calls == 1:
             return "Sure! Here is your answer: {hate: true"  # invalid JSON
 
         return json.dumps(
@@ -154,5 +180,7 @@ class MockClient:
                 "reasoning": "The text attacks a protected group.",
                 "hate": True,
                 "target_group": ["gender"],
+                "hate_type": ["explicit"],
+                "severity": "medium",
             }
         )

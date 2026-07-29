@@ -1,0 +1,24 @@
+# Guidelines whose text implies a specific gate answer WHEN THEY APPLY.
+#
+# Data, not code, so the set can be revised without touching the analysis -
+# same principle as taxonomy.yaml and guidelines.yaml.
+#
+# CRITICAL CAVEAT, measured not assumed: retrieval fetches guidelines by
+# resemblance, not by applicability. On the Slice 1 RAG results,
+# guide-threats-and-incitement was retrieved on 41 items and the gold label
+# CONTRADICTED its implication on 27 of them (66%). So a naive "did the model
+# obey the retrieved guideline" rate would score 27 correct predictions as
+# violations and would be measuring retrieval noise, not grounding.
+#
+# The instrument therefore reports gate accuracy split by gold label, plus the
+# paired rag-minus-zero_shot difference on the same items. zero_shot never saw
+# the guideline, so that difference is the causal effect of placing it in the
+# prompt.
+
+decisive:
+  guide-profanity-without-target: false
+  guide-quoted-slurs: false
+  guide-counter-speech: false
+  guide-reclaimed-slurs: false
+  guide-negation-and-support: false
+  guide-threats-and-incitement: true

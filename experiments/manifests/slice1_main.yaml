@@ -1,0 +1,13 @@
+name: slice1_main
+description: >
+  Slice 1, already executed. Kept so the harness can be validated against
+  results that exist on disk, and re-scored without any API calls.
+subset: en_dev_eval_main
+limit: 150
+arms: [zero_shot, few_shot, rag]
+provider: tudagpt
+allow_fallback: false
+n_votes: 3
+workers: 4
+gate_mapping: both
+hate_type_scoring: multilabel

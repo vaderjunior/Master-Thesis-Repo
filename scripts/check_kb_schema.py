@@ -5,6 +5,7 @@ Run after build_kb_records (3.2). Fails loudly on any malformed record.
 
 import json
 import sys
+from collections import defaultdict
 from pathlib import Path
 
 RECORDS = Path("kb/records.jsonl")
@@ -62,6 +63,7 @@ def main():
 
     all_errors = []
     ids = set()
+    by_text = defaultdict(list)   # normalised text -> [ids]
     counts = {"definition": 0, "guideline": 0, "example": 0}
 
     with open(RECORDS, encoding="utf-8") as f:
@@ -81,12 +83,25 @@ def main():
                 all_errors.append(f"line {n}: duplicate id '{obj['id']}'")
             ids.add(obj.get("id"))
 
+            if obj.get("text"):
+                key = " ".join(str(obj["text"]).lower().split())
+                by_text[key].append(obj.get("id"))
+
             if obj.get("kind") in counts:
                 counts[obj["kind"]] += 1
+
+    # --- KB-wide text uniqueness (Phase 4.5) ---
+    # ex-detox-<id> and ex-detox-legal-<id> were the same comment under two
+    # different ids, so the id check above could not see it. Retrieval then
+    # spent two of five German example slots on one text.
+    dupes = {t: rec_ids for t, rec_ids in by_text.items() if len(rec_ids) > 1}
+    for rec_ids in list(dupes.values())[:10]:
+        all_errors.append(f"duplicate text shared by ids {rec_ids}")
 
     print(f"Records: {sum(counts.values())}")
     for kind, n in counts.items():
         print(f"  {kind:12} {n}")
+    print(f"  distinct texts {len(by_text)}")
 
     if all_errors:
         print(f"\n{len(all_errors)} ERRORS:")

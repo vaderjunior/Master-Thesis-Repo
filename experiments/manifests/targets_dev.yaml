@@ -1,0 +1,14 @@
+name: targets_dev
+description: >
+  Confirmation run for the only positive Slice 1 signal: rag +0.131 over
+  few_shot on target_group, measured on n=28 across two labels. This subset
+  is label-stratified with all seven labels at >=15 support
+  (thinnest: religion=15, versus MIN_SUPPORT=10).
+subset: en_dev_eval_targets
+arms: [zero_shot, few_shot, rag]
+provider: tudagpt
+allow_fallback: false
+n_votes: 3
+workers: 4
+gate_mapping: both
+hate_type_scoring: multilabel

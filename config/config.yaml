@@ -1,21 +1,26 @@
 api:
     base_url_env: TUDAGPT_URL      # we read the actual URL from .env
     token_env: TUDAGPT_TOKEN       # we read the actual token from .env
+
+    # Slugs verified live 2026-07-21 from the TUDaGPT model panel.
+    # Online models lead each list; offline ones trail as fallbacks in case
+    # they return. Availability on this shared infra changes without notice -
+    # re-verify before any formal run.
     models_strong:
-      - mistral-large-3-675b-instruct-2512
-      - qwen3.5-397b-a17b
-      - deepseek-r1-distill-llama-70b
+      - qwen3.5-397b-a17b                    # online
+      - glm-4.7                              # online (web chat default)
+      - mistral-large-3-675b-instruct-2512   # OFFLINE 2026-07-21, was the lead
     models_medium:
-      - qwen3.5-122b-a10b
-      - openai-gpt-oss-120b
-      - glm-4.7
+      - qwen3.5-122b-a10b                    # online - THE PINNED MODEL (Q2)
+      - openai-gpt-oss-120b                  # online
     models_fast:
-      - meta-llama-3.3-70b-instruct    # verify
-      - gemma-3-27b-instruct          # verify
-      - qwen-3.5-27b                  # verify
+      - qwen3-30b-a3b-instruct-2507          # online, 3B active
+      - meta-llama-3.1-8b-instruct           # online
+      - apertus-70b-instruct-2509            # online
+
     temperature: 1.0
     max_retries: 2
-    timeout_seconds: 40
+    timeout_seconds: 180
 
 paths:
   data_raw: data/raw
@@ -30,11 +35,19 @@ kb:
   examples_per_label: 10
 
 retrieval:
-  strategy: hybrid           # dense | bm25 | hybrid  
-  k_definitions: 2
+  strategy: hybrid          # dense | bm25 | hybrid   <- SQ1 Stage B
+  k_definitions: 2          # <- SQ1 Stage A/D
   k_guidelines: 2
   k_examples: 5
-  use_mmr: false            # 4.5
+  use_mmr: true             # <- SQ1 Stage C
   mmr_lambda: 0.7
+  mmr_pool_factor: 3
   use_reranker: false       # stub, Phase 8 Stage C
-  rrf_k: 60                 # 4.4
+  rrf_k: 60                 # cited (Cormack 2009), not tuned
+
+classify:
+  pinned_model: qwen3.5-122b-a10b   # asserted when allow_fallback is off
+  max_repair_retries: 2
+  n_votes_dev: 3
+  n_votes_formal: 5
+  fewshot_seed: 42

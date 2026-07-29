@@ -39,6 +39,8 @@ class Hit:
     meta: dict           # post-unsentinel: real None / real lists restored
     score: float
     via: str             # "dense" | "bm25" | "rrf" - provenance for debugging
+    vec: list[float] | None = None   # dense candidate vector, MMR only.
+                                     # Nulled before return; never reaches the prompt.
 
 
 @dataclass
@@ -93,7 +95,9 @@ def rrf_fuse(rank_lists: dict[str, list[Hit]], k: int = 60,
             ranks_by_id.setdefault(hit.id, {})[channel] = rank
 
     fused = []
-    for hit_id, score in sorted(scores.items(), key=lambda x: -x[1])[:top_n]:
+    # Secondary sort on id: single-channel hits all tie at exactly 1/(k+1),
+    # so without a tie-break the output order depends on dict insertion order.
+    for hit_id, score in sorted(scores.items(), key=lambda x: (-x[1], x[0]))[:top_n]:
         src = hits_by_id[hit_id]
         fused.append(
             Hit(
@@ -107,6 +111,63 @@ def rrf_fuse(rank_lists: dict[str, list[Hit]], k: int = 60,
             )
         )
     return fused
+
+def mmr_select(qvec: list[float], hits: list[Hit], lam: float = 0.7,
+               top_n: int = 5) -> list[Hit]:
+    """Maximal Marginal Relevance over dense candidates.
+
+    THE PROBLEM: dense retrieval loves near-duplicates. Five example slots can
+    fill with five variants of the same tweet - one slot of information, four
+    wasted. Phase 4.4 output showed this concretely: probe 3 returned the same
+    DeTox comment twice.
+
+    MMR picks iteratively:  argmax  lam * sim(q, d) - (1 - lam) * max_sim(d, S)
+    i.e. relevance minus redundancy against what is already chosen.
+    lam = 0.7 favours relevance with a meaningful diversity penalty.
+
+    WHY THE DENSE CHANNEL ONLY: BM25-only hits have no cached embedding, so
+    running MMR after fusion would need a fresh encode of every candidate on
+    every query. Running it on the dense candidate list before fusion is free -
+    Chroma already has the vectors - and keeps the behaviour identical between
+    strategy=dense and strategy=hybrid. The BM25 channel contributes its own
+    diversity through lexical variation.
+
+    Returns fewer than top_n if the candidate pool is thin (German). Does not pad.
+    """
+    import numpy as np
+
+    if not hits:
+        return []
+    if len(hits) <= top_n or any(h.vec is None for h in hits):
+        for h in hits:
+            h.vec = None
+        return hits[:top_n]
+
+    q = np.asarray(qvec, dtype=float).ravel()
+    q = q / (np.linalg.norm(q) or 1.0)
+
+    V = np.asarray([h.vec for h in hits], dtype=float)
+    V = V / (np.linalg.norm(V, axis=1, keepdims=True) + 1e-12)
+
+    rel = V @ q          # relevance to the query
+    sim = V @ V.T        # pairwise redundancy
+
+    selected = [int(np.argmax(rel))]
+    while len(selected) < top_n:
+        best_i, best_score = None, -np.inf
+        for i in range(len(hits)):
+            if i in selected:
+                continue
+            redundancy = max(sim[i][j] for j in selected)
+            score = lam * rel[i] - (1.0 - lam) * redundancy
+            if score > best_score:
+                best_score, best_i = score, i
+        selected.append(best_i)
+
+    out = [hits[i] for i in selected]
+    for h in out:
+        h.vec = None     # drop 1024 floats per hit before anything logs this
+    return out
 
 class Retriever:
     """Holds the embedding model and Chroma collection so they load once.
@@ -148,11 +209,25 @@ class Retriever:
     def _embed(self, text: str) -> list[list[float]]:
         return self.model.encode([text], normalize_embeddings=True).tolist()
 
-    def _query_kind(self, qvec, where: dict, k: int, via: str) -> list[Hit]:
-        """One filtered Chroma query -> list of Hits."""
+    def _query_kind(self, qvec, where: dict, k: int, via: str,
+                    want_vecs: bool = False) -> list[Hit]:
+        """One filtered Chroma query -> list of Hits.
+
+        want_vecs asks Chroma to return the stored embeddings too. Only MMR
+        needs them, and only for the example bucket, so it is off by default -
+        1024 floats per hit is not something to carry around by accident.
+        """
         if k <= 0:
             return []
-        res = self.col.query(query_embeddings=qvec, n_results=k, where=where)
+
+        include = ["metadatas", "documents", "distances"]
+        if want_vecs:
+            include = include + ["embeddings"]
+
+        res = self.col.query(query_embeddings=qvec, n_results=k,
+                             where=where, include=include)
+
+        embs = res.get("embeddings") if want_vecs else None
 
         hits = []
         for i in range(len(res["ids"][0])):
@@ -166,6 +241,7 @@ class Retriever:
                     # Chroma returns cosine DISTANCE; convert to similarity
                     score=1.0 - res["distances"][0][i],
                     via=via,
+                    vec=(list(embs[0][i]) if embs is not None else None),
                 )
             )
         return hits
@@ -201,14 +277,24 @@ class Retriever:
 
         if strategy == "dense":
             qvec = self._embed(text)
+            ex_where = {"$and": [{"kind": "example"}, {"lang": lang}]}
+            k_ex = cfg["k_examples"]
+
+            if cfg.get("use_mmr", False):
+                pool = cfg.get("mmr_pool_factor", 3) * k_ex
+                cands = self._query_kind(qvec, ex_where, pool, "dense",
+                                         want_vecs=True)
+                examples = mmr_select(qvec, cands,
+                                      cfg.get("mmr_lambda", 0.7), k_ex)
+            else:
+                examples = self._query_kind(qvec, ex_where, k_ex, "dense")
+
             return RetrievalResult(
                 definitions=self._query_kind(qvec, {"kind": "definition"},
                                              cfg["k_definitions"], "dense"),
                 guidelines=self._query_kind(qvec, {"kind": "guideline"},
                                             cfg["k_guidelines"], "dense"),
-                examples=self._query_kind(
-                    qvec, {"$and": [{"kind": "example"}, {"lang": lang}]},
-                    cfg["k_examples"], "dense"),
+                examples=examples,
             )
 
         if strategy == "bm25":
@@ -239,7 +325,18 @@ class Retriever:
                  {"$and": [{"kind": "example"}, {"lang": lang}]},
                  f"example:{lang}", cfg["k_examples"]),
             ]:
-                dense_hits = self._query_kind(qvec, where, depth, "dense")
+                # MMR re-ranks the dense channel before fusion. Pool is
+                # mmr_pool_factor x depth, selected down to depth, so the
+                # dense list handed to RRF is the same LENGTH as before and
+                # only its ORDER changes - which is exactly what RRF consumes.
+                if bucket == "examples" and cfg.get("use_mmr", False):
+                    pool = cfg.get("mmr_pool_factor", 3) * depth
+                    cands = self._query_kind(qvec, where, pool, "dense",
+                                             want_vecs=True)
+                    dense_hits = mmr_select(qvec, cands,
+                                            cfg.get("mmr_lambda", 0.7), depth)
+                else:
+                    dense_hits = self._query_kind(qvec, where, depth, "dense")
                 bm25_hits = self._bm25_kind(text, bm25_key, depth)
                 buckets[bucket] = rrf_fuse(
                     {"dense": dense_hits, "bm25": bm25_hits},
@@ -248,4 +345,4 @@ class Retriever:
 
             return RetrievalResult(**buckets)
 
-        raise ValueError(f"Unknown strategy: {strategy}")   # hybrid lands in 4.4
+        raise ValueError(f"Unknown strategy: {strategy}")
