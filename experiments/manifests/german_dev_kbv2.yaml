@@ -1,0 +1,25 @@
+name: german_dev_kbv2
+description: >
+  First German results. The thesis title claims bilingual and no German
+  numbers exist yet. Gate only: en_dev_eval diagnostics showed German
+  target_group has effectively no positive labels (de_test_eval has zero, and
+  the full German test split holds only about 30), so scoring masks the three
+  fine-grained dimensions automatically via the None-vs-[] rule rather than by
+  any German-specific code.
+  GAHD is adversarial by construction, so this is a hard robustness test, not
+  a natural distribution. DeTox is the other half at 11% hateful.
+  Definitions and guidelines are English-only by design and reachable
+  cross-lingually (BGE-M3 EN/DE misogyny cosine 0.887); examples are
+  language-filtered. Phase 4 Finding C: BM25 contributes nothing for a German
+  query against English knowledge, so hybrid degrades to dense here.
+  Provider must be TU or PEASEC infrastructure: DeTox arrived under Zenodo
+  terms (decision Q8), asserted in Manifest.validate().
+subset: de_dev_eval
+arms: [zero_shot, few_shot, rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: strict

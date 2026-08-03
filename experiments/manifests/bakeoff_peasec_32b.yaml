@@ -1,0 +1,15 @@
+name: bakeoff_peasec_32b
+description: >
+  Provider and model bake-off, PEASEC Qwen3-VL-32B. Runs on the TUNING slice
+  only: model selection is a tuning decision and must never touch
+  en_dev_eval_main, the reporting slice. Compared against the TUDaGPT
+  qwen3.5-122b-a10b baseline on identical items.
+subset: en_dev_eval_sq1_tune
+limit: 50
+arms: [zero_shot, few_shot, rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: both

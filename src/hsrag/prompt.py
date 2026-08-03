@@ -156,7 +156,14 @@ def build_prompt(text: str, lang: str, ctx: PromptContext) -> list[dict]:
         if not hits:
             continue                      # empty groups render nothing
         legal = any(h.meta.get("illustrative_only") for h in hits)
-        caution = tpl["ILLUSTRATIONS_CAUTION" if legal else "EXAMPLES_CAUTION"]
+        # The few_shot arm's examples are sampled statically and have nothing
+        # to do with the input, so the retrieval caution is false there. via
+        # is "static" for those hits and a retrieval channel otherwise.
+        static = any(h.via == "static" for h in hits)
+        key = ("ILLUSTRATIONS_CAUTION" if legal
+               else "STATIC_EXAMPLES_CAUTION" if static
+               else "EXAMPLES_CAUTION")
+        caution = tpl[key]
         rows = []
         for h in hits:
             if h.meta.get("illustrative_only"):

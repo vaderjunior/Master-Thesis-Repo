@@ -1,0 +1,764 @@
+{
+  "zero_shot": {
+    "gate": {
+      "strict": {
+        "macro_f1": 0.7790868924889542,
+        "mapping": "strict",
+        "per_class": {
+          "hate": {
+            "precision": 0.6071428571428571,
+            "recall": 0.8292682926829268,
+            "f1": 0.7010309278350515,
+            "tp": 34,
+            "fp": 22,
+            "fn": 7
+          },
+          "not_hate": {
+            "precision": 0.925531914893617,
+            "recall": 0.7981651376146789,
+            "f1": 0.8571428571428571,
+            "tp": 87,
+            "fp": 7,
+            "fn": 22
+          }
+        },
+        "tp": 34,
+        "fp": 22,
+        "fn": 7,
+        "tn": 87,
+        "per_source": {
+          "detox": {
+            "n": 72,
+            "benign": 63,
+            "hateful": 9,
+            "fp": 12,
+            "fn": 3,
+            "fp_rate": 0.19047619047619047,
+            "fn_rate": 0.3333333333333333
+          },
+          "gahd": {
+            "n": 78,
+            "benign": 46,
+            "hateful": 32,
+            "fp": 10,
+            "fn": 4,
+            "fp_rate": 0.21739130434782608,
+            "fn_rate": 0.125
+          }
+        },
+        "n_scored": 150,
+        "n_unscored": 0,
+        "n_uncertain": 1,
+        "macro_f1_confident_only": 0.7783761604349386,
+        "note": null
+      },
+      "lenient": {
+        "macro_f1": 0.7790868924889542,
+        "mapping": "lenient",
+        "per_class": {
+          "hate": {
+            "precision": 0.6071428571428571,
+            "recall": 0.8292682926829268,
+            "f1": 0.7010309278350515,
+            "tp": 34,
+            "fp": 22,
+            "fn": 7
+          },
+          "not_hate": {
+            "precision": 0.925531914893617,
+            "recall": 0.7981651376146789,
+            "f1": 0.8571428571428571,
+            "tp": 87,
+            "fp": 7,
+            "fn": 22
+          }
+        },
+        "tp": 34,
+        "fp": 22,
+        "fn": 7,
+        "tn": 87,
+        "per_source": {
+          "detox": {
+            "n": 72,
+            "benign": 63,
+            "hateful": 9,
+            "fp": 12,
+            "fn": 3,
+            "fp_rate": 0.19047619047619047,
+            "fn_rate": 0.3333333333333333
+          },
+          "gahd": {
+            "n": 78,
+            "benign": 46,
+            "hateful": 32,
+            "fp": 10,
+            "fn": 4,
+            "fp_rate": 0.21739130434782608,
+            "fn_rate": 0.125
+          }
+        },
+        "n_scored": 150,
+        "n_unscored": 0,
+        "n_uncertain": 1,
+        "macro_f1_confident_only": 0.7783761604349386,
+        "note": null
+      }
+    },
+    "target_group": {
+      "dimension": "target_group",
+      "macro_f1": null,
+      "micro_f1": 0.0,
+      "per_label": {
+        "other": {
+          "label": "other",
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 0,
+          "predicted": 6,
+          "tp": 0,
+          "fp": 6,
+          "fn": 0,
+          "averaged": false
+        },
+        "race": {
+          "label": "race",
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 0,
+          "predicted": 1,
+          "tp": 0,
+          "fp": 1,
+          "fn": 0,
+          "averaged": false
+        },
+        "religion": {
+          "label": "religion",
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 1,
+          "predicted": 0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 1,
+          "averaged": false
+        }
+      },
+      "labels_averaged": [],
+      "labels_excluded": [
+        "other",
+        "race",
+        "religion"
+      ],
+      "n_items": 9,
+      "n_unscored": 0,
+      "subset_accuracy": 0.3333333333333333,
+      "hamming_loss": 0.2962962962962963,
+      "extra": {
+        "mean_gold_labels": 0.1111111111111111,
+        "mean_pred_labels": 0.7777777777777778,
+        "any_overlap_rate": 0.0,
+        "gold_subset_of_pred": 0.8888888888888888
+      }
+    },
+    "hate_type": {
+      "dimension": "hate_type",
+      "macro_f1": null,
+      "micro_f1": 0.0,
+      "per_label": {},
+      "labels_averaged": [],
+      "labels_excluded": [],
+      "n_items": 0,
+      "n_unscored": 0,
+      "subset_accuracy": 0.0,
+      "hamming_loss": 0.0,
+      "extra": {}
+    },
+    "legal": {
+      "dimension": "legal",
+      "macro_f1": null,
+      "micro_f1": 0.0,
+      "per_label": {},
+      "labels_averaged": [],
+      "labels_excluded": [],
+      "n_items": 0,
+      "n_unscored": 0,
+      "subset_accuracy": 0.0,
+      "hamming_loss": 0.0,
+      "extra": {}
+    },
+    "severity": {
+      "dimension": "severity",
+      "macro_f1": null,
+      "micro_f1": 0.0,
+      "per_label": {},
+      "labels_averaged": [],
+      "labels_excluded": [],
+      "n_items": 0,
+      "n_unscored": 0,
+      "subset_accuracy": 0.0,
+      "hamming_loss": 0.0,
+      "extra": {}
+    },
+    "calibration": {
+      "ece": 0.16772666666666666,
+      "bins": {
+        "0.5": {
+          "n": 1,
+          "accuracy": 1.0,
+          "confidence": 0.5
+        },
+        "0.667": {
+          "n": 23,
+          "accuracy": 0.7391304347826086,
+          "confidence": 0.667
+        },
+        "1.0": {
+          "n": 126,
+          "accuracy": 0.8174603174603174,
+          "confidence": 1.0
+        }
+      },
+      "n": 150,
+      "note": "vote share proxy; n_votes=3 gives 2-3 distinct values"
+    },
+    "honesty": {
+      "n_items": 150,
+      "total_runs": 450,
+      "parse_failures": 8,
+      "parse_failure_rate": 0.017777777777777778,
+      "repairs": 54,
+      "normalisations": 0,
+      "gate_normalised": 0,
+      "uncertain": 1,
+      "no_prediction": 0,
+      "mean_latency_s": 10.710377777777778,
+      "workers": [
+        8
+      ],
+      "models": {
+        "Qwen/Qwen3-VL-32B-Instruct": 150
+      },
+      "kb_versions": [],
+      "prompt_versions": [
+        "classify_v1-8e588db7"
+      ]
+    }
+  },
+  "few_shot": {
+    "gate": {
+      "strict": {
+        "macro_f1": 0.7587907375643225,
+        "mapping": "strict",
+        "per_class": {
+          "hate": {
+            "precision": 0.6170212765957447,
+            "recall": 0.7073170731707317,
+            "f1": 0.6590909090909092,
+            "tp": 29,
+            "fp": 18,
+            "fn": 12
+          },
+          "not_hate": {
+            "precision": 0.883495145631068,
+            "recall": 0.8348623853211009,
+            "f1": 0.8584905660377358,
+            "tp": 91,
+            "fp": 12,
+            "fn": 18
+          }
+        },
+        "tp": 29,
+        "fp": 18,
+        "fn": 12,
+        "tn": 91,
+        "per_source": {
+          "detox": {
+            "n": 72,
+            "benign": 63,
+            "hateful": 9,
+            "fp": 7,
+            "fn": 7,
+            "fp_rate": 0.1111111111111111,
+            "fn_rate": 0.7777777777777778
+          },
+          "gahd": {
+            "n": 78,
+            "benign": 46,
+            "hateful": 32,
+            "fp": 11,
+            "fn": 5,
+            "fp_rate": 0.2391304347826087,
+            "fn_rate": 0.15625
+          }
+        },
+        "n_scored": 150,
+        "n_unscored": 0,
+        "n_uncertain": 0,
+        "macro_f1_confident_only": null,
+        "note": null
+      },
+      "lenient": {
+        "macro_f1": 0.7587907375643225,
+        "mapping": "lenient",
+        "per_class": {
+          "hate": {
+            "precision": 0.6170212765957447,
+            "recall": 0.7073170731707317,
+            "f1": 0.6590909090909092,
+            "tp": 29,
+            "fp": 18,
+            "fn": 12
+          },
+          "not_hate": {
+            "precision": 0.883495145631068,
+            "recall": 0.8348623853211009,
+            "f1": 0.8584905660377358,
+            "tp": 91,
+            "fp": 12,
+            "fn": 18
+          }
+        },
+        "tp": 29,
+        "fp": 18,
+        "fn": 12,
+        "tn": 91,
+        "per_source": {
+          "detox": {
+            "n": 72,
+            "benign": 63,
+            "hateful": 9,
+            "fp": 7,
+            "fn": 7,
+            "fp_rate": 0.1111111111111111,
+            "fn_rate": 0.7777777777777778
+          },
+          "gahd": {
+            "n": 78,
+            "benign": 46,
+            "hateful": 32,
+            "fp": 11,
+            "fn": 5,
+            "fp_rate": 0.2391304347826087,
+            "fn_rate": 0.15625
+          }
+        },
+        "n_scored": 150,
+        "n_unscored": 0,
+        "n_uncertain": 0,
+        "macro_f1_confident_only": null,
+        "note": null
+      }
+    },
+    "target_group": {
+      "dimension": "target_group",
+      "macro_f1": null,
+      "micro_f1": 0.0,
+      "per_label": {
+        "national_origin": {
+          "label": "national_origin",
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 0,
+          "predicted": 1,
+          "tp": 0,
+          "fp": 1,
+          "fn": 0,
+          "averaged": false
+        },
+        "other": {
+          "label": "other",
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 0,
+          "predicted": 1,
+          "tp": 0,
+          "fp": 1,
+          "fn": 0,
+          "averaged": false
+        },
+        "race": {
+          "label": "race",
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 0,
+          "predicted": 1,
+          "tp": 0,
+          "fp": 1,
+          "fn": 0,
+          "averaged": false
+        },
+        "religion": {
+          "label": "religion",
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 1,
+          "predicted": 0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 1,
+          "averaged": false
+        }
+      },
+      "labels_averaged": [],
+      "labels_excluded": [
+        "national_origin",
+        "other",
+        "race",
+        "religion"
+      ],
+      "n_items": 9,
+      "n_unscored": 0,
+      "subset_accuracy": 0.6666666666666666,
+      "hamming_loss": 0.1111111111111111,
+      "extra": {
+        "mean_gold_labels": 0.1111111111111111,
+        "mean_pred_labels": 0.3333333333333333,
+        "any_overlap_rate": 0.0,
+        "gold_subset_of_pred": 0.8888888888888888
+      }
+    },
+    "hate_type": {
+      "dimension": "hate_type",
+      "macro_f1": null,
+      "micro_f1": 0.0,
+      "per_label": {},
+      "labels_averaged": [],
+      "labels_excluded": [],
+      "n_items": 0,
+      "n_unscored": 0,
+      "subset_accuracy": 0.0,
+      "hamming_loss": 0.0,
+      "extra": {}
+    },
+    "legal": {
+      "dimension": "legal",
+      "macro_f1": null,
+      "micro_f1": 0.0,
+      "per_label": {},
+      "labels_averaged": [],
+      "labels_excluded": [],
+      "n_items": 0,
+      "n_unscored": 0,
+      "subset_accuracy": 0.0,
+      "hamming_loss": 0.0,
+      "extra": {}
+    },
+    "severity": {
+      "dimension": "severity",
+      "macro_f1": null,
+      "micro_f1": 0.0,
+      "per_label": {},
+      "labels_averaged": [],
+      "labels_excluded": [],
+      "n_items": 0,
+      "n_unscored": 0,
+      "subset_accuracy": 0.0,
+      "hamming_loss": 0.0,
+      "extra": {}
+    },
+    "calibration": {
+      "ece": 0.15781999999999996,
+      "bins": {
+        "0.667": {
+          "n": 19,
+          "accuracy": 0.5789473684210527,
+          "confidence": 0.667
+        },
+        "1.0": {
+          "n": 131,
+          "accuracy": 0.8320610687022901,
+          "confidence": 1.0
+        }
+      },
+      "n": 150,
+      "note": "vote share proxy; n_votes=3 gives 2-3 distinct values"
+    },
+    "honesty": {
+      "n_items": 150,
+      "total_runs": 450,
+      "parse_failures": 3,
+      "parse_failure_rate": 0.006666666666666667,
+      "repairs": 19,
+      "normalisations": 0,
+      "gate_normalised": 0,
+      "uncertain": 0,
+      "no_prediction": 0,
+      "mean_latency_s": 8.2594,
+      "workers": [
+        8
+      ],
+      "models": {
+        "Qwen/Qwen3-VL-32B-Instruct": 150
+      },
+      "kb_versions": [],
+      "prompt_versions": [
+        "classify_v1-8e588db7"
+      ]
+    }
+  },
+  "rag": {
+    "gate": {
+      "strict": {
+        "macro_f1": 0.78505291005291,
+        "mapping": "strict",
+        "per_class": {
+          "hate": {
+            "precision": 0.6744186046511628,
+            "recall": 0.7073170731707317,
+            "f1": 0.6904761904761904,
+            "tp": 29,
+            "fp": 14,
+            "fn": 12
+          },
+          "not_hate": {
+            "precision": 0.8878504672897196,
+            "recall": 0.8715596330275229,
+            "f1": 0.8796296296296298,
+            "tp": 95,
+            "fp": 12,
+            "fn": 14
+          }
+        },
+        "tp": 29,
+        "fp": 14,
+        "fn": 12,
+        "tn": 95,
+        "per_source": {
+          "detox": {
+            "n": 72,
+            "benign": 63,
+            "hateful": 9,
+            "fp": 8,
+            "fn": 6,
+            "fp_rate": 0.12698412698412698,
+            "fn_rate": 0.6666666666666666
+          },
+          "gahd": {
+            "n": 78,
+            "benign": 46,
+            "hateful": 32,
+            "fp": 6,
+            "fn": 6,
+            "fp_rate": 0.13043478260869565,
+            "fn_rate": 0.1875
+          }
+        },
+        "n_scored": 150,
+        "n_unscored": 0,
+        "n_uncertain": 0,
+        "macro_f1_confident_only": null,
+        "note": null
+      },
+      "lenient": {
+        "macro_f1": 0.78505291005291,
+        "mapping": "lenient",
+        "per_class": {
+          "hate": {
+            "precision": 0.6744186046511628,
+            "recall": 0.7073170731707317,
+            "f1": 0.6904761904761904,
+            "tp": 29,
+            "fp": 14,
+            "fn": 12
+          },
+          "not_hate": {
+            "precision": 0.8878504672897196,
+            "recall": 0.8715596330275229,
+            "f1": 0.8796296296296298,
+            "tp": 95,
+            "fp": 12,
+            "fn": 14
+          }
+        },
+        "tp": 29,
+        "fp": 14,
+        "fn": 12,
+        "tn": 95,
+        "per_source": {
+          "detox": {
+            "n": 72,
+            "benign": 63,
+            "hateful": 9,
+            "fp": 8,
+            "fn": 6,
+            "fp_rate": 0.12698412698412698,
+            "fn_rate": 0.6666666666666666
+          },
+          "gahd": {
+            "n": 78,
+            "benign": 46,
+            "hateful": 32,
+            "fp": 6,
+            "fn": 6,
+            "fp_rate": 0.13043478260869565,
+            "fn_rate": 0.1875
+          }
+        },
+        "n_scored": 150,
+        "n_unscored": 0,
+        "n_uncertain": 0,
+        "macro_f1_confident_only": null,
+        "note": null
+      }
+    },
+    "target_group": {
+      "dimension": "target_group",
+      "macro_f1": null,
+      "micro_f1": 0.0,
+      "per_label": {
+        "national_origin": {
+          "label": "national_origin",
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 0,
+          "predicted": 1,
+          "tp": 0,
+          "fp": 1,
+          "fn": 0,
+          "averaged": false
+        },
+        "other": {
+          "label": "other",
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 0,
+          "predicted": 3,
+          "tp": 0,
+          "fp": 3,
+          "fn": 0,
+          "averaged": false
+        },
+        "race": {
+          "label": "race",
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 0,
+          "predicted": 1,
+          "tp": 0,
+          "fp": 1,
+          "fn": 0,
+          "averaged": false
+        },
+        "religion": {
+          "label": "religion",
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 1,
+          "predicted": 0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 1,
+          "averaged": false
+        }
+      },
+      "labels_averaged": [],
+      "labels_excluded": [
+        "national_origin",
+        "other",
+        "race",
+        "religion"
+      ],
+      "n_items": 9,
+      "n_unscored": 0,
+      "subset_accuracy": 0.5555555555555556,
+      "hamming_loss": 0.16666666666666666,
+      "extra": {
+        "mean_gold_labels": 0.1111111111111111,
+        "mean_pred_labels": 0.5555555555555556,
+        "any_overlap_rate": 0.0,
+        "gold_subset_of_pred": 0.8888888888888888
+      }
+    },
+    "hate_type": {
+      "dimension": "hate_type",
+      "macro_f1": null,
+      "micro_f1": 0.0,
+      "per_label": {},
+      "labels_averaged": [],
+      "labels_excluded": [],
+      "n_items": 0,
+      "n_unscored": 0,
+      "subset_accuracy": 0.0,
+      "hamming_loss": 0.0,
+      "extra": {}
+    },
+    "legal": {
+      "dimension": "legal",
+      "macro_f1": null,
+      "micro_f1": 0.0,
+      "per_label": {},
+      "labels_averaged": [],
+      "labels_excluded": [],
+      "n_items": 0,
+      "n_unscored": 0,
+      "subset_accuracy": 0.0,
+      "hamming_loss": 0.0,
+      "extra": {}
+    },
+    "severity": {
+      "dimension": "severity",
+      "macro_f1": null,
+      "micro_f1": 0.0,
+      "per_label": {},
+      "labels_averaged": [],
+      "labels_excluded": [],
+      "n_items": 0,
+      "n_unscored": 0,
+      "subset_accuracy": 0.0,
+      "hamming_loss": 0.0,
+      "extra": {}
+    },
+    "calibration": {
+      "ece": 0.15995999999999996,
+      "bins": {
+        "0.667": {
+          "n": 18,
+          "accuracy": 0.7777777777777778,
+          "confidence": 0.667
+        },
+        "1.0": {
+          "n": 132,
+          "accuracy": 0.8333333333333334,
+          "confidence": 1.0
+        }
+      },
+      "n": 150,
+      "note": "vote share proxy; n_votes=3 gives 2-3 distinct values"
+    },
+    "honesty": {
+      "n_items": 150,
+      "total_runs": 450,
+      "parse_failures": 2,
+      "parse_failure_rate": 0.0044444444444444444,
+      "repairs": 10,
+      "normalisations": 0,
+      "gate_normalised": 0,
+      "uncertain": 0,
+      "no_prediction": 0,
+      "mean_latency_s": 9.204355555555555,
+      "workers": [
+        8
+      ],
+      "models": {
+        "Qwen/Qwen3-VL-32B-Instruct": 150
+      },
+      "kb_versions": [
+        "c34e780cc973cfde"
+      ],
+      "prompt_versions": [
+        "classify_v1-8e588db7"
+      ]
+    }
+  }
+}

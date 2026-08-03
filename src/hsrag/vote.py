@@ -77,6 +77,7 @@ def aggregate(runs: list) -> VoteResult:
 
     target_group = majority_labels("target_group")
     hate_type = majority_labels("hate_type")
+    legal = majority_labels("legal")
 
     sevs = [r.severity for r in valid if r.severity is not None]
     severity = _median_severity(sevs)
@@ -92,6 +93,11 @@ def aggregate(runs: list) -> VoteResult:
     # normalised at validation, but a vote can still produce hate=false with
     # sub-labels when runs disagree about the gate while agreeing about the
     # target.
+    #
+    # `legal` is deliberately excluded, as in Result.gate_consistency:
+    # criminal relevance is independent of the hate gate. A section 185 insult
+    # aimed at one private individual is criminally relevant and not hate
+    # speech, and clearing it here would erase a legitimate answer.
     if not hate:
         target_group, hate_type, severity = [], [], None
 
@@ -108,6 +114,17 @@ def aggregate(runs: list) -> VoteResult:
     out.result = Result(
         reasoning=reasoning,
         hate=hate, target_group=target_group,
-        hate_type=hate_type, severity=severity,
+        hate_type=hate_type, severity=severity, legal=legal,
     )
+
+    # DIAGNOSTIC, not an assertion. A dimension where every valid run said
+    # something and the aggregate says nothing usually means this function was
+    # not updated when the taxonomy grew - legal was dropped for 974 of 1350
+    # runs that way, and the symptom was a plausible-looking zero rather than
+    # a crash. A legitimate majority vote can also empty a field, so this is
+    # recorded rather than raised.
+    out.agreement["_dropped"] = [
+        f for f in ("target_group", "hate_type", "legal")
+        if any(getattr(r, f) for r in valid) and not getattr(out.result, f)]
+
     return out

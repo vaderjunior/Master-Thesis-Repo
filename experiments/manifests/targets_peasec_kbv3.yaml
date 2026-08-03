@@ -1,0 +1,26 @@
+name: targets_peasec_kbv3
+description: >
+  Adaptability demo, edit type "revised definition" (decision Q6). The `other`
+  target_group definition scored 0.000 F1 under RAG in three separate runs
+  across two providers and three models, and 0.077-0.400 in every other arm.
+  On en_dev_eval_targets it cost rag 0.016 on the seven-label macro average by
+  itself, which is most of the effect size that subset was built to measure.
+  Cause: the definition text - "targets an identifiable protected group not
+  covered by the labels above" - contained no content words, making it both
+  uninformative to the classifier and unreachable by either retrieval channel.
+  Phase 4 Finding G in its most extreme form: definition text is not only
+  documentation for the model, it is also the retrieval key.
+  The edit adds example groups (age, caste, poverty, appearance, veteran
+  status) and states the residual condition explicitly. One YAML edit, one
+  re-ingest, frozen LLM. Paired item-for-item with
+  bakeoff_peasec_32b_targets_live under kb c34e780cc973cfde; zero_shot is the
+  control and consults no knowledge base.
+subset: en_dev_eval_targets
+arms: [zero_shot, few_shot, rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: both

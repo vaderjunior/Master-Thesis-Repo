@@ -156,12 +156,19 @@ def test_misogyny_retrieves_gender_example(retriever_dense):
 def test_german_gets_english_knowledge_cross_lingually(retriever_hybrid):
     """The asymmetric design: EN-only definitions and guidelines stay reachable
     from a German query via BGE-M3 (EN/DE misogyny cosine 0.887), while the
-    BM25 channel contributes nothing at zero lexical overlap. Hybrid must
-    degrade gracefully to dense rather than return empty."""
+    BM25 channel contributes what German material the KB now holds. Hybrid
+    must degrade gracefully rather than return empty.
+
+    The source assertion was originally `startswith("detox")`, written when
+    DeTox was the only German example source. BoTox is now a second one, so
+    the check is on LANGUAGE rather than on a source name that will keep
+    changing.
+    """
     text, lang = PROBES["german"]
     res = retriever_hybrid.retrieve(text, lang)
     assert res.definitions and res.guidelines
-    assert all(h.meta["source"].startswith("detox") for h in res.examples)
+    assert all(h.meta["lang"] == "de" for h in res.examples)
+    assert all(h.meta["lang"] == "en" for h in res.definitions)
 
 
 def test_neutral_probe_less_similar_than_hate(retriever_dense):
@@ -173,3 +180,19 @@ def test_neutral_probe_less_similar_than_hate(retriever_dense):
     best_hate = retriever_dense.retrieve(hate, "en").examples[0].score
     best_neutral = retriever_dense.retrieve(neutral, "en").examples[0].score
     assert best_neutral < best_hate
+    
+def test_empty_list_metadata_survives_chroma(retriever_hybrid):
+    """[] must round-trip as [], not as None and not as "[]".
+
+    Adding the legal dimension broke ingest outright: LIST_META_KEYS was a
+    hardcoded tuple of two keys, legal=[] reached Chroma as a real empty list,
+    and Chroma rejects those. [] is the value that carries the meaning here -
+    "annotated, and the answer is empty", which is class 0 for legal.
+    """
+    res = retriever_hybrid.retrieve("Deutschland erwache", "de")
+    legals = [h.meta.get("legal") for h in res.examples
+              if "legal" in h.meta]
+    assert legals, "no BoTox example retrieved; is the KB rebuilt?"
+    for v in legals:
+        assert v is None or isinstance(v, list), f"bad legal value: {v!r}"
+        assert v != "[]", "empty list came back as a string"

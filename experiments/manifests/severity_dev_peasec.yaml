@@ -1,0 +1,14 @@
+name: severity_dev_peasec
+description: >
+  severity on the band-balanced subset, PEASEC Qwen3-VL-32B. 15 items per
+  band. Ordinal, so mean absolute rank error and within-one accuracy matter
+  as much as macro-F1: predicting high for a low item is worse than
+  predicting medium.
+subset: en_dev_eval_severity
+arms: [zero_shot, few_shot, rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: both

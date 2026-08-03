@@ -56,7 +56,7 @@ def report(scores: dict) -> None:
             print(f"  {src:16} {base['benign']:7} {base['hateful']:8}  " +
                   "  ".join(f"{c:>14}" for c in cells))
 
-    for dim in ("target_group", "hate_type", "severity"):
+    for dim in ("target_group", "hate_type", "legal", "severity"):
         d0 = scores[arms[0]][dim]
         if not d0["n_items"]:
             continue
@@ -95,14 +95,21 @@ def report(scores: dict) -> None:
                       f"within-one {fmt(e['within_one_accuracy'])}")
 
         print(f"\n  per-label F1")
-        allx = sorted(scores[arms[0]][dim]["per_label"])
+        # UNION across arms, not arms[0] alone. The label set is gold labels
+        # PLUS predicted ones, so an arm that hallucinates a label absent from
+        # gold has it in its table while the others do not. A label missing
+        # from an arm means that arm never predicted it and gold never had it,
+        # which is F1 = 0, not an error.
+        allx = sorted({l for a in arms for l in scores[a][dim]["per_label"]})
         print(f"  {'label':22} {'support':>8}  " +
               "  ".join(f"{a:>10}" for a in arms))
         for l in allx:
-            sup = scores[arms[0]][dim]["per_label"][l]["support"]
+            sup = max(scores[a][dim]["per_label"].get(l, {}).get("support", 0)
+                      for a in arms)
             mark = "" if sup >= MIN_SUPPORT else "  *"
-            cells = "  ".join(f"{scores[a][dim]['per_label'][l]['f1']:10.3f}"
-                              for a in arms)
+            cells = "  ".join(
+                f"{scores[a][dim]['per_label'].get(l, {}).get('f1', 0.0):10.3f}"
+                for a in arms)
             print(f"  {l:22} {sup:8}  {cells}{mark}")
 
     print(f"\n{'=' * 78}\nHONESTY\n{'=' * 78}")

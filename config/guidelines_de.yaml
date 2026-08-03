@@ -1,0 +1,92 @@
+# German annotation guidelines, derived from the BoTox annotation guidelines
+# (Kums et al. 2025, WOAH), which were authored for annotators trained by the
+# Frankfurt am Main public prosecutor's office.
+#
+# WHY THESE ARE IN GERMAN. Phase 4 Finding C: BM25 contributes nothing for a
+# German query because every guideline in the KB was English, so there was no
+# German lexical material to match against. These are the first German
+# guidelines in the knowledge base, and whether BM25 becomes live for German
+# is a direct, testable prediction.
+#
+# PROVENANCE. Paraphrased and condensed from the published guidelines, not
+# reproduced. Kept in a separate file from guidelines.yaml so that
+# self-authored policy (FOR_MARKUS #10) stays distinguishable from policy
+# derived from an external, prosecutor-trained source.
+
+guidelines:
+  - id: de-legal-konkretheit
+    dimension: legal
+    lang: de
+    text: >
+      Eine Aufforderung zu einer Straftat ist nur dann strafrechtlich
+      relevant, wenn sie konkret ist. Tatzeit, Ort oder Opfer sollten
+      erkennbar sein. Je konkreter die Formulierung, desto eher ist der
+      Kommentar strafbar. Vage Wut oder allgemeine Ablehnung reicht nicht.
+
+  - id: de-legal-oeffentliche-personen
+    dimension: legal
+    lang: de
+    text: >
+      Aussagen gegen Personen des oeffentlichen Lebens werden milder
+      beurteilt als Aussagen gegen Privatpersonen. Politikerinnen und
+      Politiker muessen scharfe Kritik und auch Beschimpfungen eher hinnehmen.
+      Dieselbe Beleidigung kann gegenueber einer Privatperson strafbar und
+      gegenueber einer oeffentlichen Person straffrei sein.
+
+  - id: de-legal-beleidigung-schwelle
+    dimension: legal
+    lang: de
+    text: >
+      Nicht jede Beschimpfung ist eine strafbare Beleidigung. Ausdruecke wie
+      Depp oder Arschloch sind nicht immer strafrechtlich relevant.
+      Herabwuerdigende sexualisierte Schimpfwoerter sind es in der Regel
+      schon. Entscheidend ist, ob ein Werturteil mit dem Ziel der
+      Herabwuerdigung abgegeben wird.
+
+  - id: de-legal-volksverhetzung
+    dimension: legal
+    lang: de
+    text: >
+      Volksverhetzung liegt vor, wenn zu Hass oder Gewalt gegen Personen
+      wegen ihrer Zugehoerigkeit zu einer nationalen, rassischen, religioesen
+      oder ethnischen Gruppe aufgerufen wird, oder wenn die Menschenwuerde
+      dieser Gruppen durch Beschimpfung oder Verleumdung angegriffen wird.
+      Dieser Paragraf betrifft Hassrede am unmittelbarsten.
+
+  - id: de-legal-verfassungsfeindlich
+    dimension: legal
+    lang: de
+    text: >
+      Parolen, Gruszformeln und Kennzeichen verbotener oder
+      verfassungswidriger Organisationen sind strafrechtlich relevant,
+      insbesondere Bezuege auf nationalsozialistische Organisationen. Der
+      Kontext entscheidet: aehnlich klingende Parolen ohne historischen Bezug
+      sind es nicht. Im Zweifel ist zu pruefen, ob sich der Ausdruck auf ein
+      konkretes Ereignis oder Kennzeichen bezieht.
+
+  - id: de-legal-uebele-nachrede
+    dimension: legal
+    lang: de
+    text: >
+      Ueble Nachrede ist die Verbreitung einer herabwuerdigenden Behauptung,
+      die nicht nachweislich wahr ist. Entscheidend ist, dass die verfassende
+      Person sich nicht bewusst ist, eine Unwahrheit zu verbreiten. Eine
+      wahre Tatsachenbehauptung ist keine ueble Nachrede.
+
+  - id: de-legal-billigung
+    dimension: legal
+    lang: de
+    text: >
+      Auch das Gutheiszen oder Belohnen einer Straftat ist strafbar, ebenso
+      das Gutheiszen einer noch nicht begangenen Tat. Formulierungen wie
+      Person X gehoert an die Wand gestellt koennen strafbar sein, auch wenn
+      keine eigene Drohung ausgesprochen wird.
+
+  - id: de-legal-sachliche-kritik
+    dimension: legal
+    lang: de
+    text: >
+      Sachliche Kritik an einer Religion, einer Weltanschauung oder an
+      Institutionen ist nicht strafbar, auch wenn sie scharf formuliert ist.
+      Strafbar wird sie erst, wenn sie in Beschimpfung uebergeht und geeignet
+      ist, den oeffentlichen Frieden zu stoeren.

@@ -1,0 +1,16 @@
+name: types_dev_peasec
+description: >
+  hate_type on the label-stratified subset, PEASEC Qwen3-VL-32B. All seven
+  types at support 15+, the first properly powered measurement of this
+  dimension. Gold is single-label by construction (Implicit Hate assigns one
+  type per post) while the taxonomy declares it multilabel, so multilabel
+  macro-F1 is primary and gold-in-predicted-set is the diagnostic ceiling.
+  Top-1 by vote share was rejected: 51-68% of items tie at n=3.
+subset: en_dev_eval_types
+arms: [zero_shot, few_shot, rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: both

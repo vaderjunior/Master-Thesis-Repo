@@ -1,0 +1,681 @@
+{
+  "zero_shot": {
+    "gate": {
+      "strict": {
+        "macro_f1": null,
+        "mapping": "strict",
+        "per_class": {
+          "hate": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "tp": 56,
+            "fp": 0,
+            "fn": 0
+          },
+          "not_hate": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "tp": 0,
+            "fp": 0,
+            "fn": 0
+          }
+        },
+        "tp": 56,
+        "fp": 0,
+        "fn": 0,
+        "tn": 0,
+        "per_source": {
+          "hatexplain": {
+            "n": 25,
+            "benign": 0,
+            "hateful": 25,
+            "fp": 0,
+            "fn": 0,
+            "fp_rate": null,
+            "fn_rate": 0.0
+          },
+          "mhs": {
+            "n": 31,
+            "benign": 0,
+            "hateful": 31,
+            "fp": 0,
+            "fn": 0,
+            "fp_rate": null,
+            "fn_rate": 0.0
+          }
+        },
+        "n_scored": 56,
+        "n_unscored": 0,
+        "n_uncertain": 0,
+        "macro_f1_confident_only": null,
+        "note": "single-class subset: every gold item has gate=True. Macro-F1 over both classes is undefined; recall on the present class is 1.000."
+      },
+      "lenient": {
+        "macro_f1": null,
+        "mapping": "lenient",
+        "per_class": {
+          "hate": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "tp": 56,
+            "fp": 0,
+            "fn": 0
+          },
+          "not_hate": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "tp": 0,
+            "fp": 0,
+            "fn": 0
+          }
+        },
+        "tp": 56,
+        "fp": 0,
+        "fn": 0,
+        "tn": 0,
+        "per_source": {
+          "hatexplain": {
+            "n": 25,
+            "benign": 0,
+            "hateful": 25,
+            "fp": 0,
+            "fn": 0,
+            "fp_rate": null,
+            "fn_rate": 0.0
+          },
+          "mhs": {
+            "n": 31,
+            "benign": 0,
+            "hateful": 31,
+            "fp": 0,
+            "fn": 0,
+            "fp_rate": null,
+            "fn_rate": 0.0
+          }
+        },
+        "n_scored": 56,
+        "n_unscored": 0,
+        "n_uncertain": 0,
+        "macro_f1_confident_only": null,
+        "note": "single-class subset: every gold item has gate=True. Macro-F1 over both classes is undefined; recall on the present class is 1.000."
+      }
+    },
+    "target_group": {
+      "dimension": "target_group",
+      "macro_f1": 0.6486939430311647,
+      "micro_f1": 0.6637554585152838,
+      "per_label": {
+        "disability": {
+          "label": "disability",
+          "precision": 0.875,
+          "recall": 0.4117647058823529,
+          "f1": 0.56,
+          "support": 17,
+          "predicted": 8,
+          "tp": 7,
+          "fp": 1,
+          "fn": 10,
+          "averaged": true
+        },
+        "gender": {
+          "label": "gender",
+          "precision": 0.7,
+          "recall": 0.7368421052631579,
+          "f1": 0.717948717948718,
+          "support": 19,
+          "predicted": 20,
+          "tp": 14,
+          "fp": 6,
+          "fn": 5,
+          "averaged": true
+        },
+        "national_origin": {
+          "label": "national_origin",
+          "precision": 0.5416666666666666,
+          "recall": 0.7647058823529411,
+          "f1": 0.6341463414634146,
+          "support": 17,
+          "predicted": 24,
+          "tp": 13,
+          "fp": 11,
+          "fn": 4,
+          "averaged": true
+        },
+        "other": {
+          "label": "other",
+          "precision": 0.3,
+          "recall": 0.1875,
+          "f1": 0.23076923076923075,
+          "support": 16,
+          "predicted": 10,
+          "tp": 3,
+          "fp": 7,
+          "fn": 13,
+          "averaged": true
+        },
+        "race": {
+          "label": "race",
+          "precision": 0.8571428571428571,
+          "recall": 0.72,
+          "f1": 0.782608695652174,
+          "support": 25,
+          "predicted": 21,
+          "tp": 18,
+          "fp": 3,
+          "fn": 7,
+          "averaged": true
+        },
+        "religion": {
+          "label": "religion",
+          "precision": 1.0,
+          "recall": 0.7333333333333333,
+          "f1": 0.846153846153846,
+          "support": 15,
+          "predicted": 11,
+          "tp": 11,
+          "fp": 0,
+          "fn": 4,
+          "averaged": true
+        },
+        "sexual_orientation": {
+          "label": "sexual_orientation",
+          "precision": 1.0,
+          "recall": 0.625,
+          "f1": 0.7692307692307693,
+          "support": 16,
+          "predicted": 10,
+          "tp": 10,
+          "fp": 0,
+          "fn": 6,
+          "averaged": true
+        }
+      },
+      "labels_averaged": [
+        "disability",
+        "gender",
+        "national_origin",
+        "other",
+        "race",
+        "religion",
+        "sexual_orientation"
+      ],
+      "labels_excluded": [],
+      "n_items": 56,
+      "n_unscored": 0,
+      "subset_accuracy": 0.21428571428571427,
+      "hamming_loss": 0.19642857142857142,
+      "extra": {
+        "mean_gold_labels": 2.232142857142857,
+        "mean_pred_labels": 1.8571428571428572,
+        "any_overlap_rate": 0.875,
+        "gold_subset_of_pred": 0.30357142857142855
+      }
+    },
+    "hate_type": {
+      "dimension": "hate_type",
+      "macro_f1": null,
+      "micro_f1": 0.0,
+      "per_label": {},
+      "labels_averaged": [],
+      "labels_excluded": [],
+      "n_items": 0,
+      "n_unscored": 0,
+      "subset_accuracy": 0.0,
+      "hamming_loss": 0.0,
+      "extra": {}
+    },
+    "legal": {
+      "dimension": "legal",
+      "macro_f1": null,
+      "micro_f1": 0.0,
+      "per_label": {},
+      "labels_averaged": [],
+      "labels_excluded": [],
+      "n_items": 0,
+      "n_unscored": 0,
+      "subset_accuracy": 0.0,
+      "hamming_loss": 0.0,
+      "extra": {}
+    },
+    "severity": {
+      "dimension": "severity",
+      "macro_f1": 0.35135135135135137,
+      "micro_f1": 0.4838709677419355,
+      "per_label": {
+        "low": {
+          "label": "low",
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 10,
+          "predicted": 1,
+          "tp": 0,
+          "fp": 1,
+          "fn": 10,
+          "averaged": true
+        },
+        "medium": {
+          "label": "medium",
+          "precision": 0.3333333333333333,
+          "recall": 0.25,
+          "f1": 0.28571428571428575,
+          "support": 8,
+          "predicted": 6,
+          "tp": 2,
+          "fp": 4,
+          "fn": 6,
+          "averaged": false
+        },
+        "high": {
+          "label": "high",
+          "precision": 0.5416666666666666,
+          "recall": 1.0,
+          "f1": 0.7027027027027027,
+          "support": 13,
+          "predicted": 24,
+          "tp": 13,
+          "fp": 11,
+          "fn": 0,
+          "averaged": true
+        }
+      },
+      "labels_averaged": [
+        "low",
+        "high"
+      ],
+      "labels_excluded": [
+        "medium"
+      ],
+      "n_items": 31,
+      "n_unscored": 0,
+      "subset_accuracy": 0.4838709677419355,
+      "hamming_loss": 0.0,
+      "extra": {
+        "n_predicted_null": 0,
+        "mean_abs_rank_error": 0.7096774193548387,
+        "within_one_accuracy": 0.8064516129032258
+      }
+    },
+    "calibration": {
+      "ece": 0.0,
+      "bins": {
+        "1.0": {
+          "n": 56,
+          "accuracy": 1.0,
+          "confidence": 1.0
+        }
+      },
+      "n": 56,
+      "note": "vote share proxy; n_votes=3 gives 2-3 distinct values"
+    },
+    "honesty": {
+      "n_items": 56,
+      "total_runs": 168,
+      "parse_failures": 4,
+      "parse_failure_rate": 0.023809523809523808,
+      "repairs": 56,
+      "normalisations": 0,
+      "gate_normalised": 0,
+      "uncertain": 0,
+      "no_prediction": 0,
+      "mean_latency_s": 11.105238095238096,
+      "workers": [
+        8
+      ],
+      "models": {
+        "Qwen/Qwen3-VL-32B-Instruct": 56
+      },
+      "kb_versions": [],
+      "prompt_versions": [
+        "classify_v1-8e588db7"
+      ]
+    }
+  },
+  "rag": {
+    "gate": {
+      "strict": {
+        "macro_f1": null,
+        "mapping": "strict",
+        "per_class": {
+          "hate": {
+            "precision": 1.0,
+            "recall": 0.9642857142857143,
+            "f1": 0.9818181818181818,
+            "tp": 54,
+            "fp": 0,
+            "fn": 2
+          },
+          "not_hate": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "tp": 0,
+            "fp": 2,
+            "fn": 0
+          }
+        },
+        "tp": 54,
+        "fp": 0,
+        "fn": 2,
+        "tn": 0,
+        "per_source": {
+          "hatexplain": {
+            "n": 25,
+            "benign": 0,
+            "hateful": 25,
+            "fp": 0,
+            "fn": 0,
+            "fp_rate": null,
+            "fn_rate": 0.0
+          },
+          "mhs": {
+            "n": 31,
+            "benign": 0,
+            "hateful": 31,
+            "fp": 0,
+            "fn": 2,
+            "fp_rate": null,
+            "fn_rate": 0.06451612903225806
+          }
+        },
+        "n_scored": 56,
+        "n_unscored": 0,
+        "n_uncertain": 0,
+        "macro_f1_confident_only": null,
+        "note": "single-class subset: every gold item has gate=True. Macro-F1 over both classes is undefined; recall on the present class is 0.964."
+      },
+      "lenient": {
+        "macro_f1": null,
+        "mapping": "lenient",
+        "per_class": {
+          "hate": {
+            "precision": 1.0,
+            "recall": 0.9642857142857143,
+            "f1": 0.9818181818181818,
+            "tp": 54,
+            "fp": 0,
+            "fn": 2
+          },
+          "not_hate": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "tp": 0,
+            "fp": 2,
+            "fn": 0
+          }
+        },
+        "tp": 54,
+        "fp": 0,
+        "fn": 2,
+        "tn": 0,
+        "per_source": {
+          "hatexplain": {
+            "n": 25,
+            "benign": 0,
+            "hateful": 25,
+            "fp": 0,
+            "fn": 0,
+            "fp_rate": null,
+            "fn_rate": 0.0
+          },
+          "mhs": {
+            "n": 31,
+            "benign": 0,
+            "hateful": 31,
+            "fp": 0,
+            "fn": 2,
+            "fp_rate": null,
+            "fn_rate": 0.06451612903225806
+          }
+        },
+        "n_scored": 56,
+        "n_unscored": 0,
+        "n_uncertain": 0,
+        "macro_f1_confident_only": null,
+        "note": "single-class subset: every gold item has gate=True. Macro-F1 over both classes is undefined; recall on the present class is 0.964."
+      }
+    },
+    "target_group": {
+      "dimension": "target_group",
+      "macro_f1": 0.6564655918557916,
+      "micro_f1": 0.6968325791855204,
+      "per_label": {
+        "disability": {
+          "label": "disability",
+          "precision": 0.9,
+          "recall": 0.5294117647058824,
+          "f1": 0.6666666666666667,
+          "support": 17,
+          "predicted": 10,
+          "tp": 9,
+          "fp": 1,
+          "fn": 8,
+          "averaged": true
+        },
+        "gender": {
+          "label": "gender",
+          "precision": 0.7777777777777778,
+          "recall": 0.7368421052631579,
+          "f1": 0.7567567567567567,
+          "support": 19,
+          "predicted": 18,
+          "tp": 14,
+          "fp": 4,
+          "fn": 5,
+          "averaged": true
+        },
+        "national_origin": {
+          "label": "national_origin",
+          "precision": 0.6666666666666666,
+          "recall": 0.8235294117647058,
+          "f1": 0.7368421052631577,
+          "support": 17,
+          "predicted": 21,
+          "tp": 14,
+          "fp": 7,
+          "fn": 3,
+          "averaged": true
+        },
+        "other": {
+          "label": "other",
+          "precision": 0.5,
+          "recall": 0.0625,
+          "f1": 0.1111111111111111,
+          "support": 16,
+          "predicted": 2,
+          "tp": 1,
+          "fp": 1,
+          "fn": 15,
+          "averaged": true
+        },
+        "race": {
+          "label": "race",
+          "precision": 0.85,
+          "recall": 0.68,
+          "f1": 0.7555555555555556,
+          "support": 25,
+          "predicted": 20,
+          "tp": 17,
+          "fp": 3,
+          "fn": 8,
+          "averaged": true
+        },
+        "religion": {
+          "label": "religion",
+          "precision": 0.8571428571428571,
+          "recall": 0.8,
+          "f1": 0.8275862068965518,
+          "support": 15,
+          "predicted": 14,
+          "tp": 12,
+          "fp": 2,
+          "fn": 3,
+          "averaged": true
+        },
+        "sexual_orientation": {
+          "label": "sexual_orientation",
+          "precision": 0.9090909090909091,
+          "recall": 0.625,
+          "f1": 0.7407407407407406,
+          "support": 16,
+          "predicted": 11,
+          "tp": 10,
+          "fp": 1,
+          "fn": 6,
+          "averaged": true
+        }
+      },
+      "labels_averaged": [
+        "disability",
+        "gender",
+        "national_origin",
+        "other",
+        "race",
+        "religion",
+        "sexual_orientation"
+      ],
+      "labels_excluded": [],
+      "n_items": 56,
+      "n_unscored": 0,
+      "subset_accuracy": 0.26785714285714285,
+      "hamming_loss": 0.17091836734693877,
+      "extra": {
+        "mean_gold_labels": 2.232142857142857,
+        "mean_pred_labels": 1.7142857142857142,
+        "any_overlap_rate": 0.9107142857142857,
+        "gold_subset_of_pred": 0.2857142857142857
+      }
+    },
+    "hate_type": {
+      "dimension": "hate_type",
+      "macro_f1": null,
+      "micro_f1": 0.0,
+      "per_label": {},
+      "labels_averaged": [],
+      "labels_excluded": [],
+      "n_items": 0,
+      "n_unscored": 0,
+      "subset_accuracy": 0.0,
+      "hamming_loss": 0.0,
+      "extra": {}
+    },
+    "legal": {
+      "dimension": "legal",
+      "macro_f1": null,
+      "micro_f1": 0.0,
+      "per_label": {},
+      "labels_averaged": [],
+      "labels_excluded": [],
+      "n_items": 0,
+      "n_unscored": 0,
+      "subset_accuracy": 0.0,
+      "hamming_loss": 0.0,
+      "extra": {}
+    },
+    "severity": {
+      "dimension": "severity",
+      "macro_f1": 0.3650793650793651,
+      "micro_f1": 0.3225806451612903,
+      "per_label": {
+        "low": {
+          "label": "low",
+          "precision": 0.5,
+          "recall": 0.2,
+          "f1": 0.28571428571428575,
+          "support": 10,
+          "predicted": 4,
+          "tp": 2,
+          "fp": 2,
+          "fn": 8,
+          "averaged": true
+        },
+        "medium": {
+          "label": "medium",
+          "precision": 0.18181818181818182,
+          "recall": 0.25,
+          "f1": 0.2105263157894737,
+          "support": 8,
+          "predicted": 11,
+          "tp": 2,
+          "fp": 9,
+          "fn": 6,
+          "averaged": false
+        },
+        "high": {
+          "label": "high",
+          "precision": 0.42857142857142855,
+          "recall": 0.46153846153846156,
+          "f1": 0.4444444444444445,
+          "support": 13,
+          "predicted": 14,
+          "tp": 6,
+          "fp": 8,
+          "fn": 7,
+          "averaged": true
+        }
+      },
+      "labels_averaged": [
+        "low",
+        "high"
+      ],
+      "labels_excluded": [
+        "medium"
+      ],
+      "n_items": 31,
+      "n_unscored": 0,
+      "subset_accuracy": 0.3225806451612903,
+      "hamming_loss": 0.0,
+      "extra": {
+        "n_predicted_null": 2,
+        "mean_abs_rank_error": 0.7931034482758621,
+        "within_one_accuracy": 0.8620689655172413
+      }
+    },
+    "calibration": {
+      "ece": 0.04760714285714291,
+      "bins": {
+        "0.667": {
+          "n": 2,
+          "accuracy": 1.0,
+          "confidence": 0.667
+        },
+        "1.0": {
+          "n": 54,
+          "accuracy": 0.9629629629629629,
+          "confidence": 1.0
+        }
+      },
+      "n": 56,
+      "note": "vote share proxy; n_votes=3 gives 2-3 distinct values"
+    },
+    "honesty": {
+      "n_items": 56,
+      "total_runs": 168,
+      "parse_failures": 1,
+      "parse_failure_rate": 0.005952380952380952,
+      "repairs": 14,
+      "normalisations": 0,
+      "gate_normalised": 0,
+      "uncertain": 0,
+      "no_prediction": 0,
+      "mean_latency_s": 9.221488095238096,
+      "workers": [
+        8
+      ],
+      "models": {
+        "Qwen/Qwen3-VL-32B-Instruct": 56
+      },
+      "kb_versions": [
+        "b3e1a021777f7b85"
+      ],
+      "prompt_versions": [
+        "classify_v1-8e588db7"
+      ]
+    }
+  }
+}

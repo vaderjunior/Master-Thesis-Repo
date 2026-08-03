@@ -1,5 +1,4 @@
 # Hand-authored annotation guidelines for the hard cases.
-# These encode POLICY - see FOR_MARKUS.md #10. Revising = edit + re-ingest KB.
 version: 1
 guidelines:
   - id: quoted-slurs

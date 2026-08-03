@@ -15,6 +15,7 @@ from pathlib import Path
 
 import yaml
 
+from src.hsrag.classify import Arms
 from src.hsrag.prompt import PromptContext, build_prompt, prompt_version
 from src.hsrag.retrieve import Retriever
 
@@ -23,7 +24,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("text")
     ap.add_argument("--lang", default="en")
-    ap.add_argument("--arm", default="rag", choices=["rag", "zero_shot"])
+    ap.add_argument("--arm", default="rag",
+                    choices=["rag", "zero_shot", "few_shot"])
     ap.add_argument("--strategy", default=None, help="override config strategy")
     ap.add_argument("--stats", action="store_true",
                     help="char counts per section (prompt length before the "
@@ -32,17 +34,27 @@ def main():
 
     cfg_all = yaml.safe_load(Path("config/config.yaml").read_text(encoding="utf-8"))
 
-    if args.arm == "zero_shot":
-        ctx = PromptContext.zero_shot()
-    else:
+    kb = cfg_all["kb"]
+    ccfg = cfg_all["classify"]
+
+    # The context is built through Arms, the same object the runner uses, so
+    # what this prints is what a real run would send. Rebuilding the context
+    # here would risk the inspection tool and the pipeline drifting apart -
+    # which is exactly the class of bug that let run_slice1 keep its own copy
+    # of the scoring code for two phases.
+    retriever = None
+    if args.arm == "rag":
         cfg = dict(cfg_all["retrieval"])
         if args.strategy:
             cfg["strategy"] = args.strategy
-        kb = cfg_all["kb"]
-        r = Retriever(chroma_path=Path(kb["chroma_path"]),
-                      records_path=Path(kb["records_path"]),
-                      model_name=kb["embedding_model"], cfg=cfg)
-        ctx = PromptContext.from_retrieval(r.retrieve(args.text, args.lang))
+        retriever = Retriever(chroma_path=Path(kb["chroma_path"]),
+                              records_path=Path(kb["records_path"]),
+                              model_name=kb["embedding_model"], cfg=cfg)
+
+    arms = Arms(retriever=retriever, records_path=Path(kb["records_path"]),
+                k_examples=cfg_all["retrieval"]["k_examples"],
+                seed=ccfg["fewshot_seed"])
+    ctx = arms.context(args.arm, args.text, args.lang)
 
     msgs = build_prompt(args.text, args.lang, ctx)
 
@@ -63,6 +75,12 @@ def main():
         print(f"  definitions {len(ctx.definitions)}, "
               f"guidelines {len(ctx.guidelines)}, "
               f"example groups {[(n, len(h)) for n, h in ctx.example_groups]}")
+        # Finding E: retrieval supplies only hateful evidence for non-hateful
+        # input. The gate balance of the examples actually placed in the
+        # prompt is the thing that mitigation would change, so print it.
+        for name, hits in ctx.example_groups:
+            pos = sum(1 for h in hits if h.meta.get("gate"))
+            print(f"  {name}: {pos} hateful, {len(hits) - pos} not-hateful")
 
 
 if __name__ == "__main__":

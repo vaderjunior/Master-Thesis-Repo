@@ -1,0 +1,20 @@
+name: main_peasec_kbv2
+description: >
+  The reporting slice on the primary system, under the KB that contains German
+  guidelines and BoTox legal examples (c34e780cc973cfde). en_dev_eval_main is
+  the only English subset with benign items, so it is the only place the
+  over-flagging bias is measurable - and the German run showed the KB edit cut
+  RAG false positives by 42%, which this tests in English.
+  Never run on PEASEC before: the existing main numbers (0.717 / 0.706 / 0.696)
+  are TUDaGPT qwen3.5-122b under kb 475869f9e2422969, so this changes both the
+  model and the KB and is a fresh baseline rather than a paired comparison.
+subset: en_dev_eval_main
+limit: 150
+arms: [zero_shot, few_shot, rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: both

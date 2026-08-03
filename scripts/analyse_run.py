@@ -3,7 +3,8 @@ scripts/analyse_run.py - consistency, significance, guideline effect.
 Runs on stored results. NO API CALLS.
 
   python -m scripts.analyse_run --manifest slice1_main
-  python -m scripts.analyse_run --manifest targets_dev --bootstrap 2000
+  python -m scripts.analyse_run --manifest types_dev_peasec \
+      --file experiments/results/types_dev_peasec_live.jsonl --bootstrap 2000
 """
 
 import argparse
@@ -21,6 +22,14 @@ from src.hsrag.metrics import (ARMS, effective_gate, score_gate,
 
 PROCESSED = Path("data/processed")
 RESULTS = Path("experiments/results")
+
+# Multilabel dimensions, in the order they are tried. Only one is scorable on
+# any given subset: en_dev_eval_types has no target_group gold,
+# en_dev_eval_targets has no hate_type gold, and de_legal_dev_eval has only
+# legal. The gold column name matches the field for legal and is plural for
+# the two older dimensions.
+DIMS = [("target_group", "target_groups"), ("hate_type", "hate_types"),
+        ("legal", "legal")]
 
 
 def fmt(v, spec=".3f"):
@@ -54,11 +63,25 @@ def main():
     arms = [a for a in ARMS if a in by_arm]
     assert arms, f"no recognised arms in {path}"
 
+    # The dimension under test varies by subset, so it is DETECTED rather than
+    # hardcoded: pick whichever multilabel dimension actually has a label
+    # clearing MIN_SUPPORT. Otherwise the n=1 comparison and the bootstrap
+    # silently report on a dimension this run was never built to measure.
+    dim_field = dim_col = None
+    for field, col in DIMS:
+        if score_multilabel(by_arm[arms[0]], gold, col, field).labels_averaged:
+            dim_field, dim_col = field, col
+            break
+
+    print(f"\n{path.name}")
+    print(f"  arms: {arms}   dimension under test: "
+          f"{dim_field or 'none scorable'}")
+
     tax = yaml.safe_load(Path("config/taxonomy.yaml").read_text(encoding="utf-8"))
     labels = {d: (list(tax["dimensions"][d]["labels"])
                   if isinstance(tax["dimensions"][d]["labels"], dict)
                   else list(tax["dimensions"][d]["labels"]))
-              for d in ("target_group", "hate_type")}
+              for d in ("target_group", "hate_type", "legal")}
 
     # ---------------------------------------------------------- consistency
     print(f"\n{'=' * 78}\nCONSISTENCY  (Krippendorff alpha across the "
@@ -74,6 +97,9 @@ def main():
               f"{fmt(c['severity']['alpha']):>10}")
     print("\n  units: gate/severity per item; multilabel per (item, label) "
           "binary decision")
+    print("  alpha deflates under skewed marginals: an arm that predicts one "
+          "class on\n  almost every item scores low even at high raw "
+          "agreement, because expected\n  disagreement collapses toward zero.")
     for a in arms:
         for dim, v in cons[a].items():
             if v.get("note"):
@@ -82,22 +108,25 @@ def main():
     # ---------------------------------------------------- the free n=1 arm
     print(f"\n{'=' * 78}\nCOST vs STABILITY: n=1 (first run) vs n={m.n_votes} "
           f"vote\n{'=' * 78}")
+    dim_label = dim_field or "dim"
     print(f"{'arm':12} {'gate n=1':>10} {'gate n=3':>10} {'delta':>8}   "
-          f"{'tg n=1':>8} {'tg n=3':>8} {'delta':>8}")
+          f"{dim_label + ' n=1':>16} {dim_label + ' n=3':>16} {'delta':>8}")
     for a in arms:
         one = single_run_view(by_arm[a])
         g1 = score_gate(one, gold, args.mapping).macro_f1
         g3 = score_gate(by_arm[a], gold, args.mapping).macro_f1
-        t1 = score_multilabel(one, gold, "target_groups",
-                              "target_group").macro_f1
-        t3 = score_multilabel(by_arm[a], gold, "target_groups",
-                              "target_group").macro_f1
+        if dim_field:
+            t1 = score_multilabel(one, gold, dim_col, dim_field).macro_f1
+            t3 = score_multilabel(by_arm[a], gold, dim_col, dim_field).macro_f1
+        else:
+            t1 = t3 = None
         # Gate macro-F1 is None on a single-class subset (every gold item is
-        # hateful), so the n=1 vs n=3 delta is undefined there.
+        # hateful), so the delta is undefined there rather than zero.
         d1 = (g3 - g1) if (g1 is not None and g3 is not None) else None
         d2 = (t3 - t1) if (t1 is not None and t3 is not None) else None
-        print(f"{a:12} {fmt(g1):>10} {fmt(g3):>10} {fmt(d1, '+.3f'):>8}   "
-              f"{fmt(t1):>8} {fmt(t3):>8} "
+        print(f"{a:12} {fmt(g1):>10} {fmt(g3):>10} "
+              f"{fmt(d1, '+.3f') if d1 is not None else 'n/a':>8}   "
+              f"{fmt(t1):>16} {fmt(t3):>16} "
               f"{fmt(d2, '+.3f') if d2 is not None else 'n/a':>8}")
 
     # --------------------------------------------------------- significance
@@ -118,29 +147,29 @@ def main():
                       f"{r['only_a_correct']:7} {r['only_b_correct']:7} "
                       f"{r['both_wrong']:9} {r['p_value']:8.3f}")
 
-        print(f"\n  paired bootstrap, B={args.bootstrap}, target_group "
-              f"macro-F1")
-        # The label set is fixed ONCE from the full sample so every resample
-        # scores the same quantity. Recomputing the MIN_SUPPORT filter per
-        # draw would admit a different label set each time and the CI would
-        # describe a moving target. Any arm yields the same set: support
-        # counts gold positives only, so it is a property of the gold data.
-        fixed = score_multilabel(by_arm[arms[0]], gold, "target_groups",
-                                 "target_group").labels_averaged
-        print(f"  labels held fixed across resamples: {fixed}")
-
-        if not fixed:
-            print("  no label clears MIN_SUPPORT; macro-F1 is undefined and "
-                  "the bootstrap is skipped")
+        print(f"\n  paired bootstrap, B={args.bootstrap}, "
+              f"{dim_field or 'no dimension'} macro-F1")
+        if not dim_field:
+            print("  no multilabel dimension is scorable on this subset; "
+                  "bootstrap skipped")
         else:
-            def tg(rows_, gold_):
-                return score_multilabel(rows_, gold_, "target_groups",
-                                        "target_group",
+            # The label set is fixed ONCE from the full sample so every
+            # resample scores the same quantity. Recomputing the MIN_SUPPORT
+            # filter per draw would admit a different label set each time and
+            # the CI would describe a moving target. Any arm gives the same
+            # set: support counts gold positives only, so it is a property of
+            # the gold data rather than of the predictions.
+            fixed = score_multilabel(by_arm[arms[0]], gold, dim_col,
+                                     dim_field).labels_averaged
+            print(f"  labels held fixed across resamples: {fixed}")
+
+            def dim_score(rows_, gold_):
+                return score_multilabel(rows_, gold_, dim_col, dim_field,
                                         fixed_labels=fixed).macro_f1
 
             for i, a in enumerate(arms):
                 for b in arms[i + 1:]:
-                    r = paired_bootstrap(by_arm[a], by_arm[b], gold, tg,
+                    r = paired_bootstrap(by_arm[a], by_arm[b], gold, dim_score,
                                          b=args.bootstrap)
                     if r.get("delta") is None:
                         print(f"  {a} vs {b}: {r.get('note')}")
@@ -180,7 +209,10 @@ def main():
         print("\n  'contra' = share of retrievals where the gold label opposes")
         print("  what the guideline implies, i.e. it was retrieved but does")
         print("  not apply. delta = rag accuracy minus zero_shot accuracy on")
-        print("  the same items; zero_shot never saw the guideline.")
+        print("  the same items; zero_shot never saw the guideline. On an")
+        print("  all-hateful subset every 'not hate' guideline has a 100%")
+        print("  contradiction rate, so a positive delta there means rag")
+        print("  correctly IGNORED the guideline, not that it followed it.")
     else:
         print(f"\n  guideline effect needs both a rag and a zero_shot arm; "
               f"present: {arms}")
@@ -190,7 +222,7 @@ def main():
     # a manifest had no rag arm.
     out = path.with_suffix(".analysis.json")
     out.write_text(json.dumps(
-        {"consistency": cons, "guideline_effect": ge},
+        {"dimension": dim_field, "consistency": cons, "guideline_effect": ge},
         indent=2, default=str), encoding="utf-8")
     print(f"\nwrote {out}")
 

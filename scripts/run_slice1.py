@@ -39,16 +39,12 @@ from concurrent.futures import ThreadPoolExecutor
 from src.hsrag.metrics import score_all
 from scripts.score_run import report
 from src.hsrag.classify import Arms, classify
-from src.hsrag.client import MockClient, TUDaGPTClient
+from src.hsrag.client import make_client
 from src.hsrag.retrieve import Retriever
 
 RESULTS = Path("experiments/results")
 ARMS = ["zero_shot", "few_shot", "rag"]
-
-
-
-
-
+PROCESSED = Path("data/processed")
 
 # --- runner ----------------------------------------------------------------
 def main():
@@ -77,16 +73,28 @@ def main():
         from src.hsrag.manifest import load as load_manifest, resolve
         mf = load_manifest(args.manifest)
         args.subset, args.arms, args.workers = mf.subset, mf.arms, mf.workers
-        if mf.limit:
-            args.n = mf.limit
+        # A manifest with no limit means the whole subset, not the CLI
+        # default. legal_dev_peasec silently ran 150 of 175 items because
+        # --n defaults to 150 and an absent limit left it in place.
+        args.n = mf.limit if mf.limit else len(
+            pd.read_parquet(PROCESSED / f"{mf.subset}.parquet"))
         ccfg = {**ccfg,
                 "n_votes_dev": mf.n_votes,
                 "max_repair_retries": mf.max_repair_retries,
                 "pinned_model": mf.pinned_model or ccfg["pinned_model"]}
+        # The manifest's temperature must reach the client, or a temperature
+        # ablation runs every arm at the config default and reports a null
+        # result for the wrong reason.
+        api = {**api, "temperature": mf.temperature or api["temperature"]}
 
     df = pd.read_parquet(Path("data/processed") / f"{args.subset}.parquet").head(args.n)
     tag = "mock" if args.dry_run else "live"
-    out_path = Path(args.out or RESULTS / f"slice1_{args.subset}_{tag}.jsonl")
+    # Manifest name in the filename, not just the subset. The bake-off runs
+    # three manifests over en_dev_eval_sq1_tune, and a subset-only name would
+    # make them share one file - the second and third would see the first's
+    # results as "already complete" and silently do nothing.
+    stem = f"{mf.name}_{tag}" if mf else f"slice1_{args.subset}_{tag}"
+    out_path = Path(args.out or RESULTS / f"{stem}.jsonl")
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
     done = set()
@@ -100,14 +108,25 @@ def main():
         print(f"resuming: {len(done)} (item, arm) pairs already complete")
 
     if not args.score_only:
-        retriever = Retriever(chroma_path=Path(kb["chroma_path"]),
-                              records_path=Path(kb["records_path"]),
+        # A manifest may point at a PREVIOUS knowledge base, so that a KB
+        # comparison changes one variable rather than two. Both paths move
+        # together: Chroma serves the dense channel, the jsonl serves BM25
+        # and the few_shot sample.
+        chroma_dir = Path(mf.chroma_path) if (mf and mf.chroma_path) \
+            else Path(kb["chroma_path"])
+        records_file = Path(mf.records_path) if (mf and mf.records_path) \
+            else Path(kb["records_path"])
+        retriever = Retriever(chroma_path=chroma_dir,
+                              records_path=records_file,
                               model_name=kb["embedding_model"],
-                              cfg=dict(cfg_all["retrieval"]))
-        arms = Arms(retriever=retriever, records_path=Path(kb["records_path"]),
+                              cfg=dict(mf.retrieval if (mf and mf.retrieval)
+                                       else cfg_all["retrieval"]))
+        arms = Arms(retriever=retriever, records_path=records_file,
                     k_examples=cfg_all["retrieval"]["k_examples"],
                     seed=ccfg["fewshot_seed"])
         kb_version = retriever.col.metadata.get("kb_version")
+        if mf and mf.chroma_path:
+            print(f"  KB OVERRIDE: {chroma_dir} -> kb_version {kb_version}")
         
         if mf is not None and not out_path.exists():
             # Resolved manifest as the first line of the results file, so the
@@ -125,20 +144,33 @@ def main():
                 for arm in args.arms
                 if (str(row.id), arm) not in done]
         calls = len(todo) * n_votes
-        # MEASURED WALL-CLOCK THROUGHPUT, not per-worker latency. Dividing a
-        # per-worker latency by the worker count double-counts the parallelism
-        # that is already inside these numbers.
-        #   sequential:  29.8 s/call
-        #   4 workers:   13.2 s/call (Slice 1, 744 calls / 164 min)
-        #                16.8 s/call (targets_dev, 498 calls / 140 min)
-        # Throughput improves only ~1.2x from 1 to 4 workers because the
-        # server caps total throughput rather than queueing, so the worker
-        # count barely enters the estimate at all.
-        wall_s = 30 if args.workers == 1 else 17
+        # MEASURED WALL-CLOCK THROUGHPUT per provider, not per-worker latency.
+        # Dividing a per-worker latency by the worker count double-counts the
+        # parallelism already inside these numbers.
+        #
+        # tudagpt: 29.8 s/call sequential; 13.2 s/call at 4 workers (Slice 1,
+        #   744 calls / 164 min) and 16.8 s/call (targets_dev, 498 / 140).
+        #   The server caps total throughput rather than queueing, so workers
+        #   buy only ~1.2x, and 8 workers triggers 422 on about half of all
+        #   requests.
+        # peasec: continuous batching over vLLM. Median latency stays flat
+        #   under load (1.1 -> 2.2 s from 1 to 16 workers) while throughput
+        #   scales 5.7x: 1.1 / 0.3 / 0.3 / 0.2 s/call at 1 / 4 / 8 / 16.
+        #   Those were small JSON prompts with no retrieved context, so 3.0
+        #   s/call is a deliberately conservative planning figure until a real
+        #   classification run measures it.
+        provider = ("mock" if args.dry_run
+                    else (mf.provider if mf else ccfg["provider"]))
+        if provider == "mock":
+            wall_s = 0.01
+        elif provider == "peasec":
+            wall_s = 8.0 if args.workers == 1 else 3.0
+        else:
+            wall_s = 30.0 if args.workers == 1 else 17.0
         est = calls * wall_s / 60
         print(f"\n{len(todo)} item-arm pairs x {n_votes} votes = {calls} calls")
-        print(f"  ~{est:.0f} min with {args.workers} worker(s), "
-              f"assuming parallelism scales (it may not)")
+        print(f"  provider {provider}, {args.workers} worker(s), "
+              f"~{wall_s:g} s/call measured -> ~{est:.0f} min")
 
         if not args.dry_run and input("proceed? [y/N] ").strip().lower() != "y":
             return
@@ -150,14 +182,19 @@ def main():
 
         def get_client():
             if not hasattr(local, "client"):
-                local.client = (
-                    MockClient() if args.dry_run else
-                    # allow_fallback=False: a silent substitution mid-run would
-                    # make every number after it unattributable to a model.
-                    TUDaGPTClient(models=[ccfg["pinned_model"]],
-                                  temperature=api["temperature"],
-                                  timeout=api["timeout_seconds"],
-                                  allow_fallback=False))
+                if provider == "mock":
+                    local.client = make_client("mock")
+                else:
+                    p = api[provider]
+                    local.client = make_client(
+                        provider, [ccfg["pinned_model"]],
+                        temperature=api["temperature"],
+                        timeout=api["timeout_seconds"],
+                        max_tokens=api.get("max_tokens"),
+                        # allow_fallback=False: a silent substitution mid-run
+                        # would make every number after it unattributable.
+                        allow_fallback=False,
+                        url_env=p["url_env"], token_env=p["token_env"])
             return local.client
 
         def work(job):
@@ -168,7 +205,7 @@ def main():
                     client=get_client(), arms=arms, n_votes=n_votes,
                     max_repairs=ccfg["max_repair_retries"],
                     pinned_model=None if args.dry_run else ccfg["pinned_model"],
-                    kb_version=kb_version, workers=args.workers)
+                    kb_version=kb_version, workers=args.workers, temperature=api["temperature"])
             except RuntimeError as e:
                 # A transient API failure must not end a multi-hour run.
                 # Nothing is written for this pair, so a rerun retries it.

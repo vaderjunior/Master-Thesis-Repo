@@ -1,0 +1,22 @@
+name: legal_dev_peasec
+description: >
+  First measurement of the legal dimension. BoTox, 175 items, all three
+  classes at 27+ support (propaganda 36, incitement_public_peace 34,
+  insult_defamation 27). Phase 2 dropped legal because DeTox had ~16 section
+  130 comments; BoTox is prosecutor-trained and dense enough to score.
+  BoTox annotates ONLY criminal relevance, so gate, target_group, hate_type
+  and severity are all None and mask themselves. The gate is therefore
+  unscorable here, but the model still predicts it - the association between
+  predicted hate and gold legal class is descriptively interesting and needs
+  no gold.
+  KB c34e780cc973cfde: first version containing German guidelines and BoTox
+  legal examples.
+subset: de_legal_dev_eval
+arms: [zero_shot, few_shot, rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: strict  

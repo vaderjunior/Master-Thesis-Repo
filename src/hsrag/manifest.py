@@ -36,10 +36,15 @@ VALID_GATE_MAPPING = {"strict", "lenient", "both"}
 # infrastructure (decision Q8). Asserted rather than remembered.
 GERMAN_SAFE_PROVIDERS = {"tudagpt", "peasec", "mock"}
 
-# Measured, not guessed: 13-25 s/call at 4 workers across the Slice 1 run,
-# varying with server load. 20 is the midpoint. Any tighter estimate is
-# unreliable and this number should stay conservative.
-DEFAULT_SECONDS_PER_CALL = 20.0
+# Measured WALL-CLOCK throughput per provider, NOT per-worker latency, so it
+# must never be divided by the worker count again - the parallelism is already
+# inside these numbers.
+#   tudagpt: 29.8 s/call sequential, 13-17 s/call at 4 workers. The server
+#            caps total throughput, so workers buy only ~1.2x.
+#   peasec:  continuous batching over vLLM; 6.5 s/call on real classification
+#            prompts at 8 workers, 2.0 s/call for the 8B model.
+SECONDS_PER_CALL = {"tudagpt": 17.0, "peasec": 6.5, "mock": 0.01}
+DEFAULT_SECONDS_PER_CALL = 17.0
 
 
 @dataclass
@@ -50,7 +55,7 @@ class Manifest:
     provider: str = "tudagpt"
     pinned_model: str | None = None
     allow_fallback: bool = False
-    temperature: float = 1.0
+    temperature: float | None = None
     n_votes: int = 3
     max_repair_retries: int = 2
     workers: int = 4
@@ -60,6 +65,14 @@ class Manifest:
 
     # rag only; None means "take config.yaml as-is"
     retrieval: dict | None = None
+    
+    # Override the knowledge base. Used only to re-query a PREVIOUS KB under
+    # the CURRENT prompt, so that a KB comparison changes one variable instead
+    # of two. Both must be set together: Chroma serves the dense channel and
+    # the jsonl serves BM25, and mixing versions across the two would produce
+    # a retriever that is neither KB.
+    records_path: str | None = None
+    chroma_path: str | None = None
 
     # scoring options, resolved here so a result set records how it is meant
     # to be read rather than leaving that to whoever scores it later
@@ -81,6 +94,12 @@ class Manifest:
 
         path = PROCESSED / f"{self.subset}.parquet"
         assert path.exists(), f"subset not found: {path}"
+        
+        assert (self.records_path is None) == (self.chroma_path is None), (
+            "records_path and chroma_path must be set together: the jsonl "
+            "feeds BM25 and Chroma feeds the dense channel, so setting one "
+            "alone gives a retriever whose two channels disagree about which "
+            "knowledge base they are querying")
 
         # Q8: data governance is an assertion, not a note in a log file.
         if self.lang == "de":
@@ -98,13 +117,12 @@ class Manifest:
     def calls(self) -> int:
         return self.n_items * len(self.arms) * self.n_votes
 
-    def estimate(self, seconds_per_call: float = DEFAULT_SECONDS_PER_CALL) -> dict:
-        # seconds_per_call is WALL-CLOCK throughput at the configured worker
-        # count, not per-worker latency, so it must not be divided by workers
-        # again - the parallelism is already inside the measured number.
-        wall = self.calls * seconds_per_call
+    def estimate(self, seconds_per_call: float | None = None) -> dict:
+        s = seconds_per_call or SECONDS_PER_CALL.get(
+            self.provider, DEFAULT_SECONDS_PER_CALL)
+        wall = self.calls * s
         return {"calls": self.calls, "seconds": wall, "minutes": wall / 60,
-                "hours": wall / 3600, "seconds_per_call": seconds_per_call}
+                "hours": wall / 3600, "seconds_per_call": s}
 
     def hash(self) -> str:
         """Identity of the resolved manifest. Two runs with the same hash are
@@ -137,9 +155,17 @@ def resolve(m: Manifest, retriever=None) -> Manifest:
     of a run that already happened.
     """
     cfg = yaml.safe_load(CONFIG.read_text(encoding="utf-8"))
-
+    # Temperature: the manifest wins if it names one, otherwise the config
+    # default. Without this the field existed but was never read, so a
+    # temperature ablation would silently run every arm at the config value.
+    if m.temperature is None:
+        m.temperature = cfg["api"]["temperature"]
     if m.pinned_model is None:
-        m.pinned_model = cfg["classify"]["pinned_model"]
+        # Per-provider default: a manifest that names peasec must not inherit
+        # a TUDaGPT slug from the global default.
+        m.pinned_model = (cfg["api"][m.provider]["default_model"]
+                          if m.provider in cfg["api"]
+                          else cfg["classify"]["pinned_model"])
     if m.retrieval is None and "rag" in m.arms:
         m.retrieval = dict(cfg["retrieval"])
 
@@ -183,8 +209,9 @@ def describe(m: Manifest, seconds_per_call: float = DEFAULT_SECONDS_PER_CALL) ->
         f"COST          {e['calls']} calls "
         f"({m.n_items} items x {len(m.arms)} arms x {m.n_votes} votes)",
         f"              ~{e['minutes']:.0f} min ({e['hours']:.1f} h) "
-        f"at {e['seconds_per_call']:.0f} s/call with {m.workers} workers",
-        f"              measured range 13-25 s/call; treat any tighter "
-        f"estimate as unreliable",
+        f"at {e['seconds_per_call']:g} s/call, wall-clock at "
+        f"workers={m.workers}",
+        f"              measured: tudagpt 13-17 s/call at 4 workers, "
+        f"peasec 6.5 s/call at 8 workers (2.0 for the 8B)",
     ]
     return "\n".join(l for l in lines if l)

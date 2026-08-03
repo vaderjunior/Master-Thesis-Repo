@@ -1,66 +1,99 @@
 """
-scripts/check_concurrency.py - does parallelism actually help?
+scripts/check_concurrency.py - does parallelism actually help on this provider?
 
-Slice 1 latency is 29.8s mean but 16.8s median, and output length does not
-predict it. That signature says queue wait rather than compute, and queue wait
-parallelises. But this is shared university infrastructure: it may serialise
-requests anyway, or rate-limit. 16 calls tells us for the price of 8 minutes.
+TUDaGPT capped total throughput: 4 workers bought only ~1.2x, and 8 workers
+made it return 422 on roughly half of all requests. PEASEC claims continuous
+batching over Nvidia MPS, which would be a genuine speedup rather than a
+shared budget being divided.
 
-  python -m scripts.check_concurrency
+EACH CALL SENDS A DIFFERENT PROMPT. An earlier version sent identical prompts
+and measured server-side caching (six of eight calls returned in under a
+second), which is not parallelism.
+
+  python -m scripts.check_concurrency --provider peasec
+  python -m scripts.check_concurrency --provider peasec --workers 1 4 8 16
 """
 
+import argparse
+import statistics
 import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import yaml
 
-from src.hsrag.client import TUDaGPTClient
+from src.hsrag.client import make_client
 
-PROMPT = [{"role": "system", "text": "Reply with a JSON object: "
-                                     '{"ok": true, "n": <the number below>}'},
-          {"role": "user", "text": "7"}]
-
-
-def one(i, cfg, api):
-    """Each worker gets its own client: active_model is mutable state and a
-    shared client would race on it."""
-    c = TUDaGPTClient(models=[cfg["pinned_model"]], temperature=api["temperature"],
-                      timeout=api["timeout_seconds"], allow_fallback=False)
-    t0 = time.time()
-    try:
-        c.complete(PROMPT)
-        return time.time() - t0, None
-    except Exception as e:
-        return time.time() - t0, f"{type(e).__name__}: {str(e)[:80]}"
+# Bounded-output prompts. An earlier version asked open-ended essay questions,
+# and calls that ran to max_tokens produced 80-185 s outliers that dominated
+# wall-clock at low worker counts. The real workload asks for a small JSON
+# object, so the probe must too.
+PROMPTS = [f'Return ONLY this JSON, no prose: {{"n": {n}, "even": <true if '
+           f'{n} is even else false>}}' for n in range(101, 301)]
 
 
 def main():
-    cfg_all = yaml.safe_load(Path("config/config.yaml").read_text(encoding="utf-8"))
-    cfg, api = cfg_all["classify"], cfg_all["api"]
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--provider", default=None)
+    ap.add_argument("--model", default=None)
+    ap.add_argument("--workers", type=int, nargs="+", default=[1, 4, 8])
+    ap.add_argument("--calls", type=int, default=8,
+                    help="calls per worker-count setting")
+    args = ap.parse_args()
 
-    print("sequential x4...")
-    t0 = time.time()
-    seq = [one(i, cfg, api) for i in range(4)]
-    seq_wall = time.time() - t0
-    print(f"  wall {seq_wall:5.1f}s   per-call {[f'{d:.1f}' for d, _ in seq]}")
-    for _, err in seq:
-        if err:
-            print(f"  ERROR {err}")
+    cfg = yaml.safe_load(Path("config/config.yaml").read_text(encoding="utf-8"))
+    api = cfg["api"]
+    provider = args.provider or cfg["classify"]["provider"]
+    p = api[provider]
+    model = args.model or p["default_model"]
 
-    for workers in (4, 8):
-        print(f"\nparallel x{workers}...")
+    def one(i):
+        # Own client per worker: active_model is mutable state and a shared
+        # client would race on it.
+        c = make_client(provider, [model],
+                        temperature=api["temperature"],
+                        timeout=api["timeout_seconds"],
+                        max_tokens=api.get("max_tokens"),
+                        allow_fallback=False,
+                        url_env=p["url_env"], token_env=p["token_env"])
         t0 = time.time()
-        with ThreadPoolExecutor(max_workers=workers) as ex:
-            par = list(ex.map(lambda i: one(i, cfg, api), range(workers)))
+        try:
+            out = c.complete([{"role": "user", "text": PROMPTS[i % len(PROMPTS)]}])
+            return time.time() - t0, len(out), None
+        except Exception as e:
+            return time.time() - t0, 0, f"{type(e).__name__}: {str(e)[:100]}"
+
+    print(f"provider {provider}, model {model}, {args.calls} calls per setting\n")
+    print(f"{'workers':>8} {'wall s':>8} {'s/call':>8} {'speedup':>8} "
+          f"{'p50 lat':>8} {'p95 lat':>8} {'errors':>7}")
+
+    base = None
+    offset = 0
+    for w in args.workers:
+        idx = list(range(offset, offset + args.calls))
+        offset += args.calls          # never reuse a prompt across settings
+
+        t0 = time.time()
+        with ThreadPoolExecutor(max_workers=w) as ex:
+            res = list(ex.map(one, idx))
         wall = time.time() - t0
-        errs = [e for _, e in par if e]
-        print(f"  wall {wall:5.1f}s   per-call {[f'{d:.1f}' for d, _ in par]}")
-        print(f"  errors {len(errs)}/{workers}")
-        for e in errs[:3]:
-            print(f"    {e}")
-        eff = (seq_wall / 4 * workers) / wall if wall else 0
-        print(f"  effective speedup vs sequential: {eff:.1f}x")
+
+        lat = sorted(d for d, _, e in res if e is None)
+        errs = [e for _, _, e in res if e]
+        per_call = wall / args.calls
+        base = base or per_call
+        p50 = statistics.median(lat) if lat else 0
+        p95 = lat[int(len(lat) * 0.95)] if lat else 0
+
+        print(f"{w:>8} {wall:8.1f} {per_call:8.1f} {base / per_call:7.1f}x "
+              f"{p50:8.1f} {p95:8.1f} {len(errs):7}")
+        for e in errs[:2]:
+            print(f"           {e}")
+
+    print("\n  s/call is WALL-CLOCK throughput, which is what run estimates "
+          "need.\n  Rising per-call latency with flat throughput means the "
+          "server is\n  dividing a fixed budget rather than truly "
+          "parallelising.")
 
 
 if __name__ == "__main__":

@@ -90,3 +90,18 @@ def test_enums_come_from_taxonomy():
     assert {e.value for e in TargetGroup} == {
         "race", "religion", "gender", "sexual_orientation",
         "disability", "national_origin", "other"}
+    
+def test_legal_survives_a_false_gate():
+    """Criminal relevance is independent of the hate gate: a section 185
+    insult aimed at a private individual is criminally relevant and not hate
+    speech. The gate normaliser must not clear it."""
+    r = Result(reasoning="private insult", hate=False,
+               legal=["insult_defamation"])
+    assert r.legal == ["insult_defamation"]
+    assert not r.gate_normalised
+
+
+def test_legal_normalisation():
+    out, n = normalise_raw({"reasoning": "x", "hate": False,
+                            "legal_class": "Insult Defamation"})
+    assert out["legal"] == ["insult_defamation"] and n > 0

@@ -29,8 +29,28 @@ from sentence_transformers import SentenceTransformer
 
 COLLECTION_NAME = "hate_kb"
 
-# metadata keys whose values are lists and must be JSON-stringified
-LIST_META_KEYS = ("target_groups", "hate_types")
+# metadata keys whose values are lists and must be JSON-stringified.
+#
+# This was a hardcoded tuple of two keys and adding the `legal` dimension
+# silently broke ingest: legal=[] fell through to the scalar branch, reached
+# Chroma as a real empty list, and was rejected. The list is now derived from
+# the taxonomy, so a new multilabel dimension is handled without editing this
+# file. `gate` is excluded (binary) and `severity` (ordinal, single-valued).
+def _list_meta_keys() -> tuple[str, ...]:
+    import yaml
+    tax = yaml.safe_load(
+        Path("config/taxonomy.yaml").read_text(encoding="utf-8"))
+    keys = []
+    for dim, spec in tax["dimensions"].items():
+        if spec.get("type") != "multilabel":
+            continue
+        # Record fields are plural for the original two dimensions and
+        # singular for later ones, so accept both spellings.
+        keys += [dim, f"{dim}s"]
+    return tuple(dict.fromkeys(keys))
+
+
+LIST_META_KEYS = _list_meta_keys()
 
 
 def _kb_hash(records_path: Path) -> str:
@@ -49,10 +69,16 @@ def unsentinel(value):
     if value == "__none__" or value == "":
         return None
     if isinstance(value, str) and value.startswith("["):
+        # "[]" parses to [], which is NOT the same as None: it means the
+        # dataset annotated this dimension and the answer is empty. The whole
+        # None / [] / ["race"] distinction rests on this line.
         try:
             return json.loads(value)
         except json.JSONDecodeError:
             return value
+    # A real list can arrive if a newer Chroma stored it natively rather than
+    # as a JSON string. Pass it through unchanged rather than assuming the
+    # encoding.
     return value
 
 
@@ -74,11 +100,16 @@ def _flatten_meta(record: dict) -> dict:
 
     # merge the example-specific meta (gate, severity, illustrative_only, stgb)
     for k, v in record.get("meta", {}).items():
-        if k in LIST_META_KEYS:
-            # None stays None-ish via a sentinel; lists -> JSON
-            meta[k] = json.dumps(v) if v is not None else "__none__"
-        elif v is None:
+        if v is None:
             meta[k] = "__none__"
+        elif k in LIST_META_KEYS or isinstance(v, (list, tuple)):
+            # EVERY list is stringified, including the empty one. Newer Chroma
+            # accepts some non-empty lists natively but rejects [], and [] is
+            # precisely the value that carries meaning here: "annotated, and
+            # the answer is empty" - class 0 for legal, no target group for a
+            # DeTox item. The isinstance check is the backstop for any key not
+            # derived from the taxonomy.
+            meta[k] = json.dumps(list(v))
         else:
             meta[k] = v
 

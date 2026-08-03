@@ -1,0 +1,19 @@
+name: legal_dev_peasec_r2
+description: >
+  Replicate 2 of legal_dev_peasec. Identical in every respect - same model,
+  prompt, KB, items, temperature - so the spread across replicates measures
+  run-to-run variance on this subset directly.
+  Replication rather than a larger subset: at ~9 minutes per run on PEASEC a
+  replicate is cheaper than more items, and the measured variance floor on
+  English was +/-0.05 macro-F1, which exceeds several of the effects being
+  reported. The first run gave 0.581 / 0.597 / 0.613, and rag led on every
+  metric.
+subset: de_legal_dev_eval
+arms: [zero_shot, few_shot, rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: strict

@@ -53,6 +53,12 @@ SUBSETS = {
     ("en", "test"): {None: 500},
     ("de", "dev"): {None: 150},
     ("de", "test"): {None: 300},
+    # BoTox legal. Dev and test are used whole: at 175 and 177 items a
+    # label-stratified subsample would not meaningfully reduce cost at
+    # 6.5 s/call, and every class already clears MIN_SUPPORT by ~3x
+    # (dev 36/34/27, test 29/30/30).
+    ("de_legal", "dev"): {None: 175},
+    ("de_legal", "test"): {None: 177},
 }
 
 LIST_DIMS = ["target_groups", "hate_types"]
@@ -197,22 +203,38 @@ def report(df: pd.DataFrame, name: str, parent: pd.DataFrame) -> None:
         sub = (df["source"] == src).mean() * 100
         par = (parent["source"] == src).mean() * 100
         print(f"    {src:15} {sub:5.1f}%  vs {par:5.1f}%")
-    print(f"    {'gate=True':15} {df['gate'].mean() * 100:5.1f}%  "
-          f"vs {parent['gate'].mean() * 100:5.1f}%")
+    # BoTox never annotates the gate, so the mean is NaN there. Printed as
+    # "not annotated" rather than nan%, because None means the dataset never
+    # asked the question and that is different from an absent proportion.
+    g_sub, g_par = df["gate"].mean(), parent["gate"].mean()
+    if pd.isna(g_sub):
+        print(f"    {'gate=True':15} not annotated by this dataset")
+    else:
+        print(f"    {'gate=True':15} {g_sub * 100:5.1f}%  vs {g_par * 100:5.1f}%")
 
     print("\n  evaluable items per dimension:")
-    print(f"    {'gate':16} {len(df):4}  (every dataset annotates it)")
-    for col in LIST_DIMS + ["severity"]:
+    gate_ann = int(df["gate"].notna().sum())
+    print(f"    {'gate':16} {gate_ann:4}  annotated")
+    for col in LIST_DIMS + ["legal", "severity"]:
+        if col not in df.columns:
+            continue
         vals = [clean(v) for v in df[col]]
         annotated = sum(1 for v in vals if v is not None)
-        hateful = sum(1 for v, g in zip(vals, df["gate"]) if v is not None and g)
-        print(f"    {col:16} {annotated:4}  annotated, {hateful:4} of those hateful")
+        # "of those hateful" is meaningless where the gate is not annotated.
+        hateful = sum(1 for v, g in zip(vals, df["gate"])
+                      if v is not None and g is True)
+        print(f"    {col:16} {annotated:4}  annotated, "
+              f"{hateful:4} of those hateful")
 
     print("\n  positive items per label "
           "(macro-F1 is only as good as its thinnest label):")
-    for col in LIST_DIMS:
+    for col in LIST_DIMS + ["legal"]:
+        if col not in df.columns:
+            continue
         counter = Counter()
         for v in df[col]:
+            # clean() is required: parquet returns list columns as numpy
+            # arrays, which are unhashable and cannot go into a Counter.
             v = clean(v)
             if v:
                 counter.update(v)

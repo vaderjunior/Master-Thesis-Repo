@@ -38,9 +38,13 @@ dimensions:
           The text targets people because of their nationality,
           immigration or refugee status.
       other:
-        definition: >
-          The text targets an identifiable protected group not covered
-          by the labels above.
+          definition: >
+            The text targets a protected group not listed above, for example
+            people singled out by age, veteran or military status, caste,
+            socioeconomic class or poverty, homelessness, immigration
+            detention status, body size or physical appearance, or
+            occupation. Use this label only when a protected group is clearly
+            identified and none of the specific labels apply.
 
   hate_type:
     type: multilabel
@@ -75,3 +79,30 @@ dimensions:
       terciles of the Measuring Hate Speech aggregate score within the
       hateful mass. It is not a harm-type taxonomy. Cut-points in
       data/mappings/mhs_thresholds.md. See FOR_MARKUS.md #8.
+      
+  legal:
+    type: multilabel
+    labels:
+      propaganda:
+        definition: >
+          The text distributes propaganda material, or uses symbols, slogans,
+          or greetings of an organisation ruled unconstitutional in Germany,
+          particularly content promoting a former National Socialist
+          organisation. Examples include banned party slogans and coded
+          references to them. German Criminal Code sections 86 and 86a.
+      incitement_public_peace:
+        definition: >
+          The text publicly calls for criminal offences, threatens serious
+          crimes, incites hatred or violence against a national, racial,
+          religious or ethnic group, glorifies violence, or approves of or
+          rewards serious crimes. Includes Volksverhetzung, the German
+          provision most directly concerned with hate speech. A call must be
+          concrete: the act, and ideally the time, place or victim, should be
+          identifiable. German Criminal Code sections 111, 126, 130, 131, 140.
+      insult_defamation:
+        definition: >
+          The text insults a person or a legally recognised collective, spreads
+          a damaging claim that is not demonstrably true, or abuses a religious
+          or ideological community over its beliefs. Statements about public
+          figures are judged more permissively than statements about private
+          individuals. German Criminal Code sections 166, 185, 186.

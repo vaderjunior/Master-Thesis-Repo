@@ -20,10 +20,20 @@ import yaml
 
 TAXONOMY = Path("config/taxonomy.yaml")
 GUIDELINES = Path("config/guidelines.yaml")
+GUIDELINES_DE = Path("config/guidelines_de.yaml")
 PROCESSED = Path("data/processed")
 OUT = Path("kb/records.jsonl")
 
 EXAMPLES_PER_LABEL = 10  # mirror config; Phase 8 ablates this
+
+# BoTox legal examples. Higher than EXAMPLES_PER_LABEL because the legal
+# dimension has only one source dataset and no cross-lingual reach: the
+# English definitions and guidelines cannot help a German criminal-law
+# question the way they help a target_group question. 15 per class plus
+# negatives gives the German example pool real content instead of the 20
+# balanced records it has now.
+LEGAL_EXAMPLES_PER_LABEL = 15
+LEGAL_NEGATIVES = 20
 
 
 def gen_definitions() -> list[dict]:
@@ -71,20 +81,32 @@ def gen_definitions() -> list[dict]:
 
 
 def gen_guidelines() -> list[dict]:
-    """One record per hand-authored guideline."""
-    g = yaml.safe_load(GUIDELINES.read_text(encoding="utf-8"))
+    """One record per hand-authored guideline, English and German.
+
+    German guidelines are derived from the BoTox annotation guidelines
+    (Kums et al. 2025) rather than self-authored, and are kept in a separate
+    file so that provenance stays visible. They are also the first German
+    text in the guideline bucket: Phase 4 Finding C found BM25 inert for
+    German queries because every guideline was English, so a German query had
+    no lexical material to match against.
+    """
     records = []
-    for rule in g["guidelines"]:
-        records.append({
-            "id": f"guide-{rule['id']}",
-            "kind": "guideline",
-            "dimension": rule.get("dimension"),
-            "label": None,
-            "lang": "en",
-            "text": " ".join(rule["text"].split()),
-            "source": "guidelines_v1",
-            "meta": {},
-        })
+    for path, source, lang in ((GUIDELINES, "guidelines_v1", "en"),
+                               (GUIDELINES_DE, "guidelines_de_botox", "de")):
+        if not path.exists():
+            continue
+        g = yaml.safe_load(path.read_text(encoding="utf-8"))
+        for rule in g["guidelines"]:
+            records.append({
+                "id": f"guide-{rule['id']}",
+                "kind": "guideline",
+                "dimension": rule.get("dimension"),
+                "label": None,
+                "lang": rule.get("lang", lang),
+                "text": " ".join(rule["text"].split()),
+                "source": source,
+                "meta": {},
+            })
     return records
 
 def clean(val):
@@ -287,6 +309,106 @@ def gen_legal_illustrations(existing: list[dict]) -> list[dict]:
           f"{merged} merged into existing balanced examples")
     return records
 
+def gen_botox_examples(existing: list[dict]) -> list[dict]:
+    """BoTox train examples for the legal dimension.
+
+    WHY THESE ARE REAL EXAMPLES AND NOT ILLUSTRATIONS. The DeTox legal records
+    are illustrative_only: their paragraph flags were too sparse to score
+    (section 130 in ~16 comments), so they ground the legal motivation without
+    being evidence for a label. BoTox is prosecutor-trained and dense enough
+    to score - 188 / 215 / 220 across three classes - so its items are
+    labelled examples like any other.
+
+    NOTE ON meta.gate. BoTox never annotates the hate gate, so gate is None:
+    "this dataset never asked", not False. Criminal relevance is NOT a
+    hate-speech gate - a section 185 insult aimed at one private individual is
+    criminally relevant and not hate speech, while section 130 is both.
+    _render_gold prints only non-None dimensions, so these examples show a
+    legal label and nothing else, which is exactly right.
+
+    NEGATIVES ARE INCLUDED DELIBERATELY. legal=[] means "annotated, not
+    criminally relevant" - class 0 - and those are the offensive-but-not-
+    criminal cases the German example pool almost entirely lacks. The
+    accidental German few_shot experiment showed negatives suppress false
+    positives substantially, so they are sampled explicitly rather than left
+    to chance.
+
+    Leakage is already handled: the BoTox loader drops any row whose text
+    appears in a held-out split, and main() asserts the same thing over the
+    whole KB.
+    """
+    path = PROCESSED / "de_legal_train.parquet"
+    if not path.exists():
+        print("\n  botox: de_legal_train.parquet not found, skipping")
+        return []
+
+    df = pd.read_parquet(path)
+    seen = {r["id"] for r in existing}
+    records = []
+    coverage = defaultdict(int)
+
+    def add(row, key):
+        rec_id = f"ex-{row.id}"
+        coverage[key] += 1
+        if rec_id in seen:
+            return
+        seen.add(rec_id)
+        records.append({
+            "id": rec_id,
+            "kind": "example",
+            "dimension": None,
+            "label": None,
+            "lang": "de",
+            "text": row.text,
+            "source": "botox-train",
+            "meta": {
+                "gate": None,           # never annotated by this dataset
+                "target_groups": None,
+                "hate_types": None,
+                "severity": None,
+                "legal": clean(row.legal),
+                "illustrative_only": False,
+            },
+        })
+
+    rows = list(df.itertuples(index=False))
+
+    # Rarest class first: a multi-class item drawn for a rare class often also
+    # carries a common one, so filling rare classes first covers the common
+    # ones incidentally and keeps the total item count down.
+    #
+    # The coverage count is recomputed from `records` on every iteration, not
+    # once per label, because add() silently skips ids already present. An
+    # earlier version counted only at the top of each label's loop and the
+    # commonest class ended up with 2 of 15.
+    labels = sorted({l for r in rows for l in (clean(r.legal) or [])})
+    by_freq = sorted(labels,
+                     key=lambda l: sum(1 for r in rows
+                                       if l in (clean(r.legal) or [])))
+
+    def covered(label):
+        return sum(1 for r in records if label in (r["meta"]["legal"] or []))
+
+    for label in by_freq:
+        # Multi-class items first: they carry more information per prompt slot.
+        cands = [r for r in rows if label in (clean(r.legal) or [])]
+        cands.sort(key=lambda r: len(clean(r.legal) or []), reverse=True)
+        for row in cands:
+            if covered(label) >= LEGAL_EXAMPLES_PER_LABEL:
+                break
+            add(row, f"legal:{label}")
+
+    # Negatives: class 0, annotated and not criminally relevant.
+    negatives = [r for r in rows if not (clean(r.legal) or [])]
+    for row in negatives[:LEGAL_NEGATIVES]:
+        add(row, "legal:none")
+
+    print("\n  botox example coverage:")
+    for key, n in sorted(coverage.items()):
+        print(f"    {key:30} {n}")
+    print(f"  botox: {len(records)} records added")
+    return records
+
 
 def main():
     OUT.parent.mkdir(parents=True, exist_ok=True)
@@ -299,6 +421,50 @@ def main():
     examples = gen_examples()
     all_records += examples
     all_records += gen_legal_illustrations(examples)
+    # BoTox last, and given everything so far, so it cannot duplicate an id
+    # already present.
+    all_records += gen_botox_examples(all_records)
+
+    # DUPLICATE IDS mean a generator ran twice, or two generators produced the
+    # same record. Chroma rejects them at ingest, but only after the build has
+    # already spent a minute embedding; failing here is cheaper and says why.
+    # This is not hypothetical: gen_legal_illustrations was accidentally called
+    # twice and produced 148 records where there should have been 74.
+    dupe_ids = [i for i, n in Counter(r["id"] for r in all_records).items()
+                if n > 1]
+    assert not dupe_ids, (f"{len(dupe_ids)} duplicate record ids: "
+                          f"{dupe_ids[:5]}")
+
+    # NO KB RECORD MAY COME FROM A HELD-OUT SPLIT.
+    # Hard rule 1: KB examples come from TRAIN only. A KB example that also
+    # appears in an evaluation set turns retrieval into a lookup of the answer.
+    #
+    # DROPPED, NOT ASSERTED. Text overlap is a property of the source data, not
+    # a code bug: DeTox emits the same comment under more than one id, so one
+    # copy can be in de_train and another in de_dev while make_splits' dedup
+    # sees them as distinct rows. Three such records were found the first time
+    # this guard ran. Every German RAG result before that date was produced
+    # with them present.
+    held_out = set()
+    for split in ("en_dev", "en_test", "de_dev", "de_test",
+                  "de_legal_dev", "de_legal_test"):
+        p = PROCESSED / f"{split}.parquet"
+        if p.exists():
+            held_out |= {" ".join(str(t).lower().split())
+                         for t in pd.read_parquet(p)["text"]}
+
+    leaked = [r for r in all_records
+              if r["kind"] == "example"
+              and " ".join(str(r["text"]).lower().split()) in held_out]
+    if leaked:
+        print(f"\n  LEAKAGE: dropping {len(leaked)} KB examples whose text "
+              f"appears in a held-out split")
+        for r in leaked:
+            print(f"    {r['id']}  [{r['source']}]")
+        leaked_ids = {r["id"] for r in leaked}
+        all_records = [r for r in all_records if r["id"] not in leaked_ids]
+    print(f"  leakage check: 0 of {len(all_records)} records appear in "
+          f"{len(held_out)} held-out texts")
 
     with open(OUT, "w", encoding="utf-8") as f:
         for r in all_records:
@@ -312,6 +478,16 @@ def main():
     print(f"  by lang: {dict(by_lang)}")
     legal = sum(1 for r in all_records if r["meta"].get("illustrative_only"))
     print(f"  legal illustrations: {legal}")
+    by_source = Counter(r["source"] for r in all_records)
+    print(f"  by source: {dict(by_source)}")
+    de_ex = [r for r in all_records
+             if r["kind"] == "example" and r["lang"] == "de"]
+    de_illus = sum(1 for r in de_ex if r["meta"].get("illustrative_only"))
+    print(f"  German examples: {len(de_ex)} "
+          f"({de_illus} illustrative, {len(de_ex) - de_illus} labelled)")
+    de_guides = sum(1 for r in all_records
+                    if r["kind"] == "guideline" and r["lang"] == "de")
+    print(f"  German guidelines: {de_guides} (was 0 before BoTox)")
 
 
 if __name__ == "__main__":

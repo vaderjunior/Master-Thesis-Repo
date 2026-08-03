@@ -1,0 +1,20 @@
+name: types_peasec_kbv2
+description: >
+  hate_type under KB c34e780cc973cfde, paired against types_dev_peasec
+  (0.280 / 0.335 / 0.368 under kb 475869f9e2422969). Same model, same prompt
+  family, same items - only the knowledge base changed.
+  This is the English half of the adaptability measurement. The KB edit was
+  German-facing (8 German guidelines, 45 BoTox examples), so the prediction is
+  NO English effect: German examples are language-filtered out of the English
+  bucket, and 8 German guidelines compete with 11 English ones without a
+  language filter. A null result here is the control that makes the German
+  +0.019 attributable to the German additions rather than to KB size.
+subset: en_dev_eval_types
+arms: [zero_shot, few_shot, rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: strict

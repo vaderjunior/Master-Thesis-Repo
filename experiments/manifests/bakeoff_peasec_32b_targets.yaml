@@ -1,0 +1,17 @@
+name: bakeoff_peasec_32b_targets
+description: >
+  PEASEC Qwen3-VL-32B on en_dev_eval_targets, the same 56 label-stratified
+  items already run on TUDaGPT qwen3.5-122b-a10b. Paired item-for-item, so
+  the difference is the model and provider rather than the evaluation set.
+  Not a tuning-slice run: targets is a scoring subset for the target_group
+  dimension and was already spent on the confirmation run, so reusing it here
+  compares models rather than selecting one. Model SELECTION stays on
+  sq1_tune.
+subset: en_dev_eval_targets
+arms: [zero_shot, few_shot, rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: both

@@ -5,7 +5,10 @@ TAXONOMY AS DATA, AGAIN. The enums are built at import time from
 config/taxonomy.yaml. Adding a label to the taxonomy changes the prompt (via
 render_label_space), the knowledge base (via build_kb_records) AND the accepted
 output schema, with no code edit anywhere. That is the same mechanism the
-adaptability claim rests on, extended to validation.
+adaptability claim rests on, extended to validation. Adding the `legal`
+dimension exercised this end to end: the taxonomy edit propagated to the
+prompt's label space and to this schema, and only the schema's field list
+below had to be touched by hand.
 
 WHY VALIDATION AND NOT CONSTRAINED DECODING (assumption A4): constrained
 decoding needs logit access, which a remote API does not provide. The
@@ -42,6 +45,7 @@ TargetGroup = Enum("TargetGroup", {l: l for l in _labels(_tax, "target_group")},
                    type=str)
 HateType = Enum("HateType", {l: l for l in _labels(_tax, "hate_type")}, type=str)
 Severity = Enum("Severity", {l: l for l in _labels(_tax, "severity")}, type=str)
+Legal = Enum("Legal", {l: l for l in _labels(_tax, "legal")}, type=str)
 
 # Ordinal position for the severity median in the self-consistency vote (5.5).
 # Read from taxonomy order, not hardcoded, so a reordered or extended severity
@@ -53,7 +57,14 @@ FIELD_ALIASES = {
     "hate_types": "hate_type",
     "is_hate": "hate",
     "hateful": "hate",
+    "legal_class": "legal",
+    "legal_classes": "legal",
+    "legals": "legal",
 }
+
+# Fields that are lists of labels. Kept as one list so a new multilabel
+# dimension is added in a single place rather than in three loops.
+LIST_FIELDS = ("target_group", "hate_type", "legal")
 
 
 class Result(BaseModel):
@@ -66,17 +77,24 @@ class Result(BaseModel):
     target_group: list[TargetGroup] = []
     hate_type: list[HateType] = []
     severity: Severity | None = None
+    legal: list[Legal] = []
 
     _gate_normalised: bool = PrivateAttr(default=False)
 
     @model_validator(mode="after")
     def gate_consistency(self):
-        """hate=false must mean no sub-labels.
+        """hate=false must mean no hate-speech sub-labels.
 
         Kept as a normalisation rather than a hard error: the gate is the
         dimension every dataset annotates and the one every metric depends on,
         so an otherwise-parseable answer is worth keeping. The flag is what
         makes the frequency of this contradiction reportable.
+
+        `legal` is DELIBERATELY EXCLUDED from this rule. Criminal relevance
+        under the StGB is independent of the hate gate: a section 185 insult
+        aimed at one private individual is criminally relevant and not hate
+        speech, while section 130 Volksverhetzung is both. Clearing `legal`
+        here would erase a legitimate answer, so do not "fix" this later.
         """
         if not self.hate and (self.target_group or self.hate_type
                               or self.severity is not None):
@@ -122,7 +140,7 @@ def normalise_raw(obj: dict) -> tuple[dict, int]:
             n += 1
         return s
 
-    for field in ("target_group", "hate_type"):
+    for field in LIST_FIELDS:
         val = out.get(field)
         if val is None:                 # absent or explicit null -> empty list
             if field in out:

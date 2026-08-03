@@ -102,6 +102,12 @@ def effective_gate(row, mapping: str = "strict") -> bool:
     analysis about one annotation decision cannot leak into unrelated
     dimensions.
     """
+    # None means the dataset never annotated the gate - BoTox annotates only
+    # criminal relevance - and must not collapse to False. bool(None) is
+    # False, which would score 150 unannotated items as benign and report
+    # every hate prediction on them as a false positive.
+    if row.gate is None:
+        return None
     if mapping == "strict" or row.source != "hatexplain":
         return bool(row.gate)
     return True if hx_original_class(row.raw) == "offensive" else bool(row.gate)
@@ -179,6 +185,8 @@ def score_gate(rows: list, gold: dict, mapping: str = "strict") -> GateScore:
             out.n_unscored += 1
             continue
         truth = effective_gate(g, mapping)
+        if truth is None:      # dimension not annotated by this dataset
+            continue
         pred = bool(r["result"]["hate"])
         scored.append((truth, pred, g.source))
         if r.get("uncertain"):
@@ -246,12 +254,14 @@ def score_gate(rows: list, gold: dict, mapping: str = "strict") -> GateScore:
 def score_multilabel(rows: list, gold: dict, gold_col: str, pred_field: str,
                      min_support: int = MIN_SUPPORT,
                      fixed_labels: list | None = None) -> DimensionScore:
-    """Multilabel dimension, scored on gold-hateful items with non-None gold.
+    """Multilabel dimension, scored on items whose gold for it is not None.
 
-    ONLY GOLD-HATEFUL ITEMS. Including non-hateful ones would fill every label
-    with true negatives and drive F1 toward 1.0 without measuring anything.
-    The number reads as: given the item is hateful, does the system identify
-    the right labels.
+    GOLD-HATEFUL ITEMS ONLY, EXCEPT FOR `legal`. Including non-hateful items
+    would fill every label with true negatives and drive F1 toward 1.0 without
+    measuring anything, so the number reads as: given the item is hateful,
+    does the system identify the right labels. `legal` is exempt because
+    criminal relevance is independent of the hate gate and BoTox does not
+    annotate the gate at all.
 
     THE LABEL SET IS THE UNION of gold and predicted labels. Scoring only
     gold-observed labels would make a spurious prediction of a label absent
@@ -273,10 +283,26 @@ def score_multilabel(rows: list, gold: dict, gold_col: str, pred_field: str,
 
     for r in rows:
         g = gold.get(r["item_id"])
-        if g is None or not bool(g.gate):
+        if g is None:
             continue
-        truth = clean(getattr(g, gold_col))
-        if truth is None:            # dimension never annotated for this item
+        # Fine-grained dimensions are scored on gold-hateful items only:
+        # including benign ones fills every label with true negatives and
+        # drives F1 toward 1.0 without measuring anything.
+        #
+        # `legal` is the exception. BoTox never annotates the gate - criminal
+        # relevance is not a hate-speech gate - so gating on it would skip
+        # every item and score nothing. Its own [] (class 0, annotated and not
+        # criminally relevant) versus ["insult_defamation"] distinction
+        # already carries that information.
+        if pred_field != "legal" and not bool(g.gate):
+            continue
+        # getattr with a default, not a bare getattr: splits created before a
+        # dimension existed have no column for it at all. The English parquets
+        # predate `legal`, and a missing column means the same thing as a None
+        # value - this dataset never annotated the dimension - so it is
+        # skipped rather than raising.
+        truth = clean(getattr(g, gold_col, None))
+        if truth is None:
             continue
         if r["result"] is None:
             out.n_unscored += 1
@@ -412,6 +438,11 @@ def calibration(rows: list, gold: dict, mapping: str = "strict") -> dict:
         g = gold.get(r["item_id"])
         if g is None or r["result"] is None:
             continue
+        # The gate is not annotated on every dataset (BoTox annotates only
+        # criminal relevance), and calibration against a None truth value
+        # scores every prediction wrong.
+        if effective_gate(g, mapping) is None:
+            continue
         conf = r.get("agreement", {}).get("hate")
         if conf is None:
             continue
@@ -478,6 +509,8 @@ def score_all(df: pd.DataFrame, results: list, gate_mapping: str = "both",
                 rows, gold, "target_groups", "target_group", min_support)),
             "hate_type": asdict(score_multilabel(
                 rows, gold, "hate_types", "hate_type", min_support)),
+            "legal": asdict(score_multilabel(
+                rows, gold, "legal", "legal", min_support)),
             "severity": asdict(score_severity(rows, gold, min_support)),
             "calibration": calibration(rows, gold, mappings[0]),
             "honesty": honesty(rows),

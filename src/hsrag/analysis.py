@@ -105,7 +105,8 @@ def consistency(rows: list, taxonomy_labels: dict) -> dict:
                           for r in rows])
 
     for field, labels in (("target_group", taxonomy_labels["target_group"]),
-                          ("hate_type", taxonomy_labels["hate_type"])):
+                          ("hate_type", taxonomy_labels["hate_type"]),
+                          ("legal", taxonomy_labels["legal"])):
         units = []
         for r in rows:
             for label in labels:

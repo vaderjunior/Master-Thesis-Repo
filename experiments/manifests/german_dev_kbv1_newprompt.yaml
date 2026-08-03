@@ -1,0 +1,24 @@
+name: german_dev_kbv1_newprompt
+description: >
+  De-confounding run. german_dev (kb 475869f9e2422969, prompt
+  classify_v1-c74cb7ab) scored 0.777 / 0.755 / 0.766; german_dev_kbv2
+  (kb c34e780cc973cfde, prompt classify_v1-8e588db7) scored
+  0.779 / 0.759 / 0.785. Both the KB and the prompt changed between them, so
+  the rag +0.019 cannot be attributed to the KB edit alone.
+  This queries the OLD knowledge base under the CURRENT prompt, so comparing
+  it against german_dev_kbv2 changes exactly one variable. The old KB was
+  recovered byte-exactly from git commit fe8d239 and re-hashes to
+  475869f9e2422969, so the index is provably the one the original run used.
+  zero_shot is the control: it consults no KB and should match
+  german_dev_kbv2 within the measured +/-0.05 variance floor.
+subset: de_dev_eval
+arms: [zero_shot, few_shot, rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: strict
+records_path: kb/records_kbv1.jsonl
+chroma_path: kb/chroma_kbv1

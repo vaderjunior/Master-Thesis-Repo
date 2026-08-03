@@ -1,0 +1,14 @@
+name: bakeoff_tudagpt
+description: >
+  Baseline arm of the bake-off: the current pinned TUDaGPT model on exactly
+  the same 50 tuning items, so the comparison is paired rather than a
+  comparison against numbers measured on a different subset.
+subset: en_dev_eval_sq1_tune
+limit: 50
+arms: [zero_shot, few_shot, rag]
+provider: tudagpt
+pinned_model: qwen3.5-122b-a10b
+allow_fallback: false
+n_votes: 3
+workers: 4
+gate_mapping: both

@@ -1,0 +1,17 @@
+name: temp_types_t10_rep2
+description: >
+  Repeat of temp_types_t10 with no change of any kind: same model, same
+  prompt, same kb_version, same temperature, same items. The temperature
+  sweep was non-monotonic (rag 0.379 / 0.328 / 0.419 at T=0.3 / 0.7 / 1.0)
+  and an earlier run at identical settings scored 0.368, so this measures the
+  run-to-run variance floor directly. Any temperature effect smaller than
+  this spread is not measurable at n=103 with n_votes=3.
+subset: en_dev_eval_types
+arms: [zero_shot, rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: strict

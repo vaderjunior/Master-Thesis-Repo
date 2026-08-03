@@ -33,10 +33,15 @@ def main():
         cfg = yaml.safe_load(Path("config/config.yaml").read_text(encoding="utf-8"))
         from src.hsrag.retrieve import Retriever
         kb = cfg["kb"]
-        retriever = Retriever(chroma_path=Path(kb["chroma_path"]),
-                              records_path=Path(kb["records_path"]),
-                              model_name=kb["embedding_model"],
-                              cfg=dict(cfg["retrieval"]))
+        # Build from the FIRST manifest that overrides the KB, if any, so the
+        # stamped kb_version describes what the run will actually query rather
+        # than what config.yaml happens to point at.
+        first = next((load(n) for n in names if load(n).chroma_path), None)
+        retriever = Retriever(
+            chroma_path=Path(first.chroma_path if first else kb["chroma_path"]),
+            records_path=Path(first.records_path if first else kb["records_path"]),
+            model_name=kb["embedding_model"],
+            cfg=dict(cfg["retrieval"]))
 
     total = 0
     for name in names:

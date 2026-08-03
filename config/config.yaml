@@ -1,26 +1,42 @@
 api:
-    base_url_env: TUDAGPT_URL      # we read the actual URL from .env
-    token_env: TUDAGPT_TOKEN       # we read the actual token from .env
-
-    # Slugs verified live 2026-07-21 from the TUDaGPT model panel.
-    # Online models lead each list; offline ones trail as fallbacks in case
-    # they return. Availability on this shared infra changes without notice -
-    # re-verify before any formal run.
+  temperature: 1.0
+  timeout_seconds: 180
+  max_tokens: 4096          # peasec only; guards against silent truncation
+  tudagpt:
+    url_env: TUDAGPT_URL    # full endpoint, incl. /api/ai-req
+    token_env: TUDAGPT_TOKEN
+    default_model: qwen3.5-122b-a10b
     models_strong:
-      - qwen3.5-397b-a17b                    # online
-      - glm-4.7                              # online (web chat default)
-      - mistral-large-3-675b-instruct-2512   # OFFLINE 2026-07-21, was the lead
+      - qwen3.5-397b-a17b
+      - glm-4.7
+      - mistral-large-3-675b-instruct-2512   # OFFLINE 2026-07-21
     models_medium:
-      - qwen3.5-122b-a10b                    # online - THE PINNED MODEL (Q2)
-      - openai-gpt-oss-120b                  # online
+      - qwen3.5-122b-a10b
+      - openai-gpt-oss-120b
     models_fast:
-      - qwen3-30b-a3b-instruct-2507          # online, 3B active
-      - meta-llama-3.1-8b-instruct           # online
-      - apertus-70b-instruct-2509            # online
+      - qwen3-30b-a3b-instruct-2507
+      - meta-llama-3.1-8b-instruct
+  peasec:
+    url_env: PEASEC_URL     # https://openwebui.srv.peasec.de/api/v1
+    token_env: PEASEC_TOKEN
+    # Model IDs carry a vendor prefix and a slash. Verify against
+    # `check_client --provider peasec --list-models` before pinning: the
+    # TUDaGPT roster drifted silently between phases and documentation lagged.
+    default_model: Qwen/Qwen3-VL-32B-Instruct
+    models_strong:
+      - Qwen/Qwen3-VL-32B-Instruct
+    models_medium:
+      - Qwen/Qwen3-VL-32B-Instruct
+    models_fast:
+      - Qwen/Qwen3-VL-8B-Instruct
 
-    temperature: 1.0
-    max_retries: 2
-    timeout_seconds: 180
+classify:
+  provider: tudagpt         # switch to peasec once the bake-off says so
+  pinned_model: qwen3.5-122b-a10b
+  max_repair_retries: 2
+  n_votes_dev: 3
+  n_votes_formal: 5
+  fewshot_seed: 42
 
 paths:
   data_raw: data/raw
@@ -42,7 +58,7 @@ retrieval:
   use_mmr: true             # <- SQ1 Stage C
   mmr_lambda: 0.7
   mmr_pool_factor: 3
-  use_reranker: false       # stub, Phase 8 Stage C
+  use_reranker: false       
   rrf_k: 60                 # cited (Cormack 2009), not tuned
 
 classify:

@@ -63,6 +63,7 @@ class ItemResult:
     # position as a proxy. Stamped from now on so it is answerable directly.
     timestamp: float = 0.0
     workers: int = 1
+    temperature: float | None = None
 
     # attribution - the falsifiability stamps
     active_model: str | None = None
@@ -170,7 +171,7 @@ def _hit_ids(ctx: PromptContext) -> dict:
 def classify(item_id: str, text: str, lang: str, arm: str, client, arms: Arms,
              n_votes: int = 3, max_repairs: int = 2,
              pinned_model: str | None = None,
-             kb_version: str | None = None, workers: int = 1) -> ItemResult:
+             kb_version: str | None = None, workers: int = 1, temperature: float | None = None) -> ItemResult:
     """Classify one item under one arm. n sampled runs, then a vote."""
     ctx = arms.context(arm, text, lang)
     messages = build_prompt(text, lang, ctx)
@@ -187,6 +188,7 @@ def classify(item_id: str, text: str, lang: str, arm: str, client, arms: Arms,
         n_runs=n_votes,
         timestamp=time.time(),
         workers=workers,
+        temperature=temperature,
     )
 
     runs: list[RunResult] = []

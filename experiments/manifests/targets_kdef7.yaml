@@ -1,0 +1,32 @@
+name: targets_kdef7
+description: >
+  k_definitions sweep, prompted by a measured mechanism rather than a hunch.
+  The `other` target_group definition was rewritten to contain content words
+  (kb b3e1a021777f7b85) and became retrievable in isolation - BM25 ranks it #2
+  on a probe about age and poverty - but scored 0.000 F1 under RAG regardless.
+  Diagnostic on the stored retrieval provenance: def-target_group-other was
+  retrieved on 0 of the 16 gold-`other` items. With k_definitions=2 over 21
+  definitions from 5 dimensions, ranked purely by similarity, a residual
+  category can never win a slot. 9 of 32 retrieved definitions on this
+  target_group subset came from hate_type, severity or legal.
+  This raises k_definitions to 7, one per target_group label, so `other` can
+  reach the prompt. The wording fix is held constant; only the budget changes.
+subset: en_dev_eval_targets
+arms: [zero_shot, rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: both
+retrieval:
+  strategy: hybrid
+  k_definitions: 7
+  k_guidelines: 2
+  k_examples: 5
+  use_mmr: true
+  mmr_lambda: 0.7
+  mmr_pool_factor: 3
+  use_reranker: false
+  rrf_k: 60

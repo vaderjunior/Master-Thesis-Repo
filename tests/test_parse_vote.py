@@ -65,10 +65,10 @@ def test_repair_gives_up_and_is_bounded():
 
 # --- vote ------------------------------------------------------------------
 
-def _run(hate, tg=(), ht=(), sev=None):
+def _run(hate, tg=(), ht=(), sev=None, legal=()):
     return RunResult(result=Result(reasoning="r", hate=hate,
                                    target_group=list(tg), hate_type=list(ht),
-                                   severity=sev))
+                                   severity=sev, legal=list(legal)))
 
 
 def _failed():
@@ -121,3 +121,8 @@ def test_aggregate_enforces_gate_consistency():
     aggregate must not emit hate=false with sub-labels."""
     v = aggregate([_run(True, tg=["race"]), _run(False), _run(False)])
     assert not v.result.hate and v.result.target_group == []
+    
+def _run(hate, tg=(), ht=(), sev=None, legal=()):
+    return RunResult(result=Result(reasoning="r", hate=hate,
+                                   target_group=list(tg), hate_type=list(ht),
+                                   severity=sev, legal=list(legal)))

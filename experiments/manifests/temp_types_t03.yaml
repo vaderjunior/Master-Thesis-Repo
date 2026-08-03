@@ -1,0 +1,19 @@
+name: temp_types_t03
+description: >
+  Temperature ablation on hate_type, the dimension where the self-consistency
+  vote measurably HURTS: n=1 scores 0.429 against 0.368 for the n=3 vote,
+  because a correct label proposed by only one run is pruned by the
+  ">half the runs" rule. T=1.0 was inherited from the HAWKI web app default
+  in Phase 0 and never justified. Compares macro-F1, Krippendorff alpha, and
+  the n=1 vs n=3 gap at 0.3 / 0.7 / 1.0.
+  zero_shot and rag only: few_shot is not needed to answer a temperature
+  question and doubles the cost.
+subset: en_dev_eval_types
+arms: [zero_shot, rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 0.3
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: strict
