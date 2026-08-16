@@ -1,0 +1,52 @@
+name: types_kbv3_r3
+description: >
+  Replicate 3. Separate manifest because the runner is resumable and keys its
+  output file on this `name` field, not on the filename. A copy of r1 that
+  keeps `name: types_kbv3_r1` resumes r1, makes zero calls, and rewrites r1's
+  results. That happened on 2026-08-14 and cost a round trip.
+
+  Three arms on en_dev_eval_types under the current KB b3e1a021777f7b85 and
+  the frozen prompt classify_v1-8e588db7. No run of this subset exists under
+  any other current state: types_dev_peasec is prompt c74cb7ab + KB 475869f9,
+  types_peasec_kbv2 is prompt 8e588db7 + KB c34e780c.
+
+  WHY A THIRD REPLICATE. r1 and r2 gave rag - few_shot +0.132 and +0.136, with
+  within-arm spreads of 0.037 (rag) and 0.032 (few_shot). Both arms moved
+  together across replicates, so the delta spread was only 0.004 and both
+  bootstraps returned p = 0.000. With n=2 that co-movement is a coin flip. A
+  third point says whether the tight delta is real, and brings the SQ2
+  headline up to the three-replicate bar that killed five claims in Phase 8.
+
+  ALSO FEEDS the Phase 7 SQ2 reconciliation. This subset reports +0.134 while
+  en_dev_eval_sq3_types reports +0.033 on the same comparison at the same
+  state. r1's per-label decomposition puts 82% of the effect on `threatening`
+  (+0.432) and `irony` (+0.327), both at support 15-16, and few_shot's F1 on
+  those two is 0.087 and 0.316. That is the label-coverage mechanism of 3.11,
+  not obviously noise, so the reconciliation needs the same decomposition at
+  support 68 on the 467.
+
+  OPEN QUESTION IT CLOSES. rag predicted `explicit` twice in 103 items under
+  both earlier KBs, against 19-23 for zero_shot, while predicting it 49 times
+  in 467 items under the current KB. r1 under the current KB gives rag 0.105
+  against zero_shot 0.341 on this subset, which points to subset rather than
+  KB, and would make retraction 9's attribution incomplete. Needs r2 and r3.
+subset: en_dev_eval_types
+arms: [zero_shot, few_shot, rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: strict
+retrieval:
+  strategy: hybrid
+  k_definitions: 2
+  k_guidelines: 2
+  k_examples: 5
+  k_examples_feedback: 0
+  use_mmr: true
+  mmr_lambda: 0.7
+  mmr_pool_factor: 3
+  use_reranker: false
+  rrf_k: 60

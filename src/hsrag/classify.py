@@ -25,12 +25,14 @@ import hashlib
 import json
 import random
 from dataclasses import asdict, dataclass, field
+from functools import lru_cache
 from pathlib import Path
 import threading
 import time
 
 from src.hsrag.parse import RunResult, run_once
-from src.hsrag.prompt import PromptContext, build_prompt, prompt_version
+from src.hsrag.prompt import (PromptContext, build_prompt, prompt_version,
+                              taxonomy_version)
 from src.hsrag.retrieve import Hit
 from src.hsrag.schema import Result
 from src.hsrag.vote import aggregate
@@ -45,6 +47,42 @@ def text_hash(text: str) -> str:
     rebuilt and ids shift, the hash still pins what was actually sent.
     """
     return hashlib.sha256(" ".join(str(text).split()).encode()).hexdigest()[:16]
+
+
+@lru_cache(maxsize=1)
+def code_version() -> str:
+    """Content hash over the library source.
+
+    THE HOLE THIS CLOSES. prompt_version hashes the template; taxonomy_version
+    hashes the label space. Neither sees the library code. run_slice1 is
+    resumable, so a run interrupted, patched and resumed writes items produced
+    by two different versions of the code into ONE file under identical
+    stamps, and make_comparability reports no issue because every stamp it
+    checks genuinely is constant.
+
+    Not hypothetical. legal_dev_peasec (2026-08-02) carries `legal` in the
+    vote on its last 25 items and not on its first 150. It stopped at 150
+    because --n defaulted there with no manifest limit; by the time it was
+    resumed, both that bug and the missing `legal = majority_labels("legal")`
+    in vote.py had been fixed. Model, prompt, KB, temperature and workers were
+    identical throughout. Its legal macro-F1 read 0.171 against 0.609 for its
+    replicate, and it sat in the ledger as a valid third replicate for twelve
+    days.
+
+    Cached for the process lifetime, which is the correct semantics rather
+    than an optimisation: Python cannot swap loaded modules mid-run, so the
+    code that produced item 1 is the code that produced item 500. An edit
+    lands on the NEXT process, and that is exactly the boundary worth
+    stamping.
+
+    Same CRLF caveat as prompt_version: git normalises line endings on
+    checkout, so this hash is not comparable across a fresh clone.
+    """
+    h = hashlib.sha256()
+    for p in sorted(Path("src/hsrag").rglob("*.py")):
+        h.update(p.as_posix().encode())
+        h.update(p.read_bytes())
+    return h.hexdigest()[:8]
 
 
 @dataclass
@@ -68,6 +106,14 @@ class ItemResult:
     # attribution - the falsifiability stamps
     active_model: str | None = None
     prompt_version: str | None = None
+    # The label space is read from taxonomy.yaml at render time and reaches
+    # every prompt in every arm, so a taxonomy edit changes the system while
+    # prompt_version stays put. Stamped on ALL arms, unlike kb_version:
+    # zero_shot consults no knowledge base but does receive the label space.
+    taxonomy_version: str | None = None
+    # Hash of src/hsrag/*.py. The resumable runner means one results file can
+    # span a code change; this is the only stamp that can see it.
+    code_version: str | None = None
     kb_version: str | None = None            # None for zero_shot: no KB was used
     retrieval_config: dict | None = None     # the RESOLVED dict, not the file
     retrieved: dict = field(default_factory=dict)   # bucket -> [hit ids]
@@ -179,6 +225,8 @@ def classify(item_id: str, text: str, lang: str, arm: str, client, arms: Arms,
     out = ItemResult(
         item_id=item_id, text_hash=text_hash(text), lang=lang, arm=arm,
         prompt_version=prompt_version(),
+        taxonomy_version=taxonomy_version(),
+        code_version=code_version(),
         # zero_shot and few_shot consult no knowledge base and run no
         # retrieval, so stamping a kb_version on them would imply a dependency
         # that does not exist.

@@ -1,0 +1,40 @@
+name: sq3_r1_fb_k3
+description: >
+  SQ3 round 1, feedback arm, k_examples_feedback raised 1 -> 3. The
+  pre-registered follow-up to a null round 1, triggered by the rule written
+  before the run rather than chosen after seeing it.
+
+  Same KB 986c6379833cd5ca and the same 20 corrections; only how many reach
+  each prompt changes. At a measured 0.149 label-relevance per draw, three
+  draws give roughly 0.39 chance of at least one label-relevant correction
+  against 0.15 at k=1. If the null is caused by label-blind retrieval, this
+  should move; if feedback itself does not generalise at this scale, it
+  should not.
+
+  Cost: 3 of 6 example-shaped slots now carry corrections against 4
+  definition and guideline slots, pushing further toward the
+  example-following failure Mohammadi et al. 2025 describes and this project
+  has reproduced twice. Paired with sq3_r1_ctl_k3 so prompt length and slot
+  count are controlled.
+subset: en_dev_eval_sq3_types
+arms: [rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: strict
+records_path: kb/records_sq3_fb_r1.jsonl
+chroma_path: kb/chroma_sq3_fb_r1
+retrieval:
+  strategy: hybrid
+  k_definitions: 2
+  k_guidelines: 2
+  k_examples: 5
+  k_examples_feedback: 3
+  use_mmr: true
+  mmr_lambda: 0.7
+  mmr_pool_factor: 3
+  use_reranker: false
+  rrf_k: 60

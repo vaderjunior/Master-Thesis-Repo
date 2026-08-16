@@ -1,0 +1,44 @@
+name: sq3_r3_fb
+description: >
+  SQ3 round 3, feedback arm. KB 1e20fff99e435fa4: base 360 records plus 48
+  corrections. Round 3 adds 15, being every item the ROUND-2 FEEDBACK ARM got
+  wrong in b3. Each arm has selected against its own KB since round 2.
+
+  The correction pool has grown 20 -> 33 -> 48 while the effect has not moved:
+  fb - ctl on the never-corrected stratum was 0.000 at round 1 (434 items) and
+  +0.002 at round 2 (406 items), against a round-0 floor of 0.021. This round
+  asks whether a third of the batch pool changes that.
+
+  Two pre-registered trajectories run alongside. Label-relevance of retrieved
+  corrections has risen 0.149 (20 records, chance 0.152) -> 0.198 (33, chance
+  0.149); if it keeps rising at 48 while the curve stays flat, retrieval
+  measurably improves while generalisation measurably does not, which is the
+  dissociation this phase is built to report. Errors-per-batch on first
+  encounter is flat so far: b2 0.536 against a round-0 mean of 0.571, b3 0.464
+  against 0.473.
+
+  k_examples_feedback stays at 1. The k=3 ablation is recorded and rejected:
+  it moved fb - ctl to -0.025 macro and produced 9 sentinel flips against a
+  baseline of 1.
+records_path: kb/records_sq3_fb_r3.jsonl
+chroma_path: kb/chroma_sq3_fb_r3
+subset: en_dev_eval_sq3_types
+arms: [rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: strict
+retrieval:
+  strategy: hybrid
+  k_definitions: 2
+  k_guidelines: 2
+  k_examples: 5
+  k_examples_feedback: 1
+  use_mmr: true
+  mmr_lambda: 0.7
+  mmr_pool_factor: 3
+  use_reranker: false
+  rrf_k: 60

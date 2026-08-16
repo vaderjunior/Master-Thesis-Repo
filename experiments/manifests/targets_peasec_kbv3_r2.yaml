@@ -1,0 +1,67 @@
+name: targets_peasec_kbv3_r2
+description: >
+  Replicate 2 of targets_peasec_kbv3. Named after it rather than following the
+  types_kbv3_rN convention, because r1 already exists under the older name and
+  renaming a results file would break the ledger. run_slice1 asserts
+  name == filename stem, so both must match.
+
+  Three arms on en_dev_eval_targets under the current KB b3e1a021777f7b85 and
+  the frozen prompt classify_v1-8e588db7. Identical to targets_peasec_kbv3
+  (2026-08-03) in every field; its stored rag retrieval_config was checked
+  against this block before the run.
+
+  WHY. Build-guide 7.2 replaces a retracted target_group claim with a
+  per-label statement. Retraction 14 killed `main` target_group 0.877 (+0.159)
+  because it was a two-label macro over 28 scorable items of 150.
+  en_dev_eval_targets is the right subset - 56 items, all seven labels clear
+  MIN_SUPPORT (religion 15, other 16, sexual_orientation 16, disability 17,
+  national_origin 17, gender 19, race 25), cardinality 2.232, mixed source
+  (hatexplain 25, mhs 31), and zero near-duplicate leakage against TRAIN or
+  the KB (max cosine 0.9256 and 0.7496).
+
+  But ONE replicate exists at the current state, so there is no floor, and
+  without a floor no per-label claim can be made. Phase 7 has now corrected two
+  published floors that were taken from a single arm at two replicates
+  (en_dev_eval_types 0.037 -> 0.070, legal 0.018 -> 0.041), and in both cases
+  the widest arm was few_shot rather than the rag arm under test. Three
+  replicates of all three arms is the minimum that makes this subset readable.
+
+  WHAT THIS RUN IS EXPECTED TO SHOW, recorded before it runs. At support 15-25
+  the per-label floors will be large - the comparable figures at support 15-16
+  on en_dev_eval_types were 0.294 (explicit), 0.170 (irony), 0.138
+  (threatening). If they land in that range here, 56 items cannot support a
+  per-label arm comparison and the honest options are to report per-label
+  numbers with their floors and draw no arm conclusion, or to draw a larger
+  target_group subset. The latter is possible: unlike hate_type, whose pool is
+  exhausted (threatening down to 7 unused dev items), target_group has 2218
+  scorable items unused with disability rarest at 74, capping a balanced
+  7-label draw at 518. Deciding that AFTER seeing the floors is the point of
+  running these two first.
+
+  ALSO NOTE, free information. targets_kdef7 (2026-08-03) is the
+  k_definitions=7 ablation and carries rag+zero_shot only. k_definitions
+  touches retrieval, and zero_shot receives no retrieved context at all -
+  Arms.context returns PromptContext.zero_shot() and classify stamps
+  retrieval_config=None for it - so targets_kdef7's zero_shot arm is a valid
+  second zero_shot replicate at the current state, obtained for nothing. Its
+  rag arm is a different configuration and is not a replicate.
+subset: en_dev_eval_targets
+arms: [zero_shot, few_shot, rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: strict
+retrieval:
+  strategy: hybrid
+  k_definitions: 2
+  k_guidelines: 2
+  k_examples: 5
+  k_examples_feedback: 0
+  use_mmr: true
+  mmr_lambda: 0.7
+  mmr_pool_factor: 3
+  use_reranker: false
+  rrf_k: 60

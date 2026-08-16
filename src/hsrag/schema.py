@@ -1,4 +1,5 @@
 """
+schema.py
 Output schema: Pydantic model generated from taxonomy.yaml.
 
 TAXONOMY AS DATA, AGAIN. The enums are built at import time from

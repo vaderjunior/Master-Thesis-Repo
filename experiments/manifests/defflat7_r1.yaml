@@ -1,0 +1,48 @@
+name: defflat7_r1
+description: >
+  Build-guide 7.3, the budget-matched control. Flat k_definitions=7,
+  replicate 1. rag arm only.
+
+  WHY THIS ARM EXISTS. Proportional totals 7 slots against the current flat 2,
+  so proportional-minus-baseline confounds ALLOCATION with AMOUNT. This arm
+  holds the amount at 7 and changes only how it is allocated.
+
+  AND THE MATCHING IS SHARPER THAN IT LOOKS. Measured on targets_kdef7, which
+  is flat k=7, slots per item are target_group 3.45, hate_type 2.23,
+  legal 0.68, severity 0.34, hate 0.30. Proportional gives target_group 2,
+  hate_type 2, hate 1, severity 1, legal 1. So at matched budget the two arms
+  give hate_type almost identical coverage (2.23 vs 2.0, slightly DOWN under
+  proportional), and the entire difference is capping target_group and putting
+  a floor under hate, severity and legal.
+
+  So the three-way reading is:
+    proportional - flat2   the decision gate: change the config or freeze it
+    proportional - flat7   allocation, with hate_type coverage held constant
+    flat7 - flat2          amount
+  If proportional beats flat2 but ties flat7, the gain is more hate_type
+  definitions. If it beats flat7 too, the gain is the floors elsewhere.
+
+  Note flat k=7 pulls 7 of 21 definitions in one ranking, so a third of the
+  KB's definitions reach every prompt regardless of relevance. That is not a
+  configuration anyone would deploy; it exists to separate two causes.
+subset: en_dev_eval_sq3_types
+arms: [rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: strict
+retrieval:
+  strategy: hybrid
+  k_definitions: 7
+  k_definitions_mode: flat
+  k_guidelines: 2
+  k_examples: 5
+  k_examples_feedback: 0
+  use_mmr: true
+  mmr_lambda: 0.7
+  mmr_pool_factor: 3
+  use_reranker: false
+  rrf_k: 60

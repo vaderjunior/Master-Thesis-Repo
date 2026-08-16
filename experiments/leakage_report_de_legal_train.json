@@ -1,0 +1,678 @@
+{
+  "smoke": false,
+  "near": 0.95,
+  "very_near": 0.98,
+  "subsets": {
+    "de_dev_eval": {
+      "n_items": 150,
+      "langs": [
+        "de"
+      ],
+      "exact_match_items": [],
+      "normalised_match_items": [],
+      "near_items": [],
+      "very_near_items": [],
+      "max_cosine": 0.8714898824691772,
+      "top": [
+        {
+          "eval_id": "detox-1386363337366286350",
+          "cosine": 0.8715,
+          "train_split": "de_legal_train",
+          "train_id": "botox-653"
+        },
+        {
+          "eval_id": "detox-1384077573089497090",
+          "cosine": 0.7927,
+          "train_split": "de_legal_train",
+          "train_id": "botox-501"
+        },
+        {
+          "eval_id": "detox-1386563414525362183",
+          "cosine": 0.7569,
+          "train_split": "de_legal_train",
+          "train_id": "botox-421"
+        },
+        {
+          "eval_id": "detox-1388472317500706818",
+          "cosine": 0.723,
+          "train_split": "de_legal_train",
+          "train_id": "botox-972"
+        },
+        {
+          "eval_id": "detox-1391085826155716609",
+          "cosine": 0.7129,
+          "train_split": "de_legal_train",
+          "train_id": "botox-506"
+        },
+        {
+          "eval_id": "detox-1403990743539191810",
+          "cosine": 0.7115,
+          "train_split": "de_legal_train",
+          "train_id": "botox-572"
+        },
+        {
+          "eval_id": "detox-1395796597750042645",
+          "cosine": 0.7114,
+          "train_split": "de_legal_train",
+          "train_id": "botox-616"
+        },
+        {
+          "eval_id": "detox-1406543603913134080",
+          "cosine": 0.6961,
+          "train_split": "de_legal_train",
+          "train_id": "botox-548"
+        },
+        {
+          "eval_id": "detox-1384132635283185673",
+          "cosine": 0.6921,
+          "train_split": "de_legal_train",
+          "train_id": "botox-237"
+        },
+        {
+          "eval_id": "detox-1394302269911445519",
+          "cosine": 0.6892,
+          "train_split": "de_legal_train",
+          "train_id": "botox-8"
+        },
+        {
+          "eval_id": "detox-1387111226853969922",
+          "cosine": 0.6873,
+          "train_split": "de_legal_train",
+          "train_id": "botox-428"
+        },
+        {
+          "eval_id": "detox-1391646629061607424",
+          "cosine": 0.6839,
+          "train_split": "de_legal_train",
+          "train_id": "botox-525"
+        },
+        {
+          "eval_id": "detox-1385335191309258754",
+          "cosine": 0.6809,
+          "train_split": "de_legal_train",
+          "train_id": "botox-545"
+        },
+        {
+          "eval_id": "detox-1389132075740106753",
+          "cosine": 0.6743,
+          "train_split": "de_legal_train",
+          "train_id": "botox-838"
+        },
+        {
+          "eval_id": "detox-1389142989050720258",
+          "cosine": 0.6742,
+          "train_split": "de_legal_train",
+          "train_id": "botox-666"
+        },
+        {
+          "eval_id": "detox-1406533189997322241",
+          "cosine": 0.6718,
+          "train_split": "de_legal_train",
+          "train_id": "botox-425"
+        },
+        {
+          "eval_id": "detox-1406595163611357190",
+          "cosine": 0.6712,
+          "train_split": "de_legal_train",
+          "train_id": "botox-378"
+        },
+        {
+          "eval_id": "detox-1395813875279335426",
+          "cosine": 0.6704,
+          "train_split": "de_legal_train",
+          "train_id": "botox-1184"
+        },
+        {
+          "eval_id": "detox-1385512397285306370",
+          "cosine": 0.6688,
+          "train_split": "de_legal_train",
+          "train_id": "botox-506"
+        },
+        {
+          "eval_id": "detox-1403950435342422022",
+          "cosine": 0.6686,
+          "train_split": "de_legal_train",
+          "train_id": "botox-892"
+        }
+      ]
+    },
+    "de_legal_dev_eval": {
+      "n_items": 175,
+      "langs": [
+        "de"
+      ],
+      "exact_match_items": [],
+      "normalised_match_items": [],
+      "near_items": [
+        "botox-767",
+        "botox-900"
+      ],
+      "very_near_items": [],
+      "max_cosine": 0.9553800821304321,
+      "top": [
+        {
+          "eval_id": "botox-767",
+          "cosine": 0.9554,
+          "train_split": "de_legal_train",
+          "train_id": "botox-959"
+        },
+        {
+          "eval_id": "botox-900",
+          "cosine": 0.9534,
+          "train_split": "de_legal_train",
+          "train_id": "botox-911"
+        },
+        {
+          "eval_id": "botox-724",
+          "cosine": 0.9469,
+          "train_split": "de_legal_train",
+          "train_id": "botox-722"
+        },
+        {
+          "eval_id": "botox-752",
+          "cosine": 0.9094,
+          "train_split": "de_legal_train",
+          "train_id": "botox-1143"
+        },
+        {
+          "eval_id": "botox-1175",
+          "cosine": 0.8968,
+          "train_split": "de_legal_train",
+          "train_id": "botox-1012"
+        },
+        {
+          "eval_id": "botox-759",
+          "cosine": 0.8942,
+          "train_split": "de_legal_train",
+          "train_id": "botox-890"
+        },
+        {
+          "eval_id": "botox-733",
+          "cosine": 0.8647,
+          "train_split": "de_legal_train",
+          "train_id": "botox-906"
+        },
+        {
+          "eval_id": "botox-478",
+          "cosine": 0.8624,
+          "train_split": "de_legal_train",
+          "train_id": "botox-474"
+        },
+        {
+          "eval_id": "botox-764",
+          "cosine": 0.8394,
+          "train_split": "de_legal_train",
+          "train_id": "botox-790"
+        },
+        {
+          "eval_id": "botox-403",
+          "cosine": 0.8378,
+          "train_split": "de_legal_train",
+          "train_id": "botox-928"
+        },
+        {
+          "eval_id": "botox-743",
+          "cosine": 0.827,
+          "train_split": "de_legal_train",
+          "train_id": "botox-744"
+        },
+        {
+          "eval_id": "botox-825",
+          "cosine": 0.8255,
+          "train_split": "de_legal_train",
+          "train_id": "botox-26"
+        },
+        {
+          "eval_id": "botox-453",
+          "cosine": 0.8231,
+          "train_split": "de_legal_train",
+          "train_id": "botox-474"
+        },
+        {
+          "eval_id": "botox-374",
+          "cosine": 0.8227,
+          "train_split": "de_legal_train",
+          "train_id": "botox-379"
+        },
+        {
+          "eval_id": "botox-159",
+          "cosine": 0.8224,
+          "train_split": "de_legal_train",
+          "train_id": "botox-15"
+        },
+        {
+          "eval_id": "botox-461",
+          "cosine": 0.8195,
+          "train_split": "de_legal_train",
+          "train_id": "botox-768"
+        },
+        {
+          "eval_id": "botox-452",
+          "cosine": 0.8162,
+          "train_split": "de_legal_train",
+          "train_id": "botox-1163"
+        },
+        {
+          "eval_id": "botox-773",
+          "cosine": 0.814,
+          "train_split": "de_legal_train",
+          "train_id": "botox-729"
+        },
+        {
+          "eval_id": "botox-1029",
+          "cosine": 0.8072,
+          "train_split": "de_legal_train",
+          "train_id": "botox-911"
+        },
+        {
+          "eval_id": "botox-793",
+          "cosine": 0.7987,
+          "train_split": "de_legal_train",
+          "train_id": "botox-776"
+        }
+      ]
+    },
+    "de_legal_test_eval": {
+      "n_items": 177,
+      "langs": [
+        "de"
+      ],
+      "exact_match_items": [],
+      "normalised_match_items": [],
+      "near_items": [
+        "botox-807"
+      ],
+      "very_near_items": [],
+      "max_cosine": 0.9521957635879517,
+      "top": [
+        {
+          "eval_id": "botox-807",
+          "cosine": 0.9522,
+          "train_split": "de_legal_train",
+          "train_id": "botox-911"
+        },
+        {
+          "eval_id": "botox-78",
+          "cosine": 0.9269,
+          "train_split": "de_legal_train",
+          "train_id": "botox-449"
+        },
+        {
+          "eval_id": "botox-734",
+          "cosine": 0.9179,
+          "train_split": "de_legal_train",
+          "train_id": "botox-736"
+        },
+        {
+          "eval_id": "botox-371",
+          "cosine": 0.9172,
+          "train_split": "de_legal_train",
+          "train_id": "botox-370"
+        },
+        {
+          "eval_id": "botox-1161",
+          "cosine": 0.8876,
+          "train_split": "de_legal_train",
+          "train_id": "botox-769"
+        },
+        {
+          "eval_id": "botox-1179",
+          "cosine": 0.8687,
+          "train_split": "de_legal_train",
+          "train_id": "botox-749"
+        },
+        {
+          "eval_id": "botox-808",
+          "cosine": 0.8588,
+          "train_split": "de_legal_train",
+          "train_id": "botox-911"
+        },
+        {
+          "eval_id": "botox-772",
+          "cosine": 0.8538,
+          "train_split": "de_legal_train",
+          "train_id": "botox-776"
+        },
+        {
+          "eval_id": "botox-176",
+          "cosine": 0.8485,
+          "train_split": "de_legal_train",
+          "train_id": "botox-170"
+        },
+        {
+          "eval_id": "botox-81",
+          "cosine": 0.8432,
+          "train_split": "de_legal_train",
+          "train_id": "botox-776"
+        },
+        {
+          "eval_id": "botox-952",
+          "cosine": 0.8388,
+          "train_split": "de_legal_train",
+          "train_id": "botox-1143"
+        },
+        {
+          "eval_id": "botox-723",
+          "cosine": 0.8356,
+          "train_split": "de_legal_train",
+          "train_id": "botox-761"
+        },
+        {
+          "eval_id": "botox-727",
+          "cosine": 0.8269,
+          "train_split": "de_legal_train",
+          "train_id": "botox-455"
+        },
+        {
+          "eval_id": "botox-1180",
+          "cosine": 0.8216,
+          "train_split": "de_legal_train",
+          "train_id": "botox-778"
+        },
+        {
+          "eval_id": "botox-460",
+          "cosine": 0.8208,
+          "train_split": "de_legal_train",
+          "train_id": "botox-748"
+        },
+        {
+          "eval_id": "botox-154",
+          "cosine": 0.8188,
+          "train_split": "de_legal_train",
+          "train_id": "botox-26"
+        },
+        {
+          "eval_id": "botox-777",
+          "cosine": 0.818,
+          "train_split": "de_legal_train",
+          "train_id": "botox-763"
+        },
+        {
+          "eval_id": "botox-737",
+          "cosine": 0.8174,
+          "train_split": "de_legal_train",
+          "train_id": "botox-768"
+        },
+        {
+          "eval_id": "botox-1107",
+          "cosine": 0.813,
+          "train_split": "de_legal_train",
+          "train_id": "botox-572"
+        },
+        {
+          "eval_id": "botox-902",
+          "cosine": 0.8113,
+          "train_split": "de_legal_train",
+          "train_id": "botox-15"
+        }
+      ]
+    },
+    "de_test_eval": {
+      "n_items": 300,
+      "langs": [
+        "de"
+      ],
+      "exact_match_items": [],
+      "normalised_match_items": [],
+      "near_items": [
+        "detox-1403984994796818436"
+      ],
+      "very_near_items": [],
+      "max_cosine": 0.9667367935180664,
+      "top": [
+        {
+          "eval_id": "detox-1403984994796818436",
+          "cosine": 0.9667,
+          "train_split": "de_legal_train",
+          "train_id": "botox-540"
+        },
+        {
+          "eval_id": "detox-1385597343953731588",
+          "cosine": 0.9485,
+          "train_split": "de_legal_train",
+          "train_id": "botox-658"
+        },
+        {
+          "eval_id": "detox-1389205908903837698",
+          "cosine": 0.9213,
+          "train_split": "de_legal_train",
+          "train_id": "botox-637"
+        },
+        {
+          "eval_id": "detox-1385099546343116801",
+          "cosine": 0.8909,
+          "train_split": "de_legal_train",
+          "train_id": "botox-1145"
+        },
+        {
+          "eval_id": "detox-1395048888365723652",
+          "cosine": 0.8871,
+          "train_split": "de_legal_train",
+          "train_id": "botox-1076"
+        },
+        {
+          "eval_id": "detox-1392495026542891012",
+          "cosine": 0.7906,
+          "train_split": "de_legal_train",
+          "train_id": "botox-878"
+        },
+        {
+          "eval_id": "detox-1388474989557522432",
+          "cosine": 0.7629,
+          "train_split": "de_legal_train",
+          "train_id": "botox-13"
+        },
+        {
+          "eval_id": "detox-1393637866186608647",
+          "cosine": 0.7589,
+          "train_split": "de_legal_train",
+          "train_id": "botox-1184"
+        },
+        {
+          "eval_id": "detox-1389510713857781764",
+          "cosine": 0.7403,
+          "train_split": "de_legal_train",
+          "train_id": "botox-616"
+        },
+        {
+          "eval_id": "detox-1403237339288178694",
+          "cosine": 0.7313,
+          "train_split": "de_legal_train",
+          "train_id": "botox-571"
+        },
+        {
+          "eval_id": "detox-1390770441078329355",
+          "cosine": 0.7311,
+          "train_split": "de_legal_train",
+          "train_id": "botox-830"
+        },
+        {
+          "eval_id": "detox-1385133063617777665",
+          "cosine": 0.7253,
+          "train_split": "de_legal_train",
+          "train_id": "botox-48"
+        },
+        {
+          "eval_id": "detox-1394291501572792327",
+          "cosine": 0.725,
+          "train_split": "de_legal_train",
+          "train_id": "botox-537"
+        },
+        {
+          "eval_id": "detox-1393585017708851208",
+          "cosine": 0.7239,
+          "train_split": "de_legal_train",
+          "train_id": "botox-999"
+        },
+        {
+          "eval_id": "detox-1404316788230328326",
+          "cosine": 0.7227,
+          "train_split": "de_legal_train",
+          "train_id": "botox-590"
+        },
+        {
+          "eval_id": "detox-1396110866437836801",
+          "cosine": 0.7211,
+          "train_split": "de_legal_train",
+          "train_id": "botox-878"
+        },
+        {
+          "eval_id": "detox-1384155205680254986",
+          "cosine": 0.7205,
+          "train_split": "de_legal_train",
+          "train_id": "botox-1053"
+        },
+        {
+          "eval_id": "detox-1405223026560573444",
+          "cosine": 0.7122,
+          "train_split": "de_legal_train",
+          "train_id": "botox-571"
+        },
+        {
+          "eval_id": "detox-1387122007511285760",
+          "cosine": 0.7119,
+          "train_split": "de_legal_train",
+          "train_id": "botox-5"
+        },
+        {
+          "eval_id": "detox-1395161807396999173",
+          "cosine": 0.6982,
+          "train_split": "de_legal_train",
+          "train_id": "botox-1184"
+        }
+      ]
+    },
+    "en_dev_eval_main": {
+      "n_items": 299,
+      "langs": [
+        "en"
+      ],
+      "exact_match_items": [],
+      "normalised_match_items": [],
+      "near_items": [],
+      "very_near_items": [],
+      "max_cosine": null,
+      "top": []
+    },
+    "en_dev_eval_severity": {
+      "n_items": 45,
+      "langs": [
+        "en"
+      ],
+      "exact_match_items": [],
+      "normalised_match_items": [],
+      "near_items": [],
+      "very_near_items": [],
+      "max_cosine": null,
+      "top": []
+    },
+    "en_dev_eval_sq1_tune": {
+      "n_items": 250,
+      "langs": [
+        "en"
+      ],
+      "exact_match_items": [],
+      "normalised_match_items": [],
+      "near_items": [],
+      "very_near_items": [],
+      "max_cosine": null,
+      "top": []
+    },
+    "en_dev_eval_sq3_feedback": {
+      "n_items": 351,
+      "langs": [
+        "en"
+      ],
+      "exact_match_items": [],
+      "normalised_match_items": [],
+      "near_items": [],
+      "very_near_items": [],
+      "max_cosine": null,
+      "top": []
+    },
+    "en_dev_eval_sq3_types": {
+      "n_items": 467,
+      "langs": [
+        "en"
+      ],
+      "exact_match_items": [],
+      "normalised_match_items": [],
+      "near_items": [],
+      "very_near_items": [],
+      "max_cosine": null,
+      "top": []
+    },
+    "en_dev_eval_targets": {
+      "n_items": 56,
+      "langs": [
+        "en"
+      ],
+      "exact_match_items": [],
+      "normalised_match_items": [],
+      "near_items": [],
+      "very_near_items": [],
+      "max_cosine": null,
+      "top": []
+    },
+    "en_dev_eval_types": {
+      "n_items": 103,
+      "langs": [
+        "en"
+      ],
+      "exact_match_items": [],
+      "normalised_match_items": [],
+      "near_items": [],
+      "very_near_items": [],
+      "max_cosine": null,
+      "top": []
+    },
+    "en_test_eval": {
+      "n_items": 500,
+      "langs": [
+        "en"
+      ],
+      "exact_match_items": [],
+      "normalised_match_items": [],
+      "near_items": [],
+      "very_near_items": [],
+      "max_cosine": null,
+      "top": []
+    },
+    "en_test_eval_severity": {
+      "n_items": 75,
+      "langs": [
+        "en"
+      ],
+      "exact_match_items": [],
+      "normalised_match_items": [],
+      "near_items": [],
+      "very_near_items": [],
+      "max_cosine": null,
+      "top": []
+    },
+    "en_test_eval_targets": {
+      "n_items": 102,
+      "langs": [
+        "en"
+      ],
+      "exact_match_items": [],
+      "normalised_match_items": [],
+      "near_items": [],
+      "very_near_items": [],
+      "max_cosine": null,
+      "top": []
+    },
+    "en_test_eval_types": {
+      "n_items": 173,
+      "langs": [
+        "en"
+      ],
+      "exact_match_items": [],
+      "normalised_match_items": [],
+      "near_items": [],
+      "very_near_items": [],
+      "max_cosine": null,
+      "top": []
+    }
+  }
+}

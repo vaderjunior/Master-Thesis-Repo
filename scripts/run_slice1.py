@@ -54,6 +54,8 @@ def main():
     ap.add_argument("--subset", default="en_dev_eval_main")
     ap.add_argument("--n", type=int, default=150)
     ap.add_argument("--arms", nargs="+", default=ARMS)
+    ap.add_argument("--yes", "-y", action="store_true",
+                    help="skip the confirmation prompt; for queued runs")
     ap.add_argument("--workers", type=int, default=1,
                     help="parallel API calls; each worker gets its own client")
     ap.add_argument("--dry-run", action="store_true", help="MockClient, no API")
@@ -72,6 +74,19 @@ def main():
     if args.manifest:
         from src.hsrag.manifest import load as load_manifest, resolve
         mf = load_manifest(args.manifest)
+        # The output file is keyed on mf.name, NOT on the filename. A manifest
+        # copied to a new filename with the old `name` still inside resumes the
+        # OLD run: zero calls made, and the old results file rewritten. That
+        # happened on 2026-08-14 with types_kbv3_r3 - check_manifest printed
+        # `manifest types_kbv3_r1` in its header and the line was missed.
+        # Checked against all 61 existing manifests before adding this: zero
+        # mismatches, so it cannot break a historical run.
+        _stem = Path(args.manifest).stem
+        assert mf.name == _stem, (
+            f"manifest name/filename mismatch: the file is {_stem}.yaml but "
+            f"`name:` says {mf.name!r}. Results would go to "
+            f"{mf.name}_live.jsonl and an existing run of that name would be "
+            f"RESUMED rather than replicated. Fix the `name:` field.")
         args.subset, args.arms, args.workers = mf.subset, mf.arms, mf.workers
         # A manifest with no limit means the whole subset, not the CLI
         # default. legal_dev_peasec silently ran 150 of 175 items because
@@ -119,8 +134,15 @@ def main():
         retriever = Retriever(chroma_path=chroma_dir,
                               records_path=records_file,
                               model_name=kb["embedding_model"],
-                              cfg=dict(mf.retrieval if (mf and mf.retrieval)
-                                       else cfg_all["retrieval"]))
+                              # MERGE, not replace. A manifest that set one
+                              # retrieval key used to drop every other key and
+                              # KeyError inside Retriever. SQ3 round manifests
+                              # set only k_examples_feedback, so merging is
+                              # what lets them do that without restating the
+                              # whole block.
+                              cfg={**cfg_all["retrieval"],
+                                   **(dict(mf.retrieval)
+                                      if (mf and mf.retrieval) else {})})
         arms = Arms(retriever=retriever, records_path=records_file,
                     k_examples=cfg_all["retrieval"]["k_examples"],
                     seed=ccfg["fewshot_seed"])
@@ -164,7 +186,13 @@ def main():
         if provider == "mock":
             wall_s = 0.01
         elif provider == "peasec":
-            wall_s = 8.0 if args.workers == 1 else 3.0
+            # MEASURED on real classification prompts with retrieved context:
+            # sq3_round0_r1, 1401 calls in 26.5 min at 8 workers = 1.13 s/call
+            # wall-clock (9.1 s per-worker latency / 8). The 3.0 that stood
+            # here was the conservative placeholder its own comment invited
+            # replacing, and it overestimated by 2.6x. That matters for SQ3,
+            # where a round count multiplies it.
+            wall_s = 8.0 if args.workers == 1 else 1.2
         else:
             wall_s = 30.0 if args.workers == 1 else 17.0
         est = calls * wall_s / 60
@@ -172,8 +200,12 @@ def main():
         print(f"  provider {provider}, {args.workers} worker(s), "
               f"~{wall_s:g} s/call measured -> ~{est:.0f} min")
 
-        if not args.dry_run and input("proceed? [y/N] ").strip().lower() != "y":
-            return
+        # The prompt stays the default: these runs spend real API time and the
+        # cost line above is the last chance to notice a wrong subset or an
+        # override that did not land. --yes is for queueing several runs.
+        if not args.dry_run and not args.yes:
+            if input("proceed? [y/N] ").strip().lower() != "y":
+                return
 
         # Each worker gets its OWN client: active_model is mutable state, and a
         # shared client would race on exactly the stamp the attribution

@@ -1,0 +1,42 @@
+name: main_base_r0_rep2
+description: >
+
+  Replicate 2 of the base-KB reference arm; separate manifest because the runner is resumable.
+  
+  Reference arm for the gate side-effect test. Unedited base KB
+  b3e1a021777f7b85, no feedback records, k_examples_feedback 0. This is the
+  no-feedback baseline the two SQ3 arms branch from, and no run of
+  en_dev_eval_main exists under this KB - main_peasec_kbv2 used c34e780c.
+
+  WHY THIS SUBSET. Across every k=1 SQ3 run the feedback arm had fewer gate
+  false negatives (54/59/62/64) than the control (65/66/68/69) or round 0
+  (65/67/68/69) - the four lowest of twelve values, p = 0.002. But
+  en_dev_eval_sq3_types is 100% hateful, so "fewer false negatives" is
+  indistinguishable from "says hate more often". en_dev_eval_main is the only
+  EN subset with benign items and can separate the two.
+
+  All 299 items, not the 150 every previous main run used.
+
+  en_dev_eval_main is disjoint from en_dev_eval_sq3_types, so no item here is
+  in any SQ3 knowledge base. Nothing is written back; this is measurement
+  only and the reporting slice stays uncontaminated.
+subset: en_dev_eval_main
+arms: [rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: both
+retrieval:
+  strategy: hybrid
+  k_definitions: 2
+  k_guidelines: 2
+  k_examples: 5
+  k_examples_feedback: 0
+  use_mmr: true
+  mmr_lambda: 0.7
+  mmr_pool_factor: 3
+  use_reranker: false
+  rrf_k: 60

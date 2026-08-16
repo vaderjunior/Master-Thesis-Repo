@@ -1,4 +1,5 @@
 """
+analysis.py 
 Consistency, significance, and the guideline instrument.
 
 Everything here runs on stored ItemResults. No API calls, ever - which is why
@@ -240,6 +241,12 @@ def paired_bootstrap(rows_a: list, rows_b: list, gold: dict, score_fn,
     return {"score_a": obs_a, "score_b": obs_b, "delta": obs_a - obs_b,
             "ci_low": float(np.percentile(d, 2.5)),
             "ci_high": float(np.percentile(d, 97.5)),
+            # SD of the resampled delta distribution. Added for the Phase 7
+            # SQ2 reconciliation: comparing the 103-item and 467-item
+            # estimates needs a standard error, and reconstructing one from
+            # the percentile CI is lossy when the distribution is skewed.
+            # Additive only - no existing caller reads this key.
+            "sd": float(d.std(ddof=1)),
             "p_value": float(p), "n_items": len(ids),
             "n_resamples": len(deltas),
             "favour_a": n_a, "ties": n_tie, "favour_b": n_b}

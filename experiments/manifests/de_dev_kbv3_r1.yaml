@@ -1,0 +1,38 @@
+name: de_dev_kbv3_r1
+description: >
+  German gate under the current KB b3e1a021777f7b85 and the frozen prompt.
+  This subset has only ever been run under 475869f9 and c34e780c, so the
+  German gate numbers sit in a different comparability group from every
+  English result and cannot be tabulated beside them without a caveat.
+
+  Two replicates, giving the German gate its first within-condition floor
+  under a fixed state. The existing +/-0.018 came from four zero_shot runs
+  under a retired KB.
+
+  This does NOT replace the German adaptability result. The +0.043 is a
+  kbv1-vs-kbv2 comparison, de-confounded by german_dev_kbv1_newprompt, and is
+  self-contained; a run under b3e1a021 adds a third point to the series.
+
+  Note when reading few_shot across KB versions: Arms._build_fewshot samples
+  the static set from records_path at seed 42, so a changed example pool can
+  change the static set. The German pool gained BoTox examples in kbv2.
+subset: de_dev_eval
+arms: [zero_shot, few_shot, rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: strict
+retrieval:
+  strategy: hybrid
+  k_definitions: 2
+  k_guidelines: 2
+  k_examples: 5
+  k_examples_feedback: 0
+  use_mmr: true
+  mmr_lambda: 0.7
+  mmr_pool_factor: 3
+  use_reranker: false
+  rrf_k: 60

@@ -1,0 +1,42 @@
+name: nolabel_rag_r1
+description: >
+  New-label adaptability, REMOVED state, rag arm. Taxonomy taxonomy-1a24b4b1
+  and KB 4033028913cca634 (349 records: def-hate_type-grievance dropped, plus
+  the 10 example records carrying that label).
+
+  SYSTEM-LEVEL RESULT, NOT A PATHWAY TEST. This arm differs from the restored
+  state in three ways at once - the label is absent from the label space, its
+  definition is gone, and 10 examples are gone. That is what adding a label to
+  a deployed system actually looks like, and it is reported as such. The
+  zero_shot arm isolates the label-space pathway alone.
+
+  The examples must go, not merely the definition: _render_gold prints an
+  example's gold labels into the prompt, so leaving them would display
+  hate_type=[grievance] while grievance is absent from the label space, and
+  the prompt would contradict itself.
+
+  The RESTORED state already exists: sq3_round0_r1..r4, four rag replicates on
+  the same 467 items under the full taxonomy and KB b3e1a021777f7b85, with
+  grievance F1 0.411 +/- 0.023 and macro 0.357 +/- 0.021.
+records_path: kb/records_no_grievance.jsonl
+chroma_path: kb/chroma_no_grievance
+subset: en_dev_eval_sq3_types
+arms: [rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: strict
+retrieval:
+  strategy: hybrid
+  k_definitions: 2
+  k_guidelines: 2
+  k_examples: 5
+  k_examples_feedback: 0
+  use_mmr: true
+  mmr_lambda: 0.7
+  mmr_pool_factor: 3
+  use_reranker: false
+  rrf_k: 60

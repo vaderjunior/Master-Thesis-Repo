@@ -1,0 +1,36 @@
+name: main_sq3_fb_r4
+description: >
+  Feedback arm's round-4 KB e4ff5e0234d51ba3 (60 error-selected corrections)
+  on the balanced reporting slice. Paired with main_sq3_ctl_r4 and
+  main_base_r0.
+
+  The prediction, stated before the run: if the SQ3 gate effect is genuine
+  adaptation, false negatives fall relative to both other arms while false
+  positives do not rise. If it is over-flagging, FP rises in step and the
+  effect is an artefact of measuring recall on an all-hateful subset.
+
+  Note that both arms' records carry gate=true, since every SQ3 item is
+  hateful - so any pure "more hateful examples" effect should appear in the
+  control too. Only a fb-specific FN drop supports error-selection.
+records_path: kb/records_sq3_fb_r4.jsonl
+chroma_path: kb/chroma_sq3_fb_r4
+subset: en_dev_eval_main
+arms: [rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: both
+retrieval:
+  strategy: hybrid
+  k_definitions: 2
+  k_guidelines: 2
+  k_examples: 5
+  k_examples_feedback: 1
+  use_mmr: true
+  mmr_lambda: 0.7
+  mmr_pool_factor: 3
+  use_reranker: false
+  rrf_k: 60

@@ -1,0 +1,60 @@
+name: defprop_targets_r2
+description: >
+  Build-guide 7.3, the `other` test. Proportional definition budgets on
+  en_dev_eval_targets, rag arm only, replicate 1.
+
+  WHY A SECOND SUBSET AFTER THE GATE HAS ALREADY BEEN DECIDED. The decision
+  gate was read on en_dev_eval_sq3_types and did not trip: proportional minus
+  flat2 is -0.006 against a floor of 0.021, so the config is frozen at flat
+  k=2. This run does not reopen that. It tests a separate architectural claim
+  that en_dev_eval_sq3_types structurally cannot: `target_group` is not
+  annotated there.
+
+  THE CLAIM. `other` is a residual category defined by exclusion. On this
+  subset it is gold on 16 of 56 items - almost identical to `disability`'s 17 -
+  and its definition is retrieved on 1 item against `disability`'s 21, a 21x
+  gap at equal prevalence. `rag` scores it 0.039 against `zero_shot`'s 0.107,
+  so retrieval actively HURTS it.
+
+  PRE-REGISTERED, and 2a is already near-certain from a zero-API probe:
+  2a. `other`'s definition reaches far more prompts. Under proportional it
+      ranked FIRST within target_group on the probe text "immigrants are
+      ruining this country", because its definition names "immigration
+      detention status". Competing against 6 siblings rather than 20 is
+      enough.
+  2b. `other`'s F1 does NOT improve proportionally. If 2a holds and 2b holds,
+      the bottleneck is ADHERENCE, not retrieval - the model is shown what
+      `other` covers and still prefers a specific label. That is a fourth
+      in-system reproduction of Mohammadi et al. 2025, and it is the outcome
+      worth having.
+
+  WITHDRAWN, recorded because the retraction is the point: an earlier version
+  of 2b said a residual category "cannot win a within-dimension similarity
+  slot". The probe falsified that. The real mechanism is that it cannot win a
+  WHOLE-CORPUS slot.
+
+  Baseline for comparison is targets_peasec_kbv3 / _r2 / _r3, three replicates
+  at flat k=2, floor 0.043 on the 7-label macro and 0.023 on the 6-label.
+subset: en_dev_eval_targets
+arms: [rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: strict
+retrieval:
+  strategy: hybrid
+  k_definitions: 2
+  k_definitions_mode: proportional
+  k_definitions_per_dimension: 1
+  k_definitions_per_label: 0.3
+  k_guidelines: 2
+  k_examples: 5
+  k_examples_feedback: 0
+  use_mmr: true
+  mmr_lambda: 0.7
+  mmr_pool_factor: 3
+  use_reranker: false
+  rrf_k: 60

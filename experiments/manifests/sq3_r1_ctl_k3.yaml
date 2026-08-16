@@ -1,0 +1,41 @@
+name: sq3_r1_ctl_k3
+description: >
+  SQ3 round 1, MATCHED-SIZE CONTROL at k_examples_feedback 3. Paired with
+  sq3_r1_fb_k3.
+
+  Raising k from 1 to 3 changes two things at once: how much feedback reaches
+  the prompt, and how long the prompt is. This arm holds the second constant.
+  Both arms now render 3 records in the feedback bucket on top of the same 5
+  regular example slots, so prompt shape, slot count and record count are
+  identical and the only remaining difference is whether those records were
+  selected by error.
+
+  KB 329b15027f14c02e: the base 360 records plus the same 20
+  correctly-labelled records as sq3_r1_ctl - 13 items from batch b1 the
+  round-0 system got right, plus 7 TRAIN items with gold labels.
+
+  Without this arm, any k=3 movement in the feedback arm would be confounded
+  with simply putting more example-shaped text in the prompt.
+  
+subset: en_dev_eval_sq3_types
+arms: [rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: strict
+records_path: kb/records_sq3_ctl_r1.jsonl
+chroma_path: kb/chroma_sq3_ctl_r1
+retrieval:
+  strategy: hybrid
+  k_definitions: 2
+  k_guidelines: 2
+  k_examples: 5
+  k_examples_feedback: 3
+  use_mmr: true
+  mmr_lambda: 0.7
+  mmr_pool_factor: 3
+  use_reranker: false
+  rrf_k: 60

@@ -57,6 +57,23 @@ class PromptContext:
         groups = []
         if regular:
             groups.append(("Labelled examples", regular))
+        # SQ3 feedback, as its own group so classify._hit_ids logs its ids
+        # under their own key - which is what the reachability check reads to
+        # ask whether a correction actually reached a prompt.
+        #
+        # The heading is deliberately neutral. The feedback arm writes
+        # corrections here; the matched-size control arm writes randomly drawn
+        # correct examples. A heading saying "Corrected" would make the two
+        # arms differ in what the model is TOLD as well as in which records it
+        # gets, which is the thing the control exists to hold constant.
+        #
+        # It reuses EXAMPLES_CAUTION rather than adding a template section:
+        # prompts/classify_v1.txt is frozen and its hash IS prompt_version, so
+        # a new section would make every round incomparable with round 0.
+        # Provenance is not lost - these records change records.jsonl and
+        # therefore move kb_version instead.
+        if getattr(res, "feedback", None):
+            groups.append(("Additional labelled examples", res.feedback))
         if legal:
             groups.append(("Legal context illustrations", legal))
         return cls(definitions=res.definitions, guidelines=res.guidelines,
@@ -87,6 +104,30 @@ def prompt_version() -> str:
     reasoning as kb_version."""
     h = hashlib.sha256(TEMPLATE.read_bytes()).hexdigest()[:8]
     return f"{TEMPLATE.stem}-{h}"
+
+
+def taxonomy_version() -> str:
+    """Content hash of taxonomy.yaml.
+
+    WHY THIS IS NOT COVERED BY prompt_version. render_label_space reads the
+    taxonomy at render time and interpolates the label space into every system
+    prompt, in every arm including zero_shot. So editing the taxonomy changes
+    every prompt in the system while prompt_version stays put.
+
+    For rag arms the edit is partly visible through kb_version, since
+    definitions are regenerated from the taxonomy. For zero_shot and few_shot,
+    kb_version is None by design - they consult no knowledge base - so without
+    this stamp a run under a modified taxonomy is indistinguishable from one
+    under the current taxonomy. The new-label adaptability experiment tests
+    exactly that arm, because the label NAME reaches the prompt without any
+    retrieval.
+
+    Hashes raw bytes, like prompt_version. Note the recorded trap: git
+    normalises CRLF on checkout, which changes any content hash, so a hash
+    compared across a fresh clone is not necessarily comparable.
+    """
+    h = hashlib.sha256(TAXONOMY.read_bytes()).hexdigest()[:8]
+    return f"{TAXONOMY.stem}-{h}"
 
 
 def render_label_space(tax: dict | None = None) -> str:

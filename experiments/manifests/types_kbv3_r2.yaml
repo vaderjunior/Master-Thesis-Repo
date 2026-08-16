@@ -1,0 +1,41 @@
+name: types_kbv3_r2
+description: >
+  Three arms on en_dev_eval_types under the current KB b3e1a021777f7b85 and
+  the frozen prompt. No run of this subset exists under the current state:
+  types_dev_peasec is prompt c74cb7ab + KB 475869f9, types_peasec_kbv2 is
+  prompt 8e588db7 + KB c34e780c.
+
+  Two open questions, both currently confounded between subset and KB.
+
+  (1) types_dev_peasec's zero_shot scored 0.280 and types_peasec_kbv2's 0.340,
+  both n=1 at a subset whose hate_type floor is ~0.058. The three-replicate
+  467-item value is 0.336 +/- 0.003, so 0.280 looks like a low draw. If it is,
+  the project's only p<0.05 result (rag - zero_shot +0.088, p=0.018) rested on
+  an unlucky baseline rather than on a real effect.
+
+  (2) The rag arm predicted `explicit` twice in 103 items under both earlier
+  KBs, against 19-23 for zero_shot, while predicting it 49 times in 467 items
+  under the current KB. Subset or KB cannot presently be separated.
+
+  Two replicates, so this also gives the first within-condition floor estimate
+  at n=103 under a fixed state.
+subset: en_dev_eval_types
+arms: [zero_shot, few_shot, rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: strict
+retrieval:
+  strategy: hybrid
+  k_definitions: 2
+  k_guidelines: 2
+  k_examples: 5
+  k_examples_feedback: 0
+  use_mmr: true
+  mmr_lambda: 0.7
+  mmr_pool_factor: 3
+  use_reranker: false
+  rrf_k: 60

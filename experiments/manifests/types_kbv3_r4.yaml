@@ -1,0 +1,64 @@
+name: types_kbv3_r4
+description: >
+  Replicate 4. Separate manifest because the runner keys its output file on
+  this `name` field, not on the filename. A copy that keeps an older `name`
+  resumes that older run, makes zero calls, and rewrites its results. That
+  happened on 2026-08-14 with r3 and cost a round trip; run_slice1 now asserts
+  name == filename stem.
+
+  Three arms on en_dev_eval_types under the current KB b3e1a021777f7b85 and
+  the frozen prompt classify_v1-8e588db7. Identical to r1/r2/r3 in every
+  field.
+
+  WHY A FOURTH REPLICATE, WHEN THE HEADLINE IS ALREADY SETTLED. It is not for
+  the headline. r3 retracted the two-replicate +0.134: the three-replicate
+  figure is +0.114, range +0.073 to +0.136, significant in two of three. That
+  question is closed and a fourth point will not reopen it.
+
+  It is for the FLOOR. Three replicates put the within-arm spread on this
+  subset at zero_shot 0.060, few_shot 0.065, rag 0.037. The 0.037 recorded in
+  PHASE8_SIGNOFF and carried into the Phase 7 build guide was rag's
+  two-replicate spread, and the retrieval-free arms turn out to be nearly
+  twice as unstable at n=103. So this subset's floor is 0.065, not 0.037.
+
+  That matters because build-guide 7.3 reads its decision gate against this
+  subset's floor: if the proportional-definition-budget config moves the
+  headline by more than the floor, the whole SQ2 set is re-run under the new
+  config; if less, the config is frozen for every remaining run in the project
+  including both test runs. A threshold that irreversible should not rest on
+  three points when a fourth costs 927 calls and ~19 minutes.
+
+  Mechanism worth recording, because it inverts what check_sq2_types' own
+  docstring says. Items are fixed within a subset, so replicate variance is
+  pure decoding noise. At support 15 per label one item flipping moves that
+  label's F1 by ~0.06, and a macro over seven such labels is brittle. At
+  n=467 (support 68) retrieval variance dominates and the retrieval-free arms
+  replicate to 0.003; at n=103 small-sample metric brittleness swamps it and
+  the ordering reverses. The docstring's claim is true only at n=467.
+
+  ALSO FEEDS the fixed_labels resample diagnostic. score_multilabel builds its
+  label set from the union of gold and predicted labels, and under
+  fixed_labels a label absent from a resample is skipped rather than scored 0.
+  At support 15 that is rare but not impossible, and every such draw computes
+  a six-label macro where the observed value is a seven-label macro. A fourth
+  replicate gives that diagnostic a fourth independent prediction set.
+subset: en_dev_eval_types
+arms: [zero_shot, few_shot, rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: strict
+retrieval:
+  strategy: hybrid
+  k_definitions: 2
+  k_guidelines: 2
+  k_examples: 5
+  k_examples_feedback: 0
+  use_mmr: true
+  mmr_lambda: 0.7
+  mmr_pool_factor: 3
+  use_reranker: false
+  rrf_k: 60

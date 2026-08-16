@@ -1,0 +1,27 @@
+name: sq3_round0_r4
+description: >
+  SQ3 round 0, replicate 4. NOT a fourth sample of the baseline - it is the
+  no-edit control for the over-steering sentinel.
+
+  The sentinel is selected as the pool items correct in all of r1/r2/r3, so
+  its flip rate measured on those same runs is zero by construction.
+  Measuring the baseline there would be regression to the mean. This run is
+  independent of the selection, so the flips it produces are the rate at
+  which all-3-correct items go wrong when the KB has NOT changed. Every
+  post-edit flip count in this phase is read against it.
+
+  Identical configuration to r1: unedited KB b3e1a021777f7b85, prompt
+  classify_v1-8e588db7, T=1.0, n_votes=3, rag only, all 467 items. It also
+  supplies a fourth sample for the variance floor, which max-min over three
+  replicates estimates badly - batches (n=117) gave 0.012 while held_out
+  (n=121) gave 0.049, and that inconsistency is estimation noise, not a real
+  difference in the floor.
+subset: en_dev_eval_sq3_types
+arms: [rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: strict

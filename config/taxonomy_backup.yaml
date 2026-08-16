@@ -1,0 +1,108 @@
+version: 1
+dimensions:
+  hate:
+    type: binary
+    definition: >
+      A text is hateful if it attacks, demeans, dehumanises, or calls for
+      harm against a person or group because of a protected characteristic
+      such as race, religion, gender, sexual orientation, disability,
+      or national origin. Offensive or rude language alone, without a
+      protected-group target, is not hate speech.
+
+  target_group:
+    type: multilabel
+    labels:
+      race:
+        definition: >
+          The text targets people because of their race, skin colour,
+          or ethnicity, e.g. Black, Asian, Hispanic, Arab, or white
+          people as a group.
+      religion:
+        definition: >
+          The text targets people because of their religion or belief,
+          e.g. Muslims, Jews, Christians, Hindus.
+      gender:
+        definition: >
+          The text targets people because of their gender, including
+          misogyny and attacks on trans people.
+      sexual_orientation:
+        definition: >
+          The text targets people because of their sexual orientation,
+          e.g. gay, lesbian, bisexual people.
+      disability:
+        definition: >
+          The text targets people because of a physical or mental
+          disability.
+      national_origin:
+        definition: >
+          The text targets people because of their nationality,
+          immigration or refugee status.
+      other:
+          definition: >
+            The text targets a protected group not listed above, for example
+            people singled out by age, veteran or military status, caste,
+            socioeconomic class or poverty, homelessness, immigration
+            detention status, body size or physical appearance, or
+            occupation. Use this label only when a protected group is clearly
+            identified and none of the specific labels apply.
+
+  hate_type:
+    type: multilabel
+    labels:   
+      explicit: {definition: "Openly hateful; slurs or direct attacks."}
+      incitement: {definition: "Calls for or glorifies violence or hateful action against the group."}
+      inferiority: {definition: "Claims the group is inferior, subhuman, or of less worth."}
+      irony: {definition: "Uses sarcasm, jokes, or irony to demean the group."}
+      stereotyping: {definition: "Attributes negative characteristics to the whole group, incl. hateful misinformation."}
+      threatening: {definition: "Threatens or intimidates the group or its members."}
+      grievance: {definition: "Frames the in-group as victims of the targeted group (e.g. white grievance)."}
+
+  severity:
+    type: ordinal
+    labels:
+      low:
+        definition: >
+          Hateful, but comparatively mild in intensity: insults, slurs, or
+          derogatory remarks that demean a protected group without extreme
+          hostility.
+      medium:
+        definition: >
+          Strongly hostile: heavy or repeated slurs and clearly degrading
+          language directed at a protected group.
+      high:
+        definition: >
+          Extremely hostile: the most intense hate, including incitement,
+          threats, or calls for violence, as well as the most severe
+          degradation.
+    note: >
+      Severity reflects annotator-PERCEIVED INTENSITY, operationalised as
+      terciles of the Measuring Hate Speech aggregate score within the
+      hateful mass. It is not a harm-type taxonomy. Cut-points in
+      data/mappings/mhs_thresholds.md. See FOR_MARKUS.md #8.
+      
+  legal:
+    type: multilabel
+    labels:
+      propaganda:
+        definition: >
+          The text distributes propaganda material, or uses symbols, slogans,
+          or greetings of an organisation ruled unconstitutional in Germany,
+          particularly content promoting a former National Socialist
+          organisation. Examples include banned party slogans and coded
+          references to them. German Criminal Code sections 86 and 86a.
+      incitement_public_peace:
+        definition: >
+          The text publicly calls for criminal offences, threatens serious
+          crimes, incites hatred or violence against a national, racial,
+          religious or ethnic group, glorifies violence, or approves of or
+          rewards serious crimes. Includes Volksverhetzung, the German
+          provision most directly concerned with hate speech. A call must be
+          concrete: the act, and ideally the time, place or victim, should be
+          identifiable. German Criminal Code sections 111, 126, 130, 131, 140.
+      insult_defamation:
+        definition: >
+          The text insults a person or a legally recognised collective, spreads
+          a damaging claim that is not demonstrably true, or abuses a religious
+          or ideological community over its beliefs. Statements about public
+          figures are judged more permissively than statements about private
+          individuals. German Criminal Code sections 166, 185, 186.

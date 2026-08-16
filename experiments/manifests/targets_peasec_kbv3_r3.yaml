@@ -1,0 +1,44 @@
+name: targets_peasec_kbv3_r3
+description: >
+  Replicate 3 of targets_peasec_kbv3. Separate manifest because run_slice1 is
+  resumable and keys its output file on this `name` field, not on the filename:
+  re-running one name resumes it rather than replicating it, makes zero calls,
+  and rewrites the earlier results. That happened on 2026-08-14 with
+  types_kbv3_r3; run_slice1 now asserts name == filename stem.
+
+  Identical to targets_peasec_kbv3 and _r2 in every field. See _r2 for the full
+  rationale; the short version is that build-guide 7.2 needs a per-label
+  target_group statement to replace retraction 14, en_dev_eval_targets is the
+  only subset that can carry one, and a single replicate gives no floor.
+
+  THIS IS THE THIRD POINT, AND THE THIRD POINT IS THE INSTRUMENT. Five Phase 8
+  claims and one Phase 7 claim (rag - few_shot +0.134, now +0.111) fell to
+  exactly this: three replicates of each arm at one fixed system state. Two
+  replicates cannot distinguish a real effect from two draws that happened to
+  move together - on en_dev_eval_types the two-replicate delta spread was 0.004
+  across arms whose own spreads were 0.032 and 0.037, and the third replicate
+  came in at roughly half the first two.
+
+  The floor from these three is the WIDEST arm's spread, not the rag arm's, and
+  it is quoted with its replicate count. That rule exists because it was got
+  wrong twice.
+subset: en_dev_eval_targets
+arms: [zero_shot, few_shot, rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: strict
+retrieval:
+  strategy: hybrid
+  k_definitions: 2
+  k_guidelines: 2
+  k_examples: 5
+  k_examples_feedback: 0
+  use_mmr: true
+  mmr_lambda: 0.7
+  mmr_pool_factor: 3
+  use_reranker: false
+  rrf_k: 60

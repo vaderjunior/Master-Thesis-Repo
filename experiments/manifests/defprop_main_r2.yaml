@@ -1,0 +1,70 @@
+name: defprop_main_r2
+description: >
+  Build-guide 7.3, the balanced-set gate probe. Proportional definition
+  budgets on en_dev_eval_main, rag arm only, replicate 2.
+
+  THE CONFIG IS ALREADY FROZEN. The decision gate was read on
+  en_dev_eval_sq3_types and did not trip: prop minus flat2 is -0.006 against a
+  floor of 0.021. This run does not reopen it and cannot change it. It answers
+  a different question the gate experiment structurally could not.
+
+  WHY. Every subset the definition budgets were tested on is 100% hateful, so
+  only false negatives are visible. The project's dominant error mode is the
+  opposite: FP:FN is roughly 5:1 in every English arm including zero_shot.
+  en_dev_eval_main (299 items) is the ONLY subset with benign items.
+
+  THE MECHANISM UNDER TEST. Under flat k=2 the hate definition reaches 2.6% of
+  prompts on en_dev_eval_sq3_types and 7.1% on en_dev_eval_targets; under
+  proportional it reaches 100%. Its last sentence is an exclusion clause:
+  "Offensive or rude language alone, without a protected-group target, is not
+  hate speech." On an all-hateful implicit-hate subset that clause can only
+  cost recall - and it did, gate FN 78.3 against a flat2 baseline of 67.2. On
+  a subset with benign items it is exactly the clause that should cut false
+  positives.
+
+  PRE-REGISTERED, RECORDED BEFORE THE RUN.
+  A. False positives fall relative to the flat k=2 baseline. If they do not,
+     the hate definition is retrieved, rendered and ignored - which would be a
+     fourth in-system reproduction of Mohammadi et al. 2025 and a stronger
+     result than a null on macro-F1.
+  B. False negatives rise, as they did on the all-hateful subsets.
+  C. The interesting outcome is A and B together with A larger: it would mean
+     the definition acts on the gate and every subset that could have shown it
+     was all-hateful. "Definitions do nothing" would become "definitions act
+     where we were not looking".
+
+  WITHDRAWN, recorded because the retraction is the point. After the
+  en_dev_eval_sq3_types runs I claimed the gate got worse BECAUSE the hate
+  definition reached every prompt. flat7 falsifies the dose-response: its
+  coverage is ~30% against flat2's 2.6%, and its gate FN is 64.3 against
+  flat2's 67.2 - slightly BETTER. Whatever drives proportional's 78.3 is
+  specific to proportional, most likely the guaranteed severity and legal
+  slots displacing target_group and hate_type coverage that flat7 keeps.
+  This run measures the effect; it does not assume the mechanism.
+
+  Baseline is main_base_r0 and main_base_r0_rep2 at flat k=2, plus a third
+  replicate run alongside this one so the comparison has a floor rather than
+  two points.
+subset: en_dev_eval_main
+arms: [rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: both
+retrieval:
+  strategy: hybrid
+  k_definitions: 2
+  k_definitions_mode: proportional
+  k_definitions_per_dimension: 1
+  k_definitions_per_label: 0.3
+  k_guidelines: 2
+  k_examples: 5
+  k_examples_feedback: 0
+  use_mmr: true
+  mmr_lambda: 0.7
+  mmr_pool_factor: 3
+  use_reranker: false
+  rrf_k: 60

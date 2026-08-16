@@ -1,4 +1,5 @@
 """
+vote.py 
 Aggregate n sampled runs into one prediction.
 
 WHY VOTE AT ALL: temperature is 1.0 (Q3), so runs genuinely differ. The vote

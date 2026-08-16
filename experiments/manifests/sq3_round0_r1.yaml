@@ -1,0 +1,34 @@
+name: sq3_round0_r1
+description: >
+  SQ3 round 0, replicate 1 of 3. The baseline every feedback round is measured
+  against, on the frozen system: unedited KB, prompt classify_v1-8e588db7,
+  PEASEC Qwen3-VL-32B at T=1.0, n_votes=3.
+
+  Four deliverables, none needing round machinery:
+  (1) sentinel candidates - sq3_role=pool items correct in all three
+      replicates under the `contains` criterion (decision of 2026-08-06);
+  (2) the round-0 held-out baseline, SHARED across all three sequence
+      replicates so every later delta is paired rather than unpaired;
+  (3) the hate_type variance floor under the frozen state, as the spread
+      across these three replicates. The 0.058 currently in use came from
+      four runs spanning three temperatures on the retired KB 475869f9;
+  (4) r, the all-replicate-correct rate, under the frozen state. The 0.427
+      used to size this subset was measured on that same retired state.
+
+  All 467 items run, not just pool and held_out. The extra ~1050 calls buy
+  B1 already scored under the round-0 KB, which round 1 needs anyway, and
+  avoid teaching the runner to filter on sq3_role before that code exists.
+
+  rag only. zero_shot and few_shot run no retrieval, so they cannot supply
+  the `retrieved` hit ids the generalisation probe needs, and the SQ3 curve
+  is rag-vs-control. Round 0 serves BOTH SQ3 arms: at round 0 the feedback
+  arm and the matched-size control arm have the identical unedited KB.
+subset: en_dev_eval_sq3_types
+arms: [rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: strict

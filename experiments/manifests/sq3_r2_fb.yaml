@@ -1,0 +1,42 @@
+name: sq3_r2_fb
+description: >
+  SQ3 round 2, feedback arm. KB 1bd566619f35a3ad: base 360 records plus 33
+  corrections, being every item the round-0 system got wrong in b1 (20) and
+  every item the ROUND-1 FEEDBACK ARM got wrong in b2 (13).
+
+  From this round the arms read their own previous runs. Round 1's errors came
+  from a shared round-0 KB; round 2's come from each arm's own KB, because an
+  error of the feedback arm is an error of the feedback KB. Using one arm's
+  classification for both would define the control as "items the feedback arm
+  got right" and couple the arms through the variable they exist to separate.
+
+  k_examples_feedback stays at 1. The k=3 ablation is recorded and rejected:
+  it moved fb - ctl to -0.025 macro on the clean stratum and produced 9
+  sentinel flips against a baseline of 1.
+
+  Round 1 at k=1 gave fb - ctl = 0.000 macro on 434 never-corrected items.
+  This round tests whether the curve stays flat as the correction pool grows
+  20 -> 33, with label-relevance of retrieved corrections rising 0.149 ->
+  0.198 against a chance of 0.149.
+records_path: kb/records_sq3_fb_r2.jsonl
+chroma_path: kb/chroma_sq3_fb_r2
+subset: en_dev_eval_sq3_types
+arms: [rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: strict
+retrieval:
+  strategy: hybrid
+  k_definitions: 2
+  k_guidelines: 2
+  k_examples: 5
+  k_examples_feedback: 1
+  use_mmr: true
+  mmr_lambda: 0.7
+  mmr_pool_factor: 3
+  use_reranker: false
+  rrf_k: 60

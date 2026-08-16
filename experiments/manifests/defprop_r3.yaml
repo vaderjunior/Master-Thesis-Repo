@@ -1,0 +1,92 @@
+name: defprop_r3
+description: >
+  Build-guide 7.3. Proportional definition budgets, replicate 1.
+  rag arm only: zero_shot and few_shot receive no retrieved definitions at
+  all, so they cannot respond to this change and running them would spend
+  two thirds of the calls measuring nothing.
+
+  THE PROBLEM. Phase 3 fixed the burial problem structurally - one filtered
+  query per KIND, each with its own budget - because definitions and
+  guidelines lose the nearest-neighbour race to raw-text examples. The same
+  problem recurs one level down, inside the definitions bucket, and was never
+  fixed. All 21 definitions across 5 dimensions compete in one ranking for
+  k_definitions=2 slots.
+
+  MEASURED, and deterministic to the slot across all four baseline replicates
+  (check_definition_budget, 2026-08-16). On en_dev_eval_sq3_types, where every
+  item is hate_type-scorable and no other dimension is annotated:
+    target_group 532 (57.0%) · hate_type 336 (36.0%) · hate 24 (2.6%)
+    severity 23 (2.5%) · legal 19 (2.0%)
+  target_group takes the majority of slots on a subset where it is not
+  annotated at all. Its share moves only 57.0% -> 60.7% between that subset
+  and en_dev_eval_targets, where it IS the primary dimension. The bucket is
+  close to subset-independent: target_group definitions name groups whose
+  words appear verbatim in hate speech, hate_type definitions name rhetorical
+  modes, and the former wins regardless of what is being scored.
+
+  THE CHANGE. k_definitions_mode: proportional gives each dimension
+  max(1, round(n_definitions * 0.3)) slots: hate 1, target_group 2,
+  hate_type 2, severity 1, legal 1 = 7 total. hate_type goes from 0.72 slots
+  per item to 2.0; hate, severity and legal go from near-absent to always
+  present.
+
+  WHAT THE MODEL SEES. On "immigrants are ruining this country":
+    flat          legal/insult_defamation, target_group/national_origin
+    proportional  hate/None, target_group/other, target_group/national_origin,
+                  hate_type/threatening, hate_type/stereotyping,
+                  severity/medium, legal/insult_defamation
+  Under flat, a five-dimension task is given definitions for two dimensions,
+  one of them a German criminal-law provision on English text, and no
+  definition of hate speech itself.
+
+  PRE-REGISTERED, RECORDED BEFORE THE RUN.
+  1. Dimension coverage improves by construction: hate_type receives exactly
+     2 of 7 slots on every item. Definition retrieval has zero variance across
+     replicates, so this is arithmetic, not a hypothesis.
+  2a. `other`'s definition reaches far more prompts. Near-certain: on
+     en_dev_eval_targets it currently reaches 1 of 56 items against
+     `disability`'s 21 at near-identical gold prevalence (16 vs 17 of 56),
+     and under proportional it ranks FIRST within target_group on the probe
+     above.
+  2b. `other`'s F1 does NOT improve proportionally. 2a without 2b is the
+     interesting outcome: it would locate the bottleneck at adherence rather
+     than retrieval, a third in-system reproduction of Mohammadi et al. 2025.
+     An earlier version of this prediction said a residual category "cannot
+     win a within-dimension similarity slot"; the probe falsified that and it
+     is recorded as withdrawn.
+  3. THE GATE IS THE DIMENSION MOST AT RISK. Its definition goes from 2.6% of
+     prompts to 100%. It is the most-reported dimension in the thesis and this
+     is a large intervention on it. Measure, do not assume neutral.
+  4. DECISION GATE, read on THIS subset against its measured floor of 0.021 -
+     NOT en_dev_eval_types, whose floor is 0.070 and which would pass the gate
+     by insensitivity rather than by the config being fine. If the headline
+     moves more than 0.021, the SQ2 set is re-run under the new config. If
+     less, the config freezes for every remaining run including both test runs.
+
+  KNOWN BEHAVIOUR CHANGE. depth=10 exceeds the 1-7 candidates in each
+  per-dimension sub-bucket, so both channels return everything and RRF stops
+  acting as a consensus gate (any record found by both outranks any found by
+  one) and becomes a rank blend. Expected, and a real difference from flat.
+subset: en_dev_eval_sq3_types
+arms: [rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: strict
+retrieval:
+  strategy: hybrid
+  k_definitions: 2
+  k_definitions_mode: proportional
+  k_definitions_per_dimension: 1
+  k_definitions_per_label: 0.3
+  k_guidelines: 2
+  k_examples: 5
+  k_examples_feedback: 0
+  use_mmr: true
+  mmr_lambda: 0.7
+  mmr_pool_factor: 3
+  use_reranker: false
+  rrf_k: 60

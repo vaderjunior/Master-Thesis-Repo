@@ -1,0 +1,35 @@
+name: sq3_r4_ctl
+description: >
+  SQ3 round 4, matched-size control, the final round. KB  d30f6900722d9e6f: base 360
+  records plus 60 correctly-labelled records, matched one-for-one to
+  sq3_r4_fb. Round 4 adds 12, all from b4 - 14 of 28 items the round-3 control
+  arm got right, so no TRAIN top-up was needed and the matching is entirely
+  within-batch.
+
+  On the fixed 350-item stratum this arm has run 0.356, 0.360, 0.363 against
+  the feedback arm's 0.368, 0.371, 0.379, and against a round-0 mean of 0.356.
+  Adding correctly-labelled records gains about +0.004; selecting them by
+  error gains about +0.017. That separation is the phase's central result and
+  exists only because this arm exists.
+records_path: kb/records_sq3_ctl_r4.jsonl
+chroma_path: kb/chroma_sq3_ctl_r4
+subset: en_dev_eval_sq3_types
+arms: [rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: strict
+retrieval:
+  strategy: hybrid
+  k_definitions: 2
+  k_guidelines: 2
+  k_examples: 5
+  k_examples_feedback: 1
+  use_mmr: true
+  mmr_lambda: 0.7
+  mmr_pool_factor: 3
+  use_reranker: false
+  rrf_k: 60

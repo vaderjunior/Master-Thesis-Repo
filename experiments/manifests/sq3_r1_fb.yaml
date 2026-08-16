@@ -1,0 +1,43 @@
+name: sq3_r1_fb
+description: >
+  SQ3 round 1, FEEDBACK arm. KB 986c6379833cd5ca: the frozen base 360 records
+  plus 20 corrections drawn from batch b1, being every item the round-0 system
+  got wrong under the `contains` criterion.
+
+  Paired against sq3_r1_ctl, which adds 20 correctly-labelled records to the
+  same base from the same batch plus a TRAIN top-up. Both arms add the same
+  count of the same kind into the same retrieval bucket, so the only variable
+  is whether the record was selected by error. Without that control any
+  improvement is confounded with the knowledge base simply getting bigger -
+  the same reason the German KB result needed its own control.
+
+  All 467 items. held_out (121) is the learning curve, pool (229) supplies the
+  84-item sentinel and the 145-item never-corrected remainder, b1 (33) is the
+  seen-items sanity check expected near 1.0 and NOT a result, and b2 supplies
+  round 2's errors.
+
+  Pre-registered before the run: feedback retrieval is label-blind here, with
+  label hit 0.149 against chance 0.152, so the expected effect is small or
+  null and possibly negative. See experiment_log 2026-08-07.
+subset: en_dev_eval_sq3_types
+arms: [rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: strict
+records_path: kb/records_sq3_fb_r1.jsonl
+chroma_path: kb/chroma_sq3_fb_r1
+retrieval:
+  strategy: hybrid
+  k_definitions: 2
+  k_guidelines: 2
+  k_examples: 5
+  k_examples_feedback: 1
+  use_mmr: true
+  mmr_lambda: 0.7
+  mmr_pool_factor: 3
+  use_reranker: false
+  rrf_k: 60

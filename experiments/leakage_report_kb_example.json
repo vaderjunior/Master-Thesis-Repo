@@ -1,0 +1,2024 @@
+{
+  "smoke": false,
+  "near": 0.95,
+  "very_near": 0.98,
+  "subsets": {
+    "de_dev_eval": {
+      "n_items": 150,
+      "langs": [
+        "de"
+      ],
+      "exact_match_items": [],
+      "normalised_match_items": [],
+      "near_items": [],
+      "very_near_items": [],
+      "max_cosine": 0.7928329706192017,
+      "top": [
+        {
+          "eval_id": "detox-1386563414525362183",
+          "cosine": 0.7928,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1406567468211093504"
+        },
+        {
+          "eval_id": "detox-1393086934432485378",
+          "cosine": 0.7774,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-1393137852733665285"
+        },
+        {
+          "eval_id": "detox-1384132635283185673",
+          "cosine": 0.7282,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-1384019888256126985"
+        },
+        {
+          "eval_id": "detox-1395796597750042645",
+          "cosine": 0.7114,
+          "train_split": "kb_example",
+          "train_id": "ex-botox-616"
+        },
+        {
+          "eval_id": "detox-1406543603913134080",
+          "cosine": 0.6966,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1399283055420977153"
+        },
+        {
+          "eval_id": "detox-1388472317500706818",
+          "cosine": 0.6955,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1390731789380030468"
+        },
+        {
+          "eval_id": "detox-1405191653829324807",
+          "cosine": 0.6844,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1405228869746102272"
+        },
+        {
+          "eval_id": "detox-1394302269911445519",
+          "cosine": 0.684,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1389315104974454786"
+        },
+        {
+          "eval_id": "detox-1406856604121772033",
+          "cosine": 0.6815,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1406567468211093504"
+        },
+        {
+          "eval_id": "detox-1403990743539191810",
+          "cosine": 0.6779,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1405228869746102272"
+        },
+        {
+          "eval_id": "detox-1406533189997322241",
+          "cosine": 0.6743,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-1384019888256126985"
+        },
+        {
+          "eval_id": "detox-1391646629061607424",
+          "cosine": 0.6727,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1384283356674756609"
+        },
+        {
+          "eval_id": "detox-1403846884108771345",
+          "cosine": 0.6688,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-1399327209941356545"
+        },
+        {
+          "eval_id": "detox-1391085826155716609",
+          "cosine": 0.6684,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-1406577124857860104"
+        },
+        {
+          "eval_id": "detox-1393239276633174020",
+          "cosine": 0.6679,
+          "train_split": "kb_example",
+          "train_id": "ex-botox-616"
+        },
+        {
+          "eval_id": "detox-1395813875279335426",
+          "cosine": 0.6595,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1392864901962641422"
+        },
+        {
+          "eval_id": "detox-1384167052710055945",
+          "cosine": 0.6572,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1389315104974454786"
+        },
+        {
+          "eval_id": "detox-1403950435342422022",
+          "cosine": 0.6564,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1392916395990654977"
+        },
+        {
+          "eval_id": "detox-1404051666224259078",
+          "cosine": 0.6541,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1391002483380695042"
+        },
+        {
+          "eval_id": "detox-1401102601282854915",
+          "cosine": 0.6539,
+          "train_split": "kb_example",
+          "train_id": "ex-botox-616"
+        }
+      ]
+    },
+    "de_legal_dev_eval": {
+      "n_items": 175,
+      "langs": [
+        "de"
+      ],
+      "exact_match_items": [],
+      "normalised_match_items": [],
+      "near_items": [
+        "botox-1109",
+        "botox-18",
+        "botox-20",
+        "botox-211",
+        "botox-224",
+        "botox-235"
+      ],
+      "very_near_items": [
+        "botox-211"
+      ],
+      "max_cosine": 0.9976541996002197,
+      "top": [
+        {
+          "eval_id": "botox-211",
+          "cosine": 0.9977,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1384099004854636544"
+        },
+        {
+          "eval_id": "botox-20",
+          "cosine": 0.9628,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1391786441303265283"
+        },
+        {
+          "eval_id": "botox-235",
+          "cosine": 0.9595,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1391821124103778312"
+        },
+        {
+          "eval_id": "botox-224",
+          "cosine": 0.959,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1388370231148621824"
+        },
+        {
+          "eval_id": "botox-1109",
+          "cosine": 0.9583,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1385342859168133121"
+        },
+        {
+          "eval_id": "botox-18",
+          "cosine": 0.9566,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1391698290731851781"
+        },
+        {
+          "eval_id": "botox-724",
+          "cosine": 0.9469,
+          "train_split": "kb_example",
+          "train_id": "ex-botox-722"
+        },
+        {
+          "eval_id": "botox-1059",
+          "cosine": 0.9448,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1383940124530991113"
+        },
+        {
+          "eval_id": "botox-859",
+          "cosine": 0.942,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1385245089799327746"
+        },
+        {
+          "eval_id": "botox-918",
+          "cosine": 0.9097,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1389333785142038530"
+        },
+        {
+          "eval_id": "botox-733",
+          "cosine": 0.7962,
+          "train_split": "kb_example",
+          "train_id": "ex-botox-736"
+        },
+        {
+          "eval_id": "botox-746",
+          "cosine": 0.7918,
+          "train_split": "kb_example",
+          "train_id": "ex-botox-725"
+        },
+        {
+          "eval_id": "botox-251",
+          "cosine": 0.7901,
+          "train_split": "kb_example",
+          "train_id": "ex-botox-726"
+        },
+        {
+          "eval_id": "botox-767",
+          "cosine": 0.7787,
+          "train_split": "kb_example",
+          "train_id": "ex-botox-736"
+        },
+        {
+          "eval_id": "botox-715",
+          "cosine": 0.7711,
+          "train_split": "kb_example",
+          "train_id": "ex-botox-736"
+        },
+        {
+          "eval_id": "botox-249",
+          "cosine": 0.7704,
+          "train_split": "kb_example",
+          "train_id": "ex-botox-726"
+        },
+        {
+          "eval_id": "botox-374",
+          "cosine": 0.7431,
+          "train_split": "kb_example",
+          "train_id": "ex-botox-125"
+        },
+        {
+          "eval_id": "botox-159",
+          "cosine": 0.7428,
+          "train_split": "kb_example",
+          "train_id": "ex-botox-125"
+        },
+        {
+          "eval_id": "botox-462",
+          "cosine": 0.7381,
+          "train_split": "kb_example",
+          "train_id": "ex-botox-736"
+        },
+        {
+          "eval_id": "botox-825",
+          "cosine": 0.727,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1406567468211093504"
+        }
+      ]
+    },
+    "de_legal_test_eval": {
+      "n_items": 177,
+      "langs": [
+        "de"
+      ],
+      "exact_match_items": [],
+      "normalised_match_items": [],
+      "near_items": [
+        "botox-1116",
+        "botox-1159",
+        "botox-19"
+      ],
+      "very_near_items": [
+        "botox-1116",
+        "botox-19"
+      ],
+      "max_cosine": 0.9992767572402954,
+      "top": [
+        {
+          "eval_id": "botox-19",
+          "cosine": 0.9993,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1391722246620815360"
+        },
+        {
+          "eval_id": "botox-1116",
+          "cosine": 0.9851,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1391687596963680257"
+        },
+        {
+          "eval_id": "botox-1159",
+          "cosine": 0.9652,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-1384019888256126985"
+        },
+        {
+          "eval_id": "botox-3",
+          "cosine": 0.9264,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1385108152459436033"
+        },
+        {
+          "eval_id": "botox-734",
+          "cosine": 0.9179,
+          "train_split": "kb_example",
+          "train_id": "ex-botox-736"
+        },
+        {
+          "eval_id": "botox-1062",
+          "cosine": 0.849,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1391764011046289412"
+        },
+        {
+          "eval_id": "botox-889",
+          "cosine": 0.8325,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1388580623565131780"
+        },
+        {
+          "eval_id": "botox-236",
+          "cosine": 0.8286,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1393986053690822659"
+        },
+        {
+          "eval_id": "botox-985",
+          "cosine": 0.7789,
+          "train_split": "kb_example",
+          "train_id": "ex-botox-725"
+        },
+        {
+          "eval_id": "botox-1107",
+          "cosine": 0.7657,
+          "train_split": "kb_example",
+          "train_id": "ex-botox-125"
+        },
+        {
+          "eval_id": "botox-371",
+          "cosine": 0.7521,
+          "train_split": "kb_example",
+          "train_id": "ex-botox-125"
+        },
+        {
+          "eval_id": "botox-772",
+          "cosine": 0.7475,
+          "train_split": "kb_example",
+          "train_id": "ex-botox-736"
+        },
+        {
+          "eval_id": "botox-176",
+          "cosine": 0.7465,
+          "train_split": "kb_example",
+          "train_id": "ex-botox-125"
+        },
+        {
+          "eval_id": "botox-208",
+          "cosine": 0.7419,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1389315104974454786"
+        },
+        {
+          "eval_id": "botox-154",
+          "cosine": 0.7376,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1406567468211093504"
+        },
+        {
+          "eval_id": "botox-390",
+          "cosine": 0.7288,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1389652900637552645"
+        },
+        {
+          "eval_id": "botox-130",
+          "cosine": 0.7277,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1392916395990654977"
+        },
+        {
+          "eval_id": "botox-861",
+          "cosine": 0.7244,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1389315104974454786"
+        },
+        {
+          "eval_id": "botox-297",
+          "cosine": 0.7227,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-1384019888256126985"
+        },
+        {
+          "eval_id": "botox-1035",
+          "cosine": 0.7215,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1406567468211093504"
+        }
+      ]
+    },
+    "de_test_eval": {
+      "n_items": 300,
+      "langs": [
+        "de"
+      ],
+      "exact_match_items": [],
+      "normalised_match_items": [],
+      "near_items": [
+        "detox-1403984994796818436"
+      ],
+      "very_near_items": [],
+      "max_cosine": 0.9667367935180664,
+      "top": [
+        {
+          "eval_id": "detox-1403984994796818436",
+          "cosine": 0.9667,
+          "train_split": "kb_example",
+          "train_id": "ex-botox-540"
+        },
+        {
+          "eval_id": "detox-1392495026542891012",
+          "cosine": 0.7998,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1392916395990654977"
+        },
+        {
+          "eval_id": "detox-1406562198302961670",
+          "cosine": 0.7993,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1406567468211093504"
+        },
+        {
+          "eval_id": "detox-1394291501572792327",
+          "cosine": 0.772,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-1393969645087076355"
+        },
+        {
+          "eval_id": "detox-1387122007511285760",
+          "cosine": 0.7644,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-1384019888256126985"
+        },
+        {
+          "eval_id": "detox-1388474989557522432",
+          "cosine": 0.7606,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1389315104974454786"
+        },
+        {
+          "eval_id": "detox-1393964505273618432",
+          "cosine": 0.7513,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1393986053690822659"
+        },
+        {
+          "eval_id": "detox-1405081630377758721",
+          "cosine": 0.7436,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-1404925291298967558"
+        },
+        {
+          "eval_id": "detox-1389510713857781764",
+          "cosine": 0.7403,
+          "train_split": "kb_example",
+          "train_id": "ex-botox-616"
+        },
+        {
+          "eval_id": "detox-1393637866186608647",
+          "cosine": 0.7384,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1392916395990654977"
+        },
+        {
+          "eval_id": "detox-1406510784507744258",
+          "cosine": 0.7376,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-1406577124857860104"
+        },
+        {
+          "eval_id": "detox-1394465669685645312",
+          "cosine": 0.7124,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-1393969645087076355"
+        },
+        {
+          "eval_id": "detox-1385133063617777665",
+          "cosine": 0.7064,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-1384107853938454536"
+        },
+        {
+          "eval_id": "detox-1404316788230328326",
+          "cosine": 0.7041,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1388550722292170754"
+        },
+        {
+          "eval_id": "detox-1392820471377317890",
+          "cosine": 0.7026,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1389220608630743047"
+        },
+        {
+          "eval_id": "detox-1393633991987666947",
+          "cosine": 0.7009,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-1399327209941356545"
+        },
+        {
+          "eval_id": "detox-1399397959494688771",
+          "cosine": 0.6937,
+          "train_split": "kb_example",
+          "train_id": "ex-botox-616"
+        },
+        {
+          "eval_id": "detox-1384467278826065923",
+          "cosine": 0.6935,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1384283356674756609"
+        },
+        {
+          "eval_id": "detox-1385274872100687876",
+          "cosine": 0.6903,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-1391888680181194753"
+        },
+        {
+          "eval_id": "detox-1403258496771051520",
+          "cosine": 0.6892,
+          "train_split": "kb_example",
+          "train_id": "ex-detox-legal-1391002483380695042"
+        }
+      ]
+    },
+    "en_dev_eval_main": {
+      "n_items": 299,
+      "langs": [
+        "en"
+      ],
+      "exact_match_items": [],
+      "normalised_match_items": [],
+      "near_items": [],
+      "very_near_items": [],
+      "max_cosine": 0.8565331697463989,
+      "top": [
+        {
+          "eval_id": "mhs-6277",
+          "cosine": 0.8565,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-11429"
+        },
+        {
+          "eval_id": "implicit_hate-6446",
+          "cosine": 0.7446,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-8285"
+        },
+        {
+          "eval_id": "mhs-17217",
+          "cosine": 0.7435,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-29768"
+        },
+        {
+          "eval_id": "hatexplain-1179098993600745472_twitter",
+          "cosine": 0.7368,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-15431"
+        },
+        {
+          "eval_id": "mhs-47738",
+          "cosine": 0.7323,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-14152"
+        },
+        {
+          "eval_id": "implicit_hate-1887",
+          "cosine": 0.7307,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-15229"
+        },
+        {
+          "eval_id": "mhs-26468",
+          "cosine": 0.7237,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "mhs-37505",
+          "cosine": 0.7235,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-3840"
+        },
+        {
+          "eval_id": "mhs-12797",
+          "cosine": 0.7207,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "mhs-34237",
+          "cosine": 0.7159,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "implicit_hate-18101",
+          "cosine": 0.7096,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-3751"
+        },
+        {
+          "eval_id": "mhs-30856",
+          "cosine": 0.7084,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-3840"
+        },
+        {
+          "eval_id": "mhs-30250",
+          "cosine": 0.7072,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-12549"
+        },
+        {
+          "eval_id": "implicit_hate-17905",
+          "cosine": 0.7009,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-466"
+        },
+        {
+          "eval_id": "hatexplain-1178960780219301889_twitter",
+          "cosine": 0.6991,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-40737"
+        },
+        {
+          "eval_id": "mhs-2825",
+          "cosine": 0.6953,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "mhs-42356",
+          "cosine": 0.6931,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "implicit_hate-3573",
+          "cosine": 0.6904,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-4168"
+        },
+        {
+          "eval_id": "mhs-50005",
+          "cosine": 0.6897,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-24382"
+        },
+        {
+          "eval_id": "mhs-2080",
+          "cosine": 0.689,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-7704"
+        }
+      ]
+    },
+    "en_dev_eval_severity": {
+      "n_items": 45,
+      "langs": [
+        "en"
+      ],
+      "exact_match_items": [],
+      "normalised_match_items": [],
+      "near_items": [],
+      "very_near_items": [],
+      "max_cosine": 0.792729377746582,
+      "top": [
+        {
+          "eval_id": "mhs-30116",
+          "cosine": 0.7927,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-36014"
+        },
+        {
+          "eval_id": "mhs-40066",
+          "cosine": 0.7735,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "mhs-8818",
+          "cosine": 0.7672,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "mhs-37841",
+          "cosine": 0.7663,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-3840"
+        },
+        {
+          "eval_id": "mhs-9016",
+          "cosine": 0.747,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "mhs-47575",
+          "cosine": 0.7174,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-24382"
+        },
+        {
+          "eval_id": "mhs-9089",
+          "cosine": 0.7153,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-16491"
+        },
+        {
+          "eval_id": "mhs-18704",
+          "cosine": 0.7086,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-12549"
+        },
+        {
+          "eval_id": "mhs-8239",
+          "cosine": 0.6998,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-12549"
+        },
+        {
+          "eval_id": "mhs-28998",
+          "cosine": 0.6997,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-36014"
+        },
+        {
+          "eval_id": "mhs-48830",
+          "cosine": 0.6911,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "mhs-7676",
+          "cosine": 0.6879,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-12235"
+        },
+        {
+          "eval_id": "mhs-23044",
+          "cosine": 0.6859,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-15431"
+        },
+        {
+          "eval_id": "mhs-10599",
+          "cosine": 0.6795,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-16491"
+        },
+        {
+          "eval_id": "mhs-24056",
+          "cosine": 0.6655,
+          "train_split": "kb_example",
+          "train_id": "ex-hatexplain-15554540_gab"
+        },
+        {
+          "eval_id": "mhs-1094",
+          "cosine": 0.6595,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "mhs-28829",
+          "cosine": 0.6593,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-36541"
+        },
+        {
+          "eval_id": "mhs-28504",
+          "cosine": 0.652,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "mhs-20007",
+          "cosine": 0.644,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-24382"
+        },
+        {
+          "eval_id": "mhs-29229",
+          "cosine": 0.6402,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-12549"
+        }
+      ]
+    },
+    "en_dev_eval_sq1_tune": {
+      "n_items": 250,
+      "langs": [
+        "en"
+      ],
+      "exact_match_items": [],
+      "normalised_match_items": [],
+      "near_items": [],
+      "very_near_items": [],
+      "max_cosine": 0.7927130460739136,
+      "top": [
+        {
+          "eval_id": "mhs-41063",
+          "cosine": 0.7927,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "mhs-35913",
+          "cosine": 0.7764,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-12549"
+        },
+        {
+          "eval_id": "hatexplain-1097236909942665216_twitter",
+          "cosine": 0.7761,
+          "train_split": "kb_example",
+          "train_id": "ex-hatexplain-1179074995479289856_twitter"
+        },
+        {
+          "eval_id": "hatexplain-1213753110587310080_twitter",
+          "cosine": 0.7448,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "mhs-45848",
+          "cosine": 0.7309,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "mhs-10176",
+          "cosine": 0.7236,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "mhs-21321",
+          "cosine": 0.7152,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-12549"
+        },
+        {
+          "eval_id": "implicit_hate-20130",
+          "cosine": 0.71,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-14152"
+        },
+        {
+          "eval_id": "mhs-46578",
+          "cosine": 0.7068,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "mhs-1380",
+          "cosine": 0.7058,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "implicit_hate-20642",
+          "cosine": 0.6917,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-20632"
+        },
+        {
+          "eval_id": "implicit_hate-19803",
+          "cosine": 0.6881,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-4902"
+        },
+        {
+          "eval_id": "mhs-20578",
+          "cosine": 0.6865,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "mhs-23502",
+          "cosine": 0.6846,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-14152"
+        },
+        {
+          "eval_id": "mhs-23175",
+          "cosine": 0.682,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "implicit_hate-7870",
+          "cosine": 0.6793,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-466"
+        },
+        {
+          "eval_id": "mhs-7855",
+          "cosine": 0.6775,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-10510"
+        },
+        {
+          "eval_id": "implicit_hate-19607",
+          "cosine": 0.6765,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-24382"
+        },
+        {
+          "eval_id": "hatexplain-1279414218274603010_twitter",
+          "cosine": 0.6737,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-14152"
+        },
+        {
+          "eval_id": "mhs-19918",
+          "cosine": 0.6724,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-10510"
+        }
+      ]
+    },
+    "en_dev_eval_sq3_feedback": {
+      "n_items": 351,
+      "langs": [
+        "en"
+      ],
+      "exact_match_items": [],
+      "normalised_match_items": [],
+      "near_items": [],
+      "very_near_items": [],
+      "max_cosine": 0.7324587106704712,
+      "top": [
+        {
+          "eval_id": "mhs-44016",
+          "cosine": 0.7325,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "mhs-19950",
+          "cosine": 0.7256,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-12549"
+        },
+        {
+          "eval_id": "mhs-27086",
+          "cosine": 0.7228,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-24382"
+        },
+        {
+          "eval_id": "implicit_hate-6353",
+          "cosine": 0.7187,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-8285"
+        },
+        {
+          "eval_id": "mhs-15545",
+          "cosine": 0.7174,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-3840"
+        },
+        {
+          "eval_id": "mhs-32568",
+          "cosine": 0.7166,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-3840"
+        },
+        {
+          "eval_id": "mhs-17062",
+          "cosine": 0.7164,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-3840"
+        },
+        {
+          "eval_id": "mhs-5144",
+          "cosine": 0.7079,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-12549"
+        },
+        {
+          "eval_id": "hatexplain-26298011_gab",
+          "cosine": 0.7055,
+          "train_split": "kb_example",
+          "train_id": "ex-hatexplain-1178675656634372096_twitter"
+        },
+        {
+          "eval_id": "mhs-49981",
+          "cosine": 0.7051,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-3840"
+        },
+        {
+          "eval_id": "implicit_hate-16886",
+          "cosine": 0.6969,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-15229"
+        },
+        {
+          "eval_id": "mhs-6899",
+          "cosine": 0.6947,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-10867"
+        },
+        {
+          "eval_id": "implicit_hate-6303",
+          "cosine": 0.6916,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-8256"
+        },
+        {
+          "eval_id": "mhs-48911",
+          "cosine": 0.6912,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "mhs-48833",
+          "cosine": 0.6874,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-12235"
+        },
+        {
+          "eval_id": "implicit_hate-17448",
+          "cosine": 0.6869,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-466"
+        },
+        {
+          "eval_id": "hatexplain-1178906065775333376_twitter",
+          "cosine": 0.6847,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "implicit_hate-2267",
+          "cosine": 0.6841,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-8285"
+        },
+        {
+          "eval_id": "implicit_hate-15322",
+          "cosine": 0.6835,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-15229"
+        },
+        {
+          "eval_id": "mhs-29885",
+          "cosine": 0.6805,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        }
+      ]
+    },
+    "en_dev_eval_sq3_types": {
+      "n_items": 467,
+      "langs": [
+        "en"
+      ],
+      "exact_match_items": [],
+      "normalised_match_items": [],
+      "near_items": [],
+      "very_near_items": [],
+      "max_cosine": 0.7798856496810913,
+      "top": [
+        {
+          "eval_id": "implicit_hate-14403",
+          "cosine": 0.7799,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-16811"
+        },
+        {
+          "eval_id": "implicit_hate-7074",
+          "cosine": 0.7617,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-2636"
+        },
+        {
+          "eval_id": "implicit_hate-20215",
+          "cosine": 0.7571,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-20632"
+        },
+        {
+          "eval_id": "implicit_hate-6454",
+          "cosine": 0.7458,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-2636"
+        },
+        {
+          "eval_id": "implicit_hate-20168",
+          "cosine": 0.7423,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-14152"
+        },
+        {
+          "eval_id": "implicit_hate-9754",
+          "cosine": 0.7362,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-2636"
+        },
+        {
+          "eval_id": "implicit_hate-20186",
+          "cosine": 0.7355,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-20632"
+        },
+        {
+          "eval_id": "implicit_hate-20170",
+          "cosine": 0.7355,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-14152"
+        },
+        {
+          "eval_id": "implicit_hate-2148",
+          "cosine": 0.7343,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-16811"
+        },
+        {
+          "eval_id": "implicit_hate-19950",
+          "cosine": 0.7262,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-3840"
+        },
+        {
+          "eval_id": "implicit_hate-7788",
+          "cosine": 0.7257,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-12235"
+        },
+        {
+          "eval_id": "implicit_hate-20233",
+          "cosine": 0.716,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-20632"
+        },
+        {
+          "eval_id": "implicit_hate-20734",
+          "cosine": 0.7137,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-14152"
+        },
+        {
+          "eval_id": "implicit_hate-15259",
+          "cosine": 0.7131,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-466"
+        },
+        {
+          "eval_id": "implicit_hate-20751",
+          "cosine": 0.71,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-20382"
+        },
+        {
+          "eval_id": "implicit_hate-20138",
+          "cosine": 0.7085,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-14152"
+        },
+        {
+          "eval_id": "implicit_hate-19710",
+          "cosine": 0.7079,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-19941"
+        },
+        {
+          "eval_id": "implicit_hate-19194",
+          "cosine": 0.7076,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-14152"
+        },
+        {
+          "eval_id": "implicit_hate-3031",
+          "cosine": 0.706,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-1589"
+        },
+        {
+          "eval_id": "implicit_hate-21169",
+          "cosine": 0.7058,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-466"
+        }
+      ]
+    },
+    "en_dev_eval_targets": {
+      "n_items": 56,
+      "langs": [
+        "en"
+      ],
+      "exact_match_items": [],
+      "normalised_match_items": [],
+      "near_items": [],
+      "very_near_items": [],
+      "max_cosine": 0.7496350407600403,
+      "top": [
+        {
+          "eval_id": "mhs-13336",
+          "cosine": 0.7496,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-3840"
+        },
+        {
+          "eval_id": "mhs-9983",
+          "cosine": 0.7251,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "mhs-40315",
+          "cosine": 0.7212,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-49298"
+        },
+        {
+          "eval_id": "mhs-30286",
+          "cosine": 0.7031,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-36014"
+        },
+        {
+          "eval_id": "mhs-8315",
+          "cosine": 0.6991,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-10510"
+        },
+        {
+          "eval_id": "mhs-17884",
+          "cosine": 0.6865,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "mhs-41572",
+          "cosine": 0.6822,
+          "train_split": "kb_example",
+          "train_id": "ex-hatexplain-1178675656634372096_twitter"
+        },
+        {
+          "eval_id": "mhs-3642",
+          "cosine": 0.6805,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "mhs-47667",
+          "cosine": 0.6752,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-20006"
+        },
+        {
+          "eval_id": "mhs-35621",
+          "cosine": 0.6675,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "mhs-15350",
+          "cosine": 0.6647,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-3840"
+        },
+        {
+          "eval_id": "hatexplain-7458007_gab",
+          "cosine": 0.6639,
+          "train_split": "kb_example",
+          "train_id": "ex-hatexplain-8211565_gab"
+        },
+        {
+          "eval_id": "hatexplain-1178513271583850497_twitter",
+          "cosine": 0.6629,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-8183"
+        },
+        {
+          "eval_id": "mhs-7461",
+          "cosine": 0.6565,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "mhs-41743",
+          "cosine": 0.6551,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-48154"
+        },
+        {
+          "eval_id": "mhs-16376",
+          "cosine": 0.6539,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-15431"
+        },
+        {
+          "eval_id": "mhs-711",
+          "cosine": 0.6493,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "mhs-6472",
+          "cosine": 0.6426,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-44820"
+        },
+        {
+          "eval_id": "mhs-18102",
+          "cosine": 0.6392,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-3840"
+        },
+        {
+          "eval_id": "mhs-47144",
+          "cosine": 0.6382,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-14152"
+        }
+      ]
+    },
+    "en_dev_eval_types": {
+      "n_items": 103,
+      "langs": [
+        "en"
+      ],
+      "exact_match_items": [],
+      "normalised_match_items": [],
+      "near_items": [],
+      "very_near_items": [],
+      "max_cosine": 0.7527632713317871,
+      "top": [
+        {
+          "eval_id": "implicit_hate-20227",
+          "cosine": 0.7528,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-14152"
+        },
+        {
+          "eval_id": "implicit_hate-4573",
+          "cosine": 0.7154,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-5637"
+        },
+        {
+          "eval_id": "implicit_hate-20401",
+          "cosine": 0.697,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-20632"
+        },
+        {
+          "eval_id": "implicit_hate-20749",
+          "cosine": 0.6955,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-24382"
+        },
+        {
+          "eval_id": "implicit_hate-17016",
+          "cosine": 0.6901,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-4168"
+        },
+        {
+          "eval_id": "implicit_hate-20675",
+          "cosine": 0.6876,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-20632"
+        },
+        {
+          "eval_id": "implicit_hate-12369",
+          "cosine": 0.6821,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-15229"
+        },
+        {
+          "eval_id": "implicit_hate-16800",
+          "cosine": 0.679,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-15746"
+        },
+        {
+          "eval_id": "implicit_hate-20434",
+          "cosine": 0.6773,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-20382"
+        },
+        {
+          "eval_id": "implicit_hate-1582",
+          "cosine": 0.6755,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-15746"
+        },
+        {
+          "eval_id": "implicit_hate-21068",
+          "cosine": 0.6624,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "implicit_hate-20409",
+          "cosine": 0.6622,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-20382"
+        },
+        {
+          "eval_id": "implicit_hate-20501",
+          "cosine": 0.6581,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-20458"
+        },
+        {
+          "eval_id": "implicit_hate-20825",
+          "cosine": 0.6577,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-14152"
+        },
+        {
+          "eval_id": "implicit_hate-8342",
+          "cosine": 0.6566,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-466"
+        },
+        {
+          "eval_id": "implicit_hate-11085",
+          "cosine": 0.6549,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-466"
+        },
+        {
+          "eval_id": "implicit_hate-18780",
+          "cosine": 0.6525,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-8285"
+        },
+        {
+          "eval_id": "implicit_hate-15185",
+          "cosine": 0.6442,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-466"
+        },
+        {
+          "eval_id": "implicit_hate-8938",
+          "cosine": 0.6407,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-20382"
+        },
+        {
+          "eval_id": "implicit_hate-20851",
+          "cosine": 0.6407,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-42732"
+        }
+      ]
+    },
+    "en_test_eval": {
+      "n_items": 500,
+      "langs": [
+        "en"
+      ],
+      "exact_match_items": [],
+      "normalised_match_items": [],
+      "near_items": [],
+      "very_near_items": [],
+      "max_cosine": 0.7495027780532837,
+      "top": [
+        {
+          "eval_id": "mhs-21031",
+          "cosine": 0.7495,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-3840"
+        },
+        {
+          "eval_id": "implicit_hate-9750",
+          "cosine": 0.7478,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-13867"
+        },
+        {
+          "eval_id": "mhs-14478",
+          "cosine": 0.7367,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-12549"
+        },
+        {
+          "eval_id": "implicit_hate-13027",
+          "cosine": 0.7265,
+          "train_split": "kb_example",
+          "train_id": "ex-hatexplain-4064564_gab"
+        },
+        {
+          "eval_id": "mhs-3738",
+          "cosine": 0.7222,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-12549"
+        },
+        {
+          "eval_id": "mhs-4381",
+          "cosine": 0.7221,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-10510"
+        },
+        {
+          "eval_id": "implicit_hate-7457",
+          "cosine": 0.7155,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-16851"
+        },
+        {
+          "eval_id": "mhs-1633",
+          "cosine": 0.715,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-12549"
+        },
+        {
+          "eval_id": "hatexplain-1084834432710656003_twitter",
+          "cosine": 0.7098,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "hatexplain-1178849131445604353_twitter",
+          "cosine": 0.7069,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "mhs-15082",
+          "cosine": 0.7051,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-7704"
+        },
+        {
+          "eval_id": "mhs-41854",
+          "cosine": 0.7028,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-12235"
+        },
+        {
+          "eval_id": "implicit_hate-5526",
+          "cosine": 0.6973,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-12235"
+        },
+        {
+          "eval_id": "mhs-27618",
+          "cosine": 0.6967,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-12549"
+        },
+        {
+          "eval_id": "mhs-17974",
+          "cosine": 0.6963,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-12549"
+        },
+        {
+          "eval_id": "hatexplain-18455479_gab",
+          "cosine": 0.6962,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-16851"
+        },
+        {
+          "eval_id": "hatexplain-16276804_gab",
+          "cosine": 0.6945,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-14152"
+        },
+        {
+          "eval_id": "mhs-5072",
+          "cosine": 0.6942,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-12549"
+        },
+        {
+          "eval_id": "mhs-16504",
+          "cosine": 0.6939,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-11429"
+        },
+        {
+          "eval_id": "mhs-44903",
+          "cosine": 0.6931,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        }
+      ]
+    },
+    "en_test_eval_severity": {
+      "n_items": 75,
+      "langs": [
+        "en"
+      ],
+      "exact_match_items": [],
+      "normalised_match_items": [],
+      "near_items": [],
+      "very_near_items": [],
+      "max_cosine": 0.8678353428840637,
+      "top": [
+        {
+          "eval_id": "mhs-11700",
+          "cosine": 0.8678,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-3840"
+        },
+        {
+          "eval_id": "mhs-1261",
+          "cosine": 0.7992,
+          "train_split": "kb_example",
+          "train_id": "ex-hatexplain-1178675656634372096_twitter"
+        },
+        {
+          "eval_id": "mhs-36063",
+          "cosine": 0.7795,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "mhs-12469",
+          "cosine": 0.7448,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-12549"
+        },
+        {
+          "eval_id": "mhs-604",
+          "cosine": 0.7428,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-12549"
+        },
+        {
+          "eval_id": "mhs-19340",
+          "cosine": 0.7392,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-11429"
+        },
+        {
+          "eval_id": "mhs-13015",
+          "cosine": 0.7378,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "mhs-18231",
+          "cosine": 0.7358,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-11429"
+        },
+        {
+          "eval_id": "mhs-14560",
+          "cosine": 0.7336,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-3840"
+        },
+        {
+          "eval_id": "mhs-47872",
+          "cosine": 0.7324,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-12549"
+        },
+        {
+          "eval_id": "mhs-6211",
+          "cosine": 0.7313,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-12549"
+        },
+        {
+          "eval_id": "mhs-4524",
+          "cosine": 0.7152,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-3840"
+        },
+        {
+          "eval_id": "mhs-3013",
+          "cosine": 0.7075,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "mhs-36536",
+          "cosine": 0.7058,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "mhs-48785",
+          "cosine": 0.6984,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-3840"
+        },
+        {
+          "eval_id": "mhs-8684",
+          "cosine": 0.6975,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "mhs-29852",
+          "cosine": 0.6933,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "mhs-15708",
+          "cosine": 0.6854,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-10510"
+        },
+        {
+          "eval_id": "mhs-33931",
+          "cosine": 0.6725,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-12549"
+        },
+        {
+          "eval_id": "mhs-47315",
+          "cosine": 0.671,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-24382"
+        }
+      ]
+    },
+    "en_test_eval_targets": {
+      "n_items": 102,
+      "langs": [
+        "en"
+      ],
+      "exact_match_items": [],
+      "normalised_match_items": [],
+      "near_items": [],
+      "very_near_items": [],
+      "max_cosine": 0.7719125151634216,
+      "top": [
+        {
+          "eval_id": "mhs-15215",
+          "cosine": 0.7719,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "mhs-23665",
+          "cosine": 0.7493,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-12549"
+        },
+        {
+          "eval_id": "mhs-48439",
+          "cosine": 0.7204,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-3840"
+        },
+        {
+          "eval_id": "mhs-5460",
+          "cosine": 0.7152,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-12549"
+        },
+        {
+          "eval_id": "mhs-27076",
+          "cosine": 0.706,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-3840"
+        },
+        {
+          "eval_id": "mhs-2296",
+          "cosine": 0.7043,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-12549"
+        },
+        {
+          "eval_id": "mhs-48774",
+          "cosine": 0.7006,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "mhs-11067",
+          "cosine": 0.6981,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "mhs-44674",
+          "cosine": 0.6942,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-7016"
+        },
+        {
+          "eval_id": "mhs-9232",
+          "cosine": 0.6941,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-12549"
+        },
+        {
+          "eval_id": "hatexplain-1112409527847211011_twitter",
+          "cosine": 0.6912,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-14152"
+        },
+        {
+          "eval_id": "mhs-15614",
+          "cosine": 0.6862,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-15431"
+        },
+        {
+          "eval_id": "mhs-1681",
+          "cosine": 0.6861,
+          "train_split": "kb_example",
+          "train_id": "ex-hatexplain-5219517_gab"
+        },
+        {
+          "eval_id": "mhs-8415",
+          "cosine": 0.6847,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-11429"
+        },
+        {
+          "eval_id": "mhs-16184",
+          "cosine": 0.677,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "mhs-43858",
+          "cosine": 0.6668,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-17240"
+        },
+        {
+          "eval_id": "mhs-19569",
+          "cosine": 0.6659,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-15431"
+        },
+        {
+          "eval_id": "hatexplain-15065738_gab",
+          "cosine": 0.661,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-4902"
+        },
+        {
+          "eval_id": "mhs-1015",
+          "cosine": 0.6602,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "mhs-40168",
+          "cosine": 0.6569,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-24382"
+        }
+      ]
+    },
+    "en_test_eval_types": {
+      "n_items": 173,
+      "langs": [
+        "en"
+      ],
+      "exact_match_items": [],
+      "normalised_match_items": [],
+      "near_items": [
+        "implicit_hate-19551"
+      ],
+      "very_near_items": [
+        "implicit_hate-19551"
+      ],
+      "max_cosine": 0.9913890361785889,
+      "top": [
+        {
+          "eval_id": "implicit_hate-19551",
+          "cosine": 0.9914,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-14718"
+        },
+        {
+          "eval_id": "implicit_hate-19454",
+          "cosine": 0.7785,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-1981"
+        },
+        {
+          "eval_id": "implicit_hate-9395",
+          "cosine": 0.7753,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-14152"
+        },
+        {
+          "eval_id": "implicit_hate-18783",
+          "cosine": 0.7694,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-13867"
+        },
+        {
+          "eval_id": "implicit_hate-17977",
+          "cosine": 0.7173,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-16851"
+        },
+        {
+          "eval_id": "implicit_hate-20261",
+          "cosine": 0.7056,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-14152"
+        },
+        {
+          "eval_id": "implicit_hate-20522",
+          "cosine": 0.7046,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-14152"
+        },
+        {
+          "eval_id": "implicit_hate-20676",
+          "cosine": 0.7038,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-14152"
+        },
+        {
+          "eval_id": "implicit_hate-20236",
+          "cosine": 0.6975,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-20382"
+        },
+        {
+          "eval_id": "implicit_hate-9396",
+          "cosine": 0.6932,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-12904"
+        },
+        {
+          "eval_id": "implicit_hate-8608",
+          "cosine": 0.6908,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-16531"
+        },
+        {
+          "eval_id": "implicit_hate-19136",
+          "cosine": 0.6904,
+          "train_split": "kb_example",
+          "train_id": "ex-mhs-48154"
+        },
+        {
+          "eval_id": "implicit_hate-15818",
+          "cosine": 0.69,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-466"
+        },
+        {
+          "eval_id": "implicit_hate-4378",
+          "cosine": 0.6875,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-8285"
+        },
+        {
+          "eval_id": "implicit_hate-10861",
+          "cosine": 0.6849,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-466"
+        },
+        {
+          "eval_id": "implicit_hate-8817",
+          "cosine": 0.6825,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-3751"
+        },
+        {
+          "eval_id": "implicit_hate-20216",
+          "cosine": 0.6822,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-14152"
+        },
+        {
+          "eval_id": "implicit_hate-6177",
+          "cosine": 0.6813,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-13824"
+        },
+        {
+          "eval_id": "implicit_hate-18176",
+          "cosine": 0.6792,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-16851"
+        },
+        {
+          "eval_id": "implicit_hate-20420",
+          "cosine": 0.6756,
+          "train_split": "kb_example",
+          "train_id": "ex-implicit_hate-20382"
+        }
+      ]
+    }
+  }
+}

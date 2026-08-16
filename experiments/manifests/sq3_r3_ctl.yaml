@@ -1,0 +1,35 @@
+name: sq3_r3_ctl
+description: >
+  SQ3 round 3, matched-size control. KB c0a47fda41431b14: base 360 records plus 48
+  correctly-labelled records, matched one-for-one in count, kind and bucket to
+  sq3_r3_fb. Round 3 adds 15: 12 items the ROUND-2 CONTROL ARM got right in
+  b3, plus 3 correctly-labelled TRAIN items to match the count exactly.
+
+  This arm is not an afterthought. At k=3 it outperformed every other run in
+  the phase (macro 0.384 against a round-0 mean of 0.357, predicted labels
+  1.64 against a round-0 range of 1.719-1.769), which is the evidence that
+  adding correctly-labelled records helps on its own. Only this arm can
+  separate that from error-selection, and error-selection has now measured
+  0.000 at round 1 and +0.002 at round 2.
+records_path: kb/records_sq3_ctl_r3.jsonl
+chroma_path: kb/chroma_sq3_ctl_r3
+subset: en_dev_eval_sq3_types
+arms: [rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: strict
+retrieval:
+  strategy: hybrid
+  k_definitions: 2
+  k_guidelines: 2
+  k_examples: 5
+  k_examples_feedback: 1
+  use_mmr: true
+  mmr_lambda: 0.7
+  mmr_pool_factor: 3
+  use_reranker: false
+  rrf_k: 60

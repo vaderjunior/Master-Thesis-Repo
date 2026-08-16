@@ -16,6 +16,7 @@ WHY THREE BUCKETS, NOT ONE RANKED LIST
   Structured prompts need structured retrieval.
 """
 
+from collections import Counter
 from dataclasses import dataclass, field
 
 from pathlib import Path
@@ -50,10 +51,16 @@ class RetrievalResult:
     definitions: list[Hit] = field(default_factory=list)
     guidelines: list[Hit] = field(default_factory=list)
     examples: list[Hit] = field(default_factory=list)
+    # SQ3. A separate bucket, not extra example slots, so the amount of
+    # feedback in a prompt is fixed by budget rather than varying with how
+    # well a correction happens to rank against ~320 training examples.
+    # Defaults empty, so every pre-SQ3 caller is unaffected.
+    feedback: list[Hit] = field(default_factory=list)
 
     def all_hits(self) -> list[Hit]:
         """Flat view, for logging and the debug CLI."""
-        return self.definitions + self.guidelines + self.examples
+        return (self.definitions + self.guidelines + self.examples
+                + self.feedback)
 
     def __len__(self) -> int:
         return len(self.all_hits())
@@ -195,16 +202,80 @@ class Retriever:
         ]
 
         buckets = {}
+        # dimension -> how many definitions the KB holds for it. Counted from
+        # records.jsonl rather than read from taxonomy.yaml on purpose: the
+        # budget should be proportional to what is actually THERE to retrieve,
+        # and a taxonomy import here would make retrieval behaviour depend on
+        # a file retrieve.py otherwise never reads. Counter preserves
+        # insertion order, so dimensions stay in taxonomy order - which is the
+        # order they will render in the prompt.
+        self._def_counts = Counter()
         for r in records:
-            if r["kind"] == "example":
-                key = f"example:{r['lang']}"      # examples are lang-specific
+            # examples AND feedback are language-specific. Without the lang
+            # key, German and English corrections would share one BM25 index
+            # and an English query could score a German correction.
+            if r["kind"] in ("example", "feedback"):
+                key = f"{r['kind']}:{r['lang']}"
             else:
                 key = r["kind"]                   # definitions, guidelines
             buckets.setdefault(key, []).append(r)
+            if r["kind"] == "definition":
+                dim = r.get("dimension") or "(none)"
+                self._def_counts[dim] += 1
+                # A SECOND, per-dimension index alongside the flat one. Both
+                # are built because both modes must stay reachable: flat is
+                # the frozen baseline every existing number was measured
+                # under, and it has to keep working byte-identically.
+                #
+                # NOTE these indexes hold 1-7 documents each, so IDF is
+                # computed over a handful rather than over all 21. RRF only
+                # consumes RANK within a channel, so that is the intended
+                # behaviour, but a single-document index can score its one
+                # document at or below zero and _bm25_kind refuses to pad -
+                # so `hate`, with one definition, may come through the dense
+                # channel only.
+                buckets.setdefault(f"definition:{dim}", []).append(r)
 
         for key, recs in buckets.items():
             self._bm25_records[key] = recs
             self._bm25[key] = BM25Okapi([tokenize(r["text"]) for r in recs])
+
+    def _definition_specs(self, cfg: dict) -> list[tuple[dict, str, int]]:
+        """(chroma_where, bm25_bucket_key, k) per definition sub-query.
+
+        ONE PLACE, USED BY ALL THREE STRATEGIES. A bucket handled in only the
+        strategy currently in use is the exact shape of the bug that discarded
+        974 predictions when `legal` was added, and the same shape again when
+        the SQ3 feedback bucket was wired. Returning a spec list rather than
+        branching inside each strategy makes it impossible for dense, bm25 and
+        hybrid to disagree about what the budget is.
+
+        `flat` returns a single spec identical to the pre-2026-08-16
+        behaviour, so a run under the default config renders byte-identically
+        to every run before it.
+        """
+        mode = cfg.get("k_definitions_mode", "flat")
+        if mode == "flat":
+            return [({"kind": "definition"}, "definition",
+                     cfg["k_definitions"])]
+
+        rate = cfg.get("k_definitions_per_label", 0.3)
+        flat_k = cfg.get("k_definitions_per_dimension", 1)
+        out = []
+        for dim, n in self._def_counts.items():
+            # max(1, ...) so a dimension is never budgeted to zero. A
+            # dimension with no definition slots is invisible to the prompt
+            # while still being demanded in the output schema, which is the
+            # asymmetry this whole change exists to remove.
+            k = flat_k if mode == "per_dimension" else max(1, round(n * rate))
+            out.append(({"$and": [{"kind": "definition"},
+                                  {"dimension": dim}]},
+                        f"definition:{dim}", int(k)))
+        if not out:
+            raise ValueError(
+                f"k_definitions_mode={mode!r} but the KB holds no definitions "
+                f"with a `dimension` field; nothing to budget")
+        return out
 
     def _embed(self, text: str) -> list[list[float]]:
         return self.model.encode([text], normalize_embeddings=True).tolist()
@@ -289,22 +360,35 @@ class Retriever:
             else:
                 examples = self._query_kind(qvec, ex_where, k_ex, "dense")
 
+            definitions = []
+            for _where, _bm, _k in self._definition_specs(cfg):
+                definitions += self._query_kind(qvec, _where, _k, "dense")
+
             return RetrievalResult(
-                definitions=self._query_kind(qvec, {"kind": "definition"},
-                                             cfg["k_definitions"], "dense"),
+                definitions=definitions,
                 guidelines=self._query_kind(qvec, {"kind": "guideline"},
                                             cfg["k_guidelines"], "dense"),
                 examples=examples,
+                # Handled in every strategy, not only the one SQ3 uses. A
+                # bucket silently absent from one code path is the exact shape
+                # of the bug that discarded 974 predictions.
+                feedback=self._query_kind(
+                    qvec, {"$and": [{"kind": "feedback"}, {"lang": lang}]},
+                    cfg.get("k_examples_feedback", 0), "dense"),
             )
 
         if strategy == "bm25":
+            definitions = []
+            for _where, _bm, _k in self._definition_specs(cfg):
+                definitions += self._bm25_kind(text, _bm, _k)
             return RetrievalResult(
-                definitions=self._bm25_kind(text, "definition",
-                                            cfg["k_definitions"]),
+                definitions=definitions,
                 guidelines=self._bm25_kind(text, "guideline",
                                            cfg["k_guidelines"]),
                 examples=self._bm25_kind(text, f"example:{lang}",
                                          cfg["k_examples"]),
+                feedback=self._bm25_kind(text, f"feedback:{lang}",
+                                         cfg.get("k_examples_feedback", 0)),
             )
         if strategy == "hybrid":
             qvec = self._embed(text)
@@ -315,16 +399,35 @@ class Retriever:
             # exactly the evidence RRF needs to arbitrate.
             depth = 10
 
+            # Definitions expand into one sub-bucket per dimension under a
+            # non-flat mode, and into exactly one under flat. Each is fused
+            # independently, then concatenated IN SPEC ORDER - which is
+            # records.jsonl order, which is taxonomy order. Order matters: it
+            # is the order they render in the prompt, and a Phase 8 retrieval
+            # check compared SORTED id sets and could not see that RRF had
+            # reordered the same records.
+            def_specs = self._definition_specs(cfg)
             buckets = {}
             for bucket, where, bm25_key, k_out in [
-                ("definitions", {"kind": "definition"}, "definition",
-                 cfg["k_definitions"]),
+                (f"definitions::{i}", w, b, k)
+                for i, (w, b, k) in enumerate(def_specs)
+            ] + [
                 ("guidelines", {"kind": "guideline"}, "guideline",
                  cfg["k_guidelines"]),
                 ("examples",
                  {"$and": [{"kind": "example"}, {"lang": lang}]},
                  f"example:{lang}", cfg["k_examples"]),
+                ("feedback",
+                 {"$and": [{"kind": "feedback"}, {"lang": lang}]},
+                 f"feedback:{lang}", cfg.get("k_examples_feedback", 0)),
             ]:
+                # Skip a zero-budget bucket entirely. Without this the dense
+                # channel still queries Chroma at depth=10 and RRF then
+                # discards everything - a pointless query per item, and a
+                # misleading one in any trace of retrieval activity.
+                if k_out <= 0:
+                    buckets[bucket] = []
+                    continue
                 # MMR re-ranks the dense channel before fusion. Pool is
                 # mmr_pool_factor x depth, selected down to depth, so the
                 # dense list handed to RRF is the same LENGTH as before and
@@ -342,6 +445,11 @@ class Retriever:
                     {"dense": dense_hits, "bm25": bm25_hits},
                     k=rrf_k, top_n=k_out,
                 )
+
+            definitions = []
+            for i in range(len(def_specs)):
+                definitions.extend(buckets.pop(f"definitions::{i}", []))
+            buckets["definitions"] = definitions
 
             return RetrievalResult(**buckets)
 

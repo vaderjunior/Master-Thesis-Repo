@@ -1,0 +1,16 @@
+name: sq3_round0_r3
+description: >
+  SQ3 round 0, replicate 3 of 3. Identical configuration to sq3_round0_r1;
+  a separate manifest because the runner is resumable and re-running one
+  name would resume rather than replicate. Seed stays 42: it drives the
+  static few-shot draw, not API determinism, confirmed by temp_types_t10 and
+  temp_types_t10_rep2 differing at the same seed.
+subset: en_dev_eval_sq3_types
+arms: [rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: strict

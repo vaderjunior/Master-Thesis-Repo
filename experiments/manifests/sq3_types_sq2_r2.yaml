@@ -1,0 +1,45 @@
+name: sq3_types_sq2_r2
+description: >
+  Replicate 2 of the SQ2 arms; a separate manifest because
+  the runner is resumable and re-running one name would resume rather than replicate.
+  zero_shot and few_shot on en_dev_eval_sq3_types under the base KB
+  b3e1a021777f7b85. Round 0 already supplies four rag replicates on the same
+  467 items, so this completes a three-arm SQ2 comparison in the current
+  comparability group.
+
+  It replaces types_dev_peasec (hate_type 0.280 / 0.335 / 0.368, rag - zs
+  +0.088, p=0.018), which is the project's only p<0.05 result and sits under
+  the retired prompt classify_v1-c74cb7ab and KB 475869f9e2422969. That number
+  therefore cannot appear in the same table as anything current without a
+  caveat.
+
+  The new comparison is on 467 items rather than 103, with 68-69 support per
+  label rather than 15-16, at the frozen state, with temperature stamped.
+
+  The subset is legitimate for SQ2: drawn label-stratified on seed 42 from
+  unused dev items with no model output influencing the draw, and disjoint
+  from types, main and sq1_tune. One limitation - it is 100% hateful, so the
+  gate is single-class and not scorable there.
+
+  k_examples_feedback 0: no corrections exist in the base KB, and zero_shot
+  and few_shot run no retrieval at all.
+subset: en_dev_eval_sq3_types
+arms: [zero_shot, few_shot]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: strict
+retrieval:
+  strategy: hybrid
+  k_definitions: 2
+  k_guidelines: 2
+  k_examples: 5
+  k_examples_feedback: 0
+  use_mmr: true
+  mmr_lambda: 0.7
+  mmr_pool_factor: 3
+  use_reranker: false
+  rrf_k: 60

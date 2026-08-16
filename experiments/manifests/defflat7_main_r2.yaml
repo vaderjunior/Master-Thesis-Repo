@@ -1,0 +1,61 @@
+name: defflat7_main_r2
+description: >
+  Build-guide 7.3, the amount-versus-allocation control for the gate finding.
+  Flat k_definitions=7 on en_dev_eval_main, rag arm only, replicate 2.
+
+  WHY THIS RUN EXISTS. Proportional budgets on this subset cut gate false
+  positives from ~101 to ~90 while adding under one false negative, moving
+  gate macro-F1 from 0.623 to 0.655 with complete separation on both the macro
+  and the raw FP count. That is the first clear improvement any retrieval
+  configuration change has produced in this project.
+
+  But proportional renders SEVEN definitions where flat renders TWO, so the
+  result confounds two causes: the model was given more definitions, AND the
+  hate definition went from 2.6% of prompts to 100%. This arm holds the amount
+  at seven and lets allocation vary, exactly as defflat7_r1..r3 did on
+  en_dev_eval_sq3_types.
+
+  PRE-REGISTERED, RECORDED BEFORE THE RUN.
+  D. If flat7 also reaches ~0.655, the effect is AMOUNT. The claim becomes
+     "two definitions is too few", which is true but weak and would apply to
+     any dimension.
+  E. If flat7 stays near the flat2 baseline of 0.623, the effect is the
+     GUARANTEED GATE SLOT. The claim becomes "the definition of the task
+     itself must reach every prompt, and similarity retrieval will not put it
+     there" - much sharper, and it names a design rule rather than a
+     hyperparameter.
+  F. E is the likelier of the two on the evidence available. On
+     en_dev_eval_sq3_types flat7 gave hate-definition coverage of ~30% against
+     flat2's 2.6% and proportional's 100%, and its gate false negatives were
+     64.3 against flat2's 67.2 and proportional's 78.3 - so flat7 did NOT
+     behave like a partial dose of proportional. Whatever proportional does to
+     the gate is not a smooth function of coverage. Recorded so that a flat7
+     result near proportional's counts as a surprise rather than a
+     confirmation.
+
+  THE CONFIG REMAINS FROZEN AT flat k=2 regardless of the outcome. The
+  decision gate was read on en_dev_eval_sq3_types and did not trip
+  (-0.006 against a floor of 0.021), SQ3 is complete and drafted under flat,
+  and both remaining test runs are on legal and hate_type rather than the
+  gate. This measures a finding; it does not change the system.
+subset: en_dev_eval_main
+arms: [rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: both
+retrieval:
+  strategy: hybrid
+  k_definitions: 7
+  k_definitions_mode: flat
+  k_guidelines: 2
+  k_examples: 5
+  k_examples_feedback: 0
+  use_mmr: true
+  mmr_lambda: 0.7
+  mmr_pool_factor: 3
+  use_reranker: false
+  rrf_k: 60

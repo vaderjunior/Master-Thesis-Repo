@@ -1,0 +1,53 @@
+name: nolabel_zs_r1
+description: >
+  New-label adaptability, REMOVED state, zero_shot arm. Taxonomy
+  taxonomy-1a24b4b1: config/taxonomy.yaml with hate_type/grievance removed,
+  six labels instead of seven.
+
+  Decision Q6 named three adaptability edit types. Corrected examples (SQ3)
+  and a revised definition (the `other` rewrite) have both been measured and
+  both are null. A new label added mid-run is the third and has never been
+  run, and it tests a different pathway: the label space is read from
+  taxonomy.yaml at render time and reaches every prompt in every arm without
+  any retrieval, so the mechanism behind SQ3's null does not apply here.
+
+  THIS ARM IS THE CLEAN PATHWAY TEST. zero_shot receives no examples and no
+  retrieved context, so removing a label from the taxonomy changes exactly one
+  thing: the label space. The rag arm additionally loses the definition and 10
+  labelled examples and is a system-level result, not a pathway test.
+  few_shot is deliberately omitted: one of the static five
+  (ex-implicit_hate-5637) carries grievance, so the reduced pool changes the
+  static draw and the arm would vary in two ways at once.
+
+  The RESTORED state already exists and needs no run: sq3_types_sq2_r1..r3
+  give three zero_shot replicates on the same 467 items under the full
+  taxonomy, with grievance F1 0.378 and macro 0.336 +/- 0.003.
+
+  This is not a rounds-to-recovery measurement. Restoring a taxonomy label is
+  one edit, so what is measured is delta macro-F1 with the LLM frozen - the
+  thesis's locked definition of adaptability, stated as plainly as it can be.
+
+  Expect parse failures to rise: the Pydantic enums are generated from the
+  taxonomy, so a prediction of `grievance` from pretraining now fails
+  validation rather than scoring as a wrong label. Count them; they measure
+  whether the taxonomy constrains output.
+subset: en_dev_eval_sq3_types
+arms: [zero_shot]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: strict
+retrieval:
+  strategy: hybrid
+  k_definitions: 2
+  k_guidelines: 2
+  k_examples: 5
+  k_examples_feedback: 0
+  use_mmr: true
+  mmr_lambda: 0.7
+  mmr_pool_factor: 3
+  use_reranker: false
+  rrf_k: 60

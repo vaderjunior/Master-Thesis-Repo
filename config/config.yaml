@@ -52,18 +52,60 @@ kb:
 
 retrieval:
   strategy: hybrid          # dense | bm25 | hybrid   <- SQ1 Stage B
-  k_definitions: 2          # <- SQ1 Stage A/D
+  k_definitions: 2
+  # HOW THE DEFINITION BUDGET IS SPLIT ACROSS DIMENSIONS.
+  #   flat          - one query over all 21 definitions, k_definitions slots
+  #                   total. The frozen baseline and the ablation arm.
+  #   per_dimension - k_definitions_per_dimension slots for EACH dimension.
+  #   proportional  - slots per dimension = max(1, round(n_definitions * rate)),
+  #                   so target_group (7) and hate_type (7) get more than
+  #                   severity (3) or legal (3).
+  #
+  # WHY. The burial problem that per-kind budgeting fixed in Phase 3 recurs
+  # one level down, inside the definitions bucket. target_group definitions
+  # name groups whose words appear verbatim in hate speech; hate_type
+  # definitions name rhetorical modes. target_group wins the similarity race
+  # regardless of which dimension is being scored.
+  #
+  # AT rate 0.3 THE BUDGETS ARE hate 1 / target_group 2 / hate_type 2 /
+  # severity 1 / legal 1 = 7 TOTAL, which is deliberate: it matches the
+  # existing flat k=7 arm, so proportional-vs-flat-7 isolates ALLOCATION while
+  # proportional-vs-flat-2 would confound allocation with amount.
+  #
+  # Default is flat, so this block changes nothing until a manifest sets it.
+  k_definitions_mode: flat
+  k_definitions_per_dimension: 1
+  k_definitions_per_label: 0.3
   k_guidelines: 2
   k_examples: 5
+  # SQ3: an ADDITIONAL slot for feedback records, not carved out of
+  # k_examples. Carving it out would mean round 0 renders 5 regular examples
+  # and round 1 renders 4 + 1 feedback, so a drop from 5 to 4 would ride
+  # along with the intervention. 0 here means every pre-SQ3 run and round 0
+  # render byte-identically to before.
+  k_examples_feedback: 0
   use_mmr: true             # <- SQ1 Stage C
   mmr_lambda: 0.7
   mmr_pool_factor: 3
   use_reranker: false       
   rrf_k: 60                 # cited (Cormack 2009), not tuned
 
-classify:
-  pinned_model: qwen3.5-122b-a10b   # asserted when allow_fallback is off
-  max_repair_retries: 2
-  n_votes_dev: 3
-  n_votes_formal: 5
-  fewshot_seed: 42
+reporting:
+  # Labels dropped from the macro average and reported separately instead,
+  # with their own support and F1. NOT a claim that the label is unimportant.
+  # `other` in target_group is a residual category defined by exclusion, so it
+  # has no semantic centroid for similarity retrieval to aim at, and it scores
+  # 0.000-0.333 in every arm against 0.56-0.93 for the six specific labels. A
+  # 7-label macro that includes it reports mostly its noise: on
+  # en_dev_eval_targets the entire between-arm macro difference is `other`.
+  # Whether `other` belongs in the taxonomy at all is an open question for
+  # Markus, which is why this is a reporting policy in config and not a rule
+  # in code. Every affected figure is reported BOTH ways.
+  macro_exclude: [other]
+
+#classify:
+#  pinned_model: qwen3.5-122b-a10b   # asserted when allow_fallback is off
+# max_repair_retries: 2
+#  n_votes_dev: 3
+# n_votes_formal: 5
+# fewshot_seed: 42

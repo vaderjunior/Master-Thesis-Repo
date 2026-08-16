@@ -11,6 +11,8 @@ __pycache__/
 *.pyc
 kb/chroma/
 data/
-experiments/results/
 scratch/
 Thesis_log/
+experiments/results/
+!experiments/results/*.metrics.json
+!experiments/results/*.analysis.json

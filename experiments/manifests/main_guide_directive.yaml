@@ -1,0 +1,45 @@
+name: main_guide_directive
+description: >
+  Guideline-edit case study (8.10). KB <HASH>: identical to
+  b3e1a021777f7b85 except that guide-profanity-without-target is reworded for
+  salience - decision first, imperative, and the output field named
+  explicitly. Content, both examples and the exception are unchanged; the
+  variant asserts that exactly one field of exactly one record differs.
+
+  Every correction written in SQ3 was a labelled example. A guideline is the
+  other adaptability lever and the one the Phase 7 encoder baseline
+  structurally cannot use. The oracle (4.3) showed the model acts on retrieved
+  material, so this asks whether an abstract RULE is acted on as readily as a
+  concrete labelled example.
+
+  The target is decisive and was measured as retrieved, correct, and obeyed
+  ~40% of the time - the second in-system reproduction of Mohammadi et al.
+  2025. On this subset the baseline carries 102 false positives over 207
+  benign items, so an obeyed guideline has a large measurable target, unlike
+  the 11 false negatives that left the balanced-set gate test underpowered.
+
+  Paired against main_base_r0 and main_base_r0_rep2 on the intersection of
+  items where the guideline is retrieved under both KBs, so a change in
+  retrieval cannot be mistaken for a change in adherence.
+records_path: kb/records_guide_directive.jsonl
+chroma_path: kb/chroma_guide_directive
+subset: en_dev_eval_main
+arms: [rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: both
+retrieval:
+  strategy: hybrid
+  k_definitions: 2
+  k_guidelines: 2
+  k_examples: 5
+  k_examples_feedback: 0
+  use_mmr: true
+  mmr_lambda: 0.7
+  mmr_pool_factor: 3
+  use_reranker: false
+  rrf_k: 60
