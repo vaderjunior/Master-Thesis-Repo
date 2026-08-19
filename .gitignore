@@ -16,3 +16,10 @@ Thesis_log/
 experiments/results/
 !experiments/results/*.metrics.json
 !experiments/results/*.analysis.json
+
+# Ignore generated model artifacts
+models/
+
+# Ignore Chroma DB binaries (optional, but recommended if generated locally)
+kb/chroma_sq3_fb_r4/*.bin
+kb/chroma_sq3_fb_r4/*.sqlite3

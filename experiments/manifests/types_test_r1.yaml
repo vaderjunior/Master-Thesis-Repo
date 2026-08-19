@@ -1,0 +1,86 @@
+name: types_test_r1
+description: >
+  Build-guide 7.12. THE SQ2 TEST RUN. Replicate 1 of three.
+
+  RULE 2: the test splits are touched by final runs and nothing else. The
+  claims below were fixed on dev before this ran.
+
+  CONFIGURATION IS FROZEN at k_definitions_mode flat, k_definitions 2 (7.3).
+
+  WHAT IS BEING CONFIRMED. rag - few_shot on hate_type, measured on two
+  disjoint dev subsets at the same system state:
+
+    en_dev_eval_sq3_types  n=467  +0.031  floor 0.021  3 replicates
+    en_dev_eval_types      n=103  +0.111  floor 0.070  4 replicates
+    pooled                 n=570  +0.045  CI [+0.009, +0.082]  I^2 = 62%
+
+  THIS IS AN ESTIMATION EXERCISE, NOT A SIGNIFICANCE TEST, and that is fixed
+  before the run rather than claimed after a null. At n=173 the item-sampling
+  SE is roughly 0.032, scaling the 103-item subset's 0.0421 by sqrt(103/173).
+  Against a pooled estimate of +0.045 that is z ~ 1.4 and power near 30%.
+  Replicates cannot fix it: the paired bootstrap resamples ITEMS, so more
+  replicates shrink only the decoding component while power is set by n. The
+  question is whether the test confidence interval CONTAINS the dev estimate.
+  A non-significant positive delta confirms; it does not fail.
+
+  PRE-REGISTERED PREDICTIONS, strongest first.
+  T1. THE MECHANISM. `irony` and `threatening` are the two largest positive
+      per-label deltas. On dev they carry 98% of the effect on the 103 and
+      116% on the 467 - same two labels, same sign, same rank order, on
+      disjoint samples. Reproducing on a THIRD disjoint sample is worth more
+      than the macro number and stays readable even if the macro is not.
+      Support here is ~25 per label, between the 103's 15 and the 467's 68, so
+      per-label floors will be intermediate and must be measured from these
+      three replicates rather than assumed.
+  T2. rag - few_shot is POSITIVE and its 95% CI contains +0.045.
+  T3. rag is WORSE than few_shot on `incitement` and `explicit`. Negative on
+      both dev subsets, and a sign flip would weaken the label-coverage
+      account.
+  T4. few_shot - zero_shot is NULL. On the 467 it was -0.014/-0.010/-0.011 at
+      p = 0.418/0.544/0.520. The earlier claim that "few_shot hurts" was a
+      103-only artefact and does not survive at larger n.
+  T5. rag has the fewest schema-repair calls.
+
+  LEAKAGE, FLAGGED BEFORE THE RUN. en_test_eval_types has ONE item with a
+  knowledge-base near-copy at 0.9914 (ex-implicit_hate-14718) and, unlike the
+  German legal records, it carries hate_types gold - the dimension this run
+  measures. 1 of 173 is 0.6% and cannot move a macro, but every headline
+  figure is re-scored with and without it and both are reported. Six further
+  items have a TRAIN near-copy, which matters for the encoder rather than for
+  a frozen LLM; those ids were already excluded from encoder training by the
+  >= 0.95 filter.
+
+  A LARGER TEST SUBSET WAS AVAILABLE AND WAS NOT DRAWN. en_test holds 913
+  unused hate_type-scorable items with `threatening` rarest at 70, so a
+  balanced seven-label draw could reach 490 items at support 70 - matching
+  en_dev_eval_sq3_types and raising power from ~30% to ~68%. It was not drawn
+  because the eval subsets were frozen before any result was seen, and sizing
+  a test subset in response to an observed power shortfall is an adaptive
+  design decision. The option is recorded in the limitations section and
+  remains available as a documented follow-up if this run is ambiguous.
+
+  WHAT WOULD FALSIFY THE SQ2 CLAIM. A negative or near-zero delta whose CI
+  excludes the dev estimate, together with `irony` and `threatening` failing to
+  lead the per-label table. Either alone is within what n=173 can produce by
+  chance; both together would mean the dev result does not generalise.
+subset: en_test_eval_types
+arms: [zero_shot, few_shot, rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: strict
+retrieval:
+  strategy: hybrid
+  k_definitions: 2
+  k_definitions_mode: flat
+  k_guidelines: 2
+  k_examples: 5
+  k_examples_feedback: 0
+  use_mmr: true
+  mmr_lambda: 0.7
+  mmr_pool_factor: 3
+  use_reranker: false
+  rrf_k: 60

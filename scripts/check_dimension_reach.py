@@ -119,9 +119,33 @@ def main():
                           if d in (r.get("agreement") or {})) for d in dims}
         n_drop = sum(1 for r in scored
                      if "_dropped" in (r.get("agreement") or {}))
-        voted = [d for d in dims if n_ref and per_dim[d] == n_ref]
-        missing = [d for d in dims if per_dim[d] == 0]
-        mixed = [d for d in dims if 0 < per_dim[d] < n_ref]
+        # WHICH DIMENSIONS IS THIS RUN EXPECTED TO CARRY? An LLM run answers
+        # all five in one pass, so all five are expected. An encoder arm has
+        # only the heads it was trained with: the German arm has hate and
+        # legal because BoTox never annotates the gate and only Implicit Hate
+        # carries hate_type gold; the English arms have no legal head because
+        # KB records store legal provenance as meta.stgb, a paragraph number,
+        # not a taxonomy label.
+        #
+        # Without this, six encoder runs generate fifteen faults that are all
+        # by design, and the one real fault - legal_dev_peasec's mixed code
+        # versions - is buried in them. That is the third time this pattern
+        # has appeared: make_comparability produced 30 kb_version false alarms
+        # by reading a field two arms deliberately leave None, and this script
+        # produced 6 by counting parse failures. A check that cries wolf gets
+        # ignored, and an ignored check is worse than none.
+        enc = next((r["encoder_meta"] for r in items if r.get("encoder_meta")),
+                   None)
+        by_design = []
+        expected = list(dims)
+        if enc:
+            have = set(enc.get("heads") or {})
+            by_design = [d for d in dims if d not in have]
+            expected = [d for d in dims if d in have]
+
+        voted = [d for d in expected if n_ref and per_dim[d] == n_ref]
+        missing = [d for d in expected if per_dim[d] == 0]
+        mixed = [d for d in expected if 0 < per_dim[d] < n_ref]
         has_dropped = bool(n_ref) and n_drop == n_ref
 
         ts = [r.get("timestamp") or 0 for r in items]
@@ -146,8 +170,11 @@ def main():
 
         rows.append({"run": stem, "date": when, "n": n_ref,
                      "voted": voted, "missing": missing, "mixed": mixed,
+                     "by_design": by_design,
                      "per_dim": per_dim, "dropped": has_dropped, "fill": fill})
         note = ",".join(missing) if missing else "-"
+        if by_design:
+            note += f"   [no head: {','.join(by_design)}]"
         if mixed:
             note += "   MIXED: " + ", ".join(
                 f"{d} on {per_dim[d]}/{n_ref}" for d in mixed)
@@ -160,6 +187,10 @@ def main():
     print(f"\n{'-' * 96}\nWHEN DID EACH DIMENSION START BEING VOTED?")
     print("  A run missing a dimension BEFORE its first appearance is not a")
     print("  fault. A run missing one AFTER is.\n")
+    nd = sum(1 for r in rows if r.get("by_design"))
+    if nd:
+        print(f"\n  {nd} run(s) declare heads they do not have; those "
+              f"dimensions are excluded from the fault check below.")
     first = {}
     for d in dims:
         dated = sorted(r["date"] for r in rows if d in r["voted"])

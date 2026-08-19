@@ -1,0 +1,37 @@
+name: de_legal_kbv3_r3
+description: >
+  Third baseline replicate on de_legal_dev_eval at the frozen config, rag arm
+  only. de_legal_kbv3_r1 and _r2 ran all three arms; arms are independent
+  per item, so a rag-only replicate is a valid third point for the rag arm and
+  costs a third as much.
+
+  WHY IT IS NEEDED. The proportional comparison below is against the CURRENT KB
+  b3e1a021, and only two rag replicates exist there. Phase 7 has already
+  corrected two published floors that were taken from a single arm at two
+  replicates (en_dev_eval_types 0.037 -> 0.070, legal 0.018 -> 0.041), and in
+  both cases the widest arm was not the arm under test. A two-point baseline is
+  the exact thing that produced both errors.
+
+  The legal_dev_peasec revote / _r2 / _r3 triple is at KB c34e780c and is NOT
+  the right baseline for a config comparison at b3e1a021.
+subset: de_legal_dev_eval
+arms: [rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: strict
+retrieval:
+  strategy: hybrid
+  k_definitions: 2
+  k_definitions_mode: flat
+  k_guidelines: 2
+  k_examples: 5
+  k_examples_feedback: 0
+  use_mmr: true
+  mmr_lambda: 0.7
+  mmr_pool_factor: 3
+  use_reranker: false
+  rrf_k: 60

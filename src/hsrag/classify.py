@@ -131,6 +131,11 @@ class ItemResult:
     normalisations: int = 0
     gate_normalised: int = 0
 
+    # Encoder runs only. Per-head checkpoint stamps, thresholds and timings,
+    # so an encoder ItemResult is as falsifiable as an LLM one. None for every
+    # LLM run, which is what distinguishes the two at a glance.
+    encoder_meta: dict | None = None
+
     # raw material: one list of attempts per run. alpha (Phase 6) needs the
     # per-run predictions, and the n=1 arm is scored from run 0 alone.
     raw_runs: list = field(default_factory=list)

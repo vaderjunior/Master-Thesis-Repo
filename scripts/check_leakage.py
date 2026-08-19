@@ -58,6 +58,7 @@ PROCESSED = Path("data/processed")
 KB_RECORDS = Path("kb/records.jsonl")
 CACHE = Path("scratch/leakage_emb")
 OUT = Path("experiments/leakage_report.json")
+EXCL = Path("experiments/leakage_train_exclusions.json")
 
 TRAIN_SPLITS = ["en_train", "de_train", "de_legal_train"]
 
@@ -197,6 +198,13 @@ def main():
             exact_index[(lang, txt)].append((src, tid))
 
     train_vecs = {}
+    # Per-TRAIN-ROW maximum similarity against ANY eval item, accumulated
+    # across every subset. The per-eval-item argmax below answers "is this
+    # eval item near something we train on"; this answers the inverse, "must
+    # this train row be dropped". They are not the same list - two train rows
+    # can both sit above threshold against one eval item while only one is
+    # that item's argmax - and the encoder filter needs the inverse.
+    train_max = {}
     report = {}
 
     for path in subsets:
@@ -239,12 +247,17 @@ def main():
             # 56k x 467 is fine, 56k x 12k is not.
             top = np.full(len(sub), -1.0, dtype=np.float32)
             arg = np.zeros(len(sub), dtype=np.int64)
+            if lang not in train_max:
+                train_max[lang] = np.full(len(tv), -1.0, dtype=np.float32)
             for s in range(0, len(tv), args.chunk):
                 sim = ev @ tv[s:s + args.chunk].T
                 m = sim.max(axis=1)
                 a = sim.argmax(axis=1) + s
                 upd = m > top
                 top[upd], arg[upd] = m[upd], a[upd]
+                # Same matrix, the other axis, accumulated across subsets.
+                seg = train_max[lang][s:s + sim.shape[1]]
+                np.maximum(seg, sim.max(axis=0), out=seg)
 
             for i, r in enumerate(sub):
                 best[str(r.id)] = (float(top[i]), rows[arg[i]],
@@ -283,6 +296,28 @@ def main():
                      "train_split": v[1][0], "train_id": v[1][1]}
                     for k, v in sims[:20]],
         }
+
+    # WRITTEN ONLY ON A FULL, UNRESTRICTED SCAN. A --smoke run sees 2000 train
+    # rows and an --only run sees one source, so either would produce a
+    # partial exclusion list that looks complete - and a leakage filter that
+    # silently misses most of what it should catch is worse than none.
+    if not args.only and not args.smoke:
+        excl = {}
+        for lang, mx in train_max.items():
+            rows = pool[lang]
+            excl[lang] = sorted(
+                {rows[i][1] for i in np.where(mx >= args.near)[0]})
+        EXCL.write_text(json.dumps(
+            {"threshold": args.near,
+             "note": "TRAIN ids with a twin at or above threshold cosine in "
+                     "ANY eval subset. Consumed by make_encoder_data; the "
+                     "count goes into each checkpoint's meta.json so the "
+                     "filter is provable after the fact.",
+             "counts": {k: len(v) for k, v in excl.items()},
+             "ids": excl}, indent=2), encoding="utf-8")
+        print(f"\n  wrote {EXCL}: "
+              + ", ".join(f"{k} {len(v)}" for k, v in excl.items())
+              + f" train rows to exclude at >= {args.near}")
 
     out = (OUT.with_name(f"leakage_report_{args.only}.json") if args.only
            else OUT)

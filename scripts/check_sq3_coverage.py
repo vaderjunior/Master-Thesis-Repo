@@ -2,6 +2,16 @@
 scripts/check_sq3_coverage.py - the 8.1 coverage audit. Read-only, zero API
 calls. Run: python -m scripts.check_sq3_coverage
 
+KNOWN LIMITATION: `--primary` controls which dimension is REPORTED, not which
+gold column is READ. The reads are hardcoded to `hate_types`, so
+`--primary legal` raises KeyError on de_legal_* subsets, which have no such
+column. It also applies a `gate=True` filter that is wrong for `legal` - BoTox
+never annotates the gate, so de_legal_* is 100% gate=None and a gated scan
+would report zero scorable items. Legal coverage was obtained with a one-off
+command instead (de_legal_dev_eval 175 items, support 27/36/34, cardinality
+0.554; de_legal_test_eval 177 items, support 30/30/29, cardinality 0.503).
+Not fixed because nothing in Phase 7 depends on it.
+
 WHY THIS IS A GATE AND NOT A STEP. en_dev_eval_sq3_feedback was drawn as a
 naturally-distributed slice of EN dev, stratified on (source, gate). Nothing
 in its construction guarantees it can support a hate_type experiment. The

@@ -1,0 +1,72 @@
+name: defprop_legal_r2
+description: >
+  Proportional definition budgets on de_legal_dev_eval, rag arm only,
+  replicate 2. The config is FROZEN at flat k=2 and this does not reopen it;
+  it tests a prediction the frozen-config runs generated.
+
+  THE OBSERVATION. check_dimension_reach shows that giving `legal` a guaranteed
+  definition slot makes the model predict `legal` LESS often, on every subset,
+  ordered flat2 > flat7 > proportional - matching legal-definition coverage.
+  Non-empty legal prediction rate:
+
+    en_dev_eval_main        flat2 0.573  flat7 0.497  prop 0.465
+    en_dev_eval_sq3_types   flat2 0.810  flat7 0.720  prop 0.633
+    en_dev_eval_targets     flat2 0.987               prop 0.853
+
+  Unlike the gate, where flat7 has 4.6x flat2's hate-definition coverage and
+  goes the WRONG way, this is a clean dose-response in legal-definition
+  coverage (~4% -> ~68% -> 100%).
+
+  WHY IT COULD NOT BE SCORED THERE. All three subsets are English, where legal
+  gold is None. The behaviour is visible and unmeasurable. de_legal_dev_eval is
+  the only dev subset that scores legal, and on it legal is the ONLY scored
+  dimension - BoTox never annotates the gate, so gate, target_group, hate_type
+  and severity all mask out.
+
+  PRE-REGISTERED, RECORDED BEFORE THE RUN.
+  G. Predicted legal labels per item fall by roughly 15-20%, from the flat2
+     baseline of ~1.01 toward the gold cardinality of 0.55.
+  H. EXACT MATCH RISES. Section 6 of sq2_log.md records that rag's advantage on
+     legal is precision, not macro: across five runs exact match goes
+     0.334 (zero_shot) -> 0.385 (few_shot) -> 0.433 (rag) while macro-F1 stays
+     flat, because the model over-predicts at 1.23 against gold 0.55. A further
+     cut in prediction count should push exact match further up.
+  I. MACRO-F1 STAYS FLAT, inside the measured floor of 0.041. Macro-F1 is
+     largely blind to this dimension's precision behaviour; that blindness is
+     itself the section 6 finding, and a macro move would be the surprise.
+  J. If G holds and H does not, the model is dropping labels that were
+     CORRECT, and proportional is trading recall for nothing. That is the
+     outcome that would argue against ever adopting this config, and it is why
+     exact match and hamming are reported beside macro rather than after it.
+
+  THE COMPLICATION, STATED. 7.11 is the legal test run under the frozen config.
+  If proportional substantially improves legal, the freeze becomes harder to
+  defend, since it rested on hate_type not moving (-0.006 against a floor of
+  0.021). Better to know before the test run than after. The freeze is not
+  automatically reopened by this result; that is a scope decision, and it is
+  recorded in FOR_MARKUS.md either way.
+
+  Baseline is de_legal_kbv3_r1 / _r2 / _r3 at flat k=2 on the same KB.
+subset: de_legal_dev_eval
+arms: [rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: strict
+retrieval:
+  strategy: hybrid
+  k_definitions: 2
+  k_definitions_mode: proportional
+  k_definitions_per_dimension: 1
+  k_definitions_per_label: 0.3
+  k_guidelines: 2
+  k_examples: 5
+  k_examples_feedback: 0
+  use_mmr: true
+  mmr_lambda: 0.7
+  mmr_pool_factor: 3
+  use_reranker: false
+  rrf_k: 60

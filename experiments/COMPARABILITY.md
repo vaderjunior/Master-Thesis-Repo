@@ -11,7 +11,7 @@ experiments and is expected to differ. Any other mismatch means the
 two numbers answer different questions and needs an explicit caveat
 wherever they appear together.
 
-_89 runs, 31910 item-arm records, generated 2026-08-16._
+_105 runs, 42315 item-arm records, generated 2026-08-18._
 
 | run | date | subset | n | arms | model | prompt | kb | taxonomy | T | votes |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -103,6 +103,22 @@ _89 runs, 31910 item-arm records, generated 2026-08-16._
 | `main_base_r0_rep4` | 2026-08-16 | en_dev_eval_main | 299 | rag | Qwen3-VL-32B-Instruct | `8e588db7` | `b3e1a021` | taxonomy-072387cd | 1.0 | 3 |
 | `targets_peasec_kbv3_r2` | 2026-08-16 | en_dev_eval_targets | 168 | few_shot+rag+zero_shot | Qwen3-VL-32B-Instruct | `8e588db7` | `b3e1a021` | taxonomy-072387cd | 1.0 | 3 |
 | `targets_peasec_kbv3_r3` | 2026-08-16 | en_dev_eval_targets | 168 | few_shot+rag+zero_shot | Qwen3-VL-32B-Instruct | `8e588db7` | `b3e1a021` | taxonomy-072387cd | 1.0 | 3 |
+| `de_legal_kbv3_r3` | 2026-08-17 | de_legal_dev_eval | 175 | rag | Qwen3-VL-32B-Instruct | `8e588db7` | `b3e1a021` | taxonomy-072387cd | 1.0 | 3 |
+| `defprop_legal_r1` | 2026-08-17 | de_legal_dev_eval | 175 | rag | Qwen3-VL-32B-Instruct | `8e588db7` | `b3e1a021` | taxonomy-072387cd | 1.0 | 3 |
+| `defprop_legal_r2` | 2026-08-17 | de_legal_dev_eval | 175 | rag | Qwen3-VL-32B-Instruct | `8e588db7` | `b3e1a021` | taxonomy-072387cd | 1.0 | 3 |
+| `defprop_legal_r3` | 2026-08-17 | de_legal_dev_eval | 175 | rag | Qwen3-VL-32B-Instruct | `8e588db7` | `b3e1a021` | taxonomy-072387cd | 1.0 | 3 |
+| `encoder_de_seed1` | 2026-08-17 | ? | 325 | encoder_de | gbert-base | `None` | `None` | taxonomy-072387cd | None | ? |
+| `encoder_de_seed2` | 2026-08-17 | ? | 325 | encoder_de | gbert-base | `None` | `None` | taxonomy-072387cd | None | ? |
+| `encoder_full_seed1` | 2026-08-17 | ? | 970 | encoder_full | hate:roberta-base+target_group:roberta-base+hate_type:roberta-base+severity:roberta-base | `None` | `None` | taxonomy-072387cd | None | ? |
+| `encoder_full_seed2` | 2026-08-17 | ? | 970 | encoder_full | hate:roberta-base+target_group:roberta-base+hate_type:roberta-base+severity:roberta-base | `None` | `None` | taxonomy-072387cd | None | ? |
+| `encoder_kb_seed1` | 2026-08-17 | ? | 970 | encoder_kb | hate:roberta-base+target_group:roberta-base+hate_type:roberta-base+severity:roberta-base | `None` | `b3e1a021` | taxonomy-072387cd | None | ? |
+| `encoder_kb_seed2` | 2026-08-17 | ? | 970 | encoder_kb | hate:roberta-base+target_group:roberta-base+hate_type:roberta-base+severity:roberta-base | `None` | `b3e1a021` | taxonomy-072387cd | None | ? |
+| `encoder_de_seed0` | 2026-08-18 | ? | 325 | encoder_de | gbert-base | `None` | `None` | taxonomy-072387cd | None | ? |
+| `encoder_full_nogrievance_seed0` | 2026-08-18 | ? | 970 | encoder_full_nogrievance | hate:roberta-base+target_group:roberta-base+hate_type:roberta-base+severity:roberta-base | `None` | `None` | taxonomy-072387cd | None | ? |
+| `encoder_full_nogrievance_seed1` | 2026-08-18 | ? | 970 | encoder_full_nogrievance | hate:roberta-base+target_group:roberta-base+hate_type:roberta-base+severity:roberta-base | `None` | `None` | taxonomy-072387cd | None | ? |
+| `encoder_full_nogrievance_seed2` | 2026-08-18 | ? | 970 | encoder_full_nogrievance | hate:roberta-base+target_group:roberta-base+hate_type:roberta-base+severity:roberta-base | `None` | `None` | taxonomy-072387cd | None | ? |
+| `encoder_full_seed0` | 2026-08-18 | ? | 970 | encoder_full | hate:roberta-base+target_group:roberta-base+hate_type:roberta-base+severity:roberta-base | `None` | `None` | taxonomy-072387cd | None | ? |
+| `encoder_kb_seed0` | 2026-08-18 | ? | 970 | encoder_kb | hate:roberta-base+target_group:roberta-base+hate_type:roberta-base+severity:roberta-base | `None` | `b3e1a021` | taxonomy-072387cd | None | ? |
 | `slice1_en_dev_eval_main` | ? | ? | 450 | few_shot+rag+zero_shot | qwen3.5-122b-a10b | `c74cb7ab` | `475869f9` | unstamped | None | ? |
 
 ## Directly comparable groups
@@ -118,9 +134,11 @@ predating 2026-08-02, when `legal` was added: run
 `check_dimension_reach` to identify them, they are the runs
 with `legal` absent from the vote.
 
-- **Qwen3-VL-32B-Instruct / `8e588db7` / T=1.0 / taxonomy-072387cd** (73 runs): de_dev_kbv3_r1, de_dev_kbv3_r2, de_legal_kbv3_r1, de_legal_kbv3_r2, defflat7_main_r1, defflat7_main_r2, defflat7_main_r3, defflat7_r1, defflat7_r2, defflat7_r3, defprop_main_r1, defprop_main_r2, defprop_main_r3, defprop_main_r4, defprop_r1, defprop_r2, defprop_r3, defprop_targets_r1, defprop_targets_r2, defprop_targets_r3, german_dev_kbv1_newprompt, german_dev_kbv2, legal_dev_peasec, legal_dev_peasec_r2, legal_dev_peasec_r3, legal_dev_peasec_revote, main_base_r0, main_base_r0_rep2, main_base_r0_rep3, main_base_r0_rep4, main_guide_directive, main_guide_directive_rep2, main_peasec_kbv2, main_sq3_ctl_r4, main_sq3_fb_r4, oracle_A, oracle_A_rep2, oracle_A_rep3, oracle_B, oracle_B_rep2, oracle_B_rep3, severity_kbv3_r1, severity_kbv3_r2, sq3_r1_ctl, sq3_r1_ctl_k3, sq3_r1_fb, sq3_r1_fb_k3, sq3_r2_ctl, sq3_r2_fb, sq3_r3_ctl, sq3_r3_fb, sq3_r4_ctl, sq3_r4_ctl_rep2, sq3_r4_ctl_rep3, sq3_r4_fb, sq3_r4_fb_rep2, sq3_r4_fb_rep3, sq3_round0_r1, sq3_round0_r2, sq3_round0_r3, sq3_round0_r4, sq3_types_sq2_r1, sq3_types_sq2_r2, sq3_types_sq2_r3, targets_kdef7, targets_peasec_kbv3, targets_peasec_kbv3_r2, targets_peasec_kbv3_r3, types_kbv3_r1, types_kbv3_r2, types_kbv3_r3, types_kbv3_r4, types_peasec_kbv2
+- **Qwen3-VL-32B-Instruct / `8e588db7` / T=1.0 / taxonomy-072387cd** (77 runs): de_dev_kbv3_r1, de_dev_kbv3_r2, de_legal_kbv3_r1, de_legal_kbv3_r2, de_legal_kbv3_r3, defflat7_main_r1, defflat7_main_r2, defflat7_main_r3, defflat7_r1, defflat7_r2, defflat7_r3, defprop_legal_r1, defprop_legal_r2, defprop_legal_r3, defprop_main_r1, defprop_main_r2, defprop_main_r3, defprop_main_r4, defprop_r1, defprop_r2, defprop_r3, defprop_targets_r1, defprop_targets_r2, defprop_targets_r3, german_dev_kbv1_newprompt, german_dev_kbv2, legal_dev_peasec, legal_dev_peasec_r2, legal_dev_peasec_r3, legal_dev_peasec_revote, main_base_r0, main_base_r0_rep2, main_base_r0_rep3, main_base_r0_rep4, main_guide_directive, main_guide_directive_rep2, main_peasec_kbv2, main_sq3_ctl_r4, main_sq3_fb_r4, oracle_A, oracle_A_rep2, oracle_A_rep3, oracle_B, oracle_B_rep2, oracle_B_rep3, severity_kbv3_r1, severity_kbv3_r2, sq3_r1_ctl, sq3_r1_ctl_k3, sq3_r1_fb, sq3_r1_fb_k3, sq3_r2_ctl, sq3_r2_fb, sq3_r3_ctl, sq3_r3_fb, sq3_r4_ctl, sq3_r4_ctl_rep2, sq3_r4_ctl_rep3, sq3_r4_fb, sq3_r4_fb_rep2, sq3_r4_fb_rep3, sq3_round0_r1, sq3_round0_r2, sq3_round0_r3, sq3_round0_r4, sq3_types_sq2_r1, sq3_types_sq2_r2, sq3_types_sq2_r3, targets_kdef7, targets_peasec_kbv3, targets_peasec_kbv3_r2, targets_peasec_kbv3_r3, types_kbv3_r1, types_kbv3_r2, types_kbv3_r3, types_kbv3_r4, types_peasec_kbv2
+- **hate:roberta-base+target_group:roberta-base+hate_type:roberta-base+severity:roberta-base / `None` / T=None / taxonomy-072387cd** (9 runs): encoder_full_nogrievance_seed0, encoder_full_nogrievance_seed1, encoder_full_nogrievance_seed2, encoder_full_seed0, encoder_full_seed1, encoder_full_seed2, encoder_kb_seed0, encoder_kb_seed1, encoder_kb_seed2
 - **Qwen3-VL-32B-Instruct / `c74cb7ab` / T=None / taxonomy-072387cd** (4 runs): bakeoff_peasec_32b, bakeoff_peasec_32b_targets, severity_dev_peasec, types_dev_peasec
 - **Qwen3-VL-32B-Instruct / `8e588db7` / T=1.0 / taxonomy-1a24b4b1** (4 runs): nolabel_rag_r1, nolabel_rag_r2, nolabel_zs_r1, nolabel_zs_r2
+- **gbert-base / `None` / T=None / taxonomy-072387cd** (3 runs): encoder_de_seed0, encoder_de_seed1, encoder_de_seed2
 - **Qwen3-VL-32B-Instruct / `c74cb7ab` / T=1.0 / taxonomy-072387cd** (3 runs): german_dev, temp_types_t10, temp_types_t10_rep2
 - **qwen3.5-122b-a10b / `c74cb7ab` / T=None / taxonomy-072387cd** (2 runs): slice1_en_dev_eval_main, slice1_en_dev_eval_targets
 - **Qwen3-VL-8B-Instruct / `c74cb7ab` / T=None / taxonomy-072387cd** (1 runs): bakeoff_peasec_8b_targets

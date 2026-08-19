@@ -1,0 +1,87 @@
+name: legal_test_r2
+description: >
+  Build-guide 7.11. THE LEGAL TEST RUN. Replicate 2 of three.
+
+  RULE 2: the test splits are touched by final runs and nothing else. This is
+  one. The claims below were fixed on dev before this ran and are not revised
+  afterwards; a result that contradicts them is reported as a contradiction.
+
+  CONFIGURATION IS FROZEN at k_definitions_mode flat, k_definitions 2, decided
+  in 7.3 on en_dev_eval_sq3_types where proportional budgets moved the headline
+  -0.006 against a floor of 0.021. Proportional was later measured to be BETTER
+  on the balanced gate (+0.026) and WORSE on legal macro (-0.043); no
+  configuration dominates, which is why the freeze stands and both are reported
+  as findings rather than adopted.
+
+  WHAT IS BEING CONFIRMED. On dev, across five runs spanning two knowledge
+  bases, legal shows a dissociation that macro-F1 alone cannot see:
+
+                        zero_shot   few_shot   rag
+    macro-F1              0.587      0.605     0.604
+    exact match           0.334      0.385     0.433
+    hamming loss          0.258      0.231     0.211
+    predicted labels      1.231      1.112     1.011   (gold 0.554)
+
+  rag wins exact match, hamming and prediction-count calibration in 5 of 5
+  runs while macro-F1 stays flat (rag - zero_shot +0.017, rag - few_shot
+  -0.001, both inside the measured floor of 0.041). The mechanism is
+  precision: zero_shot predicts more than twice the gold cardinality, and
+  retrieval pulls the count almost exactly onto it. Macro-F1 is largely blind
+  to this because each label gains recall and loses precision in compensating
+  amounts.
+
+  PRE-REGISTERED PREDICTIONS.
+  L1. Macro-F1 is FLAT: every arm-to-arm delta inside the floor measured from
+      these three replicates. A significant macro difference would contradict
+      dev and is reported as such.
+  L2. Exact match orders rag > few_shot > zero_shot in EVERY replicate. On dev
+      at the current KB that ordering held in both replicates where all three
+      arms ran (rag 0.400/0.443, few_shot 0.385/0.394, zero_shot 0.326/0.337).
+  L3. Predicted labels per item order zero_shot > few_shot > rag, with rag
+      closest to the gold cardinality.
+  L4. rag has the fewest schema-repair calls. Replicated on five subsets and
+      two languages; on legal dev, 177 -> 89 and 162 -> 106.
+
+  COMPOSITION NOTE, fixed before the run. de_legal_test_eval has gold
+  cardinality 0.503 against dev's 0.554, a 9% lower target, with support
+  30/30/29 against 27/36/34. Both subsets average over the same three labels,
+  so the macros are the same quantity. But L3 says rag lands closest to gold,
+  and the target it must land on is lower here - so absolute exact-match
+  figures will differ from dev even if every ordering prediction holds. The
+  orderings are what is being confirmed, not the levels.
+
+  LEAKAGE, FLAGGED BEFORE THE RUN, NOT DISCOVERED AFTER. de_legal_test_eval
+  has 3 items with a knowledge-base near-copy at >= 0.95 (max 0.9993) and 14
+  with a TRAIN near-copy. Cause: BoTox re-annotates DeTox tweets, so one tweet
+  exists under two ids in two splits, and build_kb_records' rule-1 assert
+  checks the split an example was drawn from rather than every other split the
+  same text also appears in. On dev the equivalent 6 items were retrieved by
+  rag in all five runs and removing them changed macro-F1 by <= 0.003 in every
+  arm while RAISING rag's exact match. Every headline figure from this run is
+  re-scored with and without those 3 items and both are reported.
+
+  Three replicates because the floor is the widest arm's spread at three or
+  more, quoted with its replicate count. That rule exists because it was got
+  wrong twice in this phase: en_dev_eval_types 0.037 -> 0.070 and legal
+  0.018 -> 0.041, both originally taken from the rag arm at two replicates.
+subset: de_legal_test_eval
+arms: [zero_shot, few_shot, rag]
+provider: peasec
+pinned_model: Qwen/Qwen3-VL-32B-Instruct
+temperature: 1.0
+allow_fallback: false
+n_votes: 3
+workers: 8
+gate_mapping: strict
+retrieval:
+  strategy: hybrid
+  k_definitions: 2
+  k_definitions_mode: flat
+  k_guidelines: 2
+  k_examples: 5
+  k_examples_feedback: 0
+  use_mmr: true
+  mmr_lambda: 0.7
+  mmr_pool_factor: 3
+  use_reranker: false
+  rrf_k: 60
